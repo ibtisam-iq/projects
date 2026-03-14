@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  repository_dispatch:
+    types: [projects-data-updated]
 
 permissions:
   contents: read
@@ -13,33 +15,53 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
+      - name: Fetch projects data from silver-ops
+        run: |
+          curl -L \
+            -H "Authorization: token ${{ secrets.PROJECTS_PAT }}" \
+            -H "Accept: application/vnd.github.v3.raw" \
+            "https://api.github.com/repos/ibtisam-iq/silver-ops/contents/data/projects.yaml" \
+            -o projects-data.yaml
+          echo "Fetched projects.yaml:"
+          cat projects-data.yaml
+
+      - name: Install yaml package for generator
+        run: npm install yaml --no-save
+
+      - name: Generate projects.ts from YAML
+        run: node scripts/generate-projects.js
+
       - name: Build
         run: npm run build
-      
+
       - name: Add CNAME
         run: echo "projects.ibtisam-iq.com" > dist/CNAME
-      
+
       - name: Add 404 fallback
         run: cp dist/index.html dist/404.html
-      
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
-      
+
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
