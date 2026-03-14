@@ -1,4 +1,4 @@
-name: Projects Site CI/CD
+name: CI/CD — projects.ibtisam-iq.com
 
 on:
   push:
