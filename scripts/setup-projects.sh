@@ -192,6 +192,7 @@ cat > tsconfig.app.json << 'EOF'
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+    "types": ["vite/client"],
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -280,16 +281,16 @@ cat > index.html << 'EOF'
     <meta name="description" content="Muhammad Ibtisam — DevOps Projects Portfolio. Production-grade deployments, real CI/CD pipelines, and documented infrastructure work." />
     <meta name="keywords" content="DevOps, Docker, Kubernetes, Jenkins, Terraform, CI/CD, Infrastructure, Muhammad Ibtisam" />
     <meta name="author" content="Muhammad Ibtisam" />
-    
+
     <meta property="og:title" content="Projects — Muhammad Ibtisam" />
     <meta property="og:description" content="DevOps Projects Portfolio — Production-grade deployments and infrastructure work" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://projects.ibtisam-iq.com" />
-    
+
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Projects — Muhammad Ibtisam" />
     <meta name="twitter:description" content="DevOps Projects Portfolio — Production-grade deployments, real CI/CD pipelines, and documented infrastructure work" />
-    
+
     <title>Projects — Muhammad Ibtisam</title>
   </head>
   <body>
@@ -428,7 +429,7 @@ EOF
 
 # GitHub Actions workflow
 cat > .github/workflows/deploy.yml << 'EOF'
-name: Projects Site CI/CD
+name: CI/CD — projects.ibtisam-iq.com
 
 on:
   push:
@@ -443,41 +444,36 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build
         run: npm run build
-      
+
       - name: Add CNAME
         run: echo "projects.ibtisam-iq.com" > dist/CNAME
-      
+
       - name: Add 404 fallback
         run: cp dist/index.html dist/404.html
-      
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
-      
+
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
-EOF
-
-# public/CNAME
-cat > public/CNAME << 'EOF'
-projects.ibtisam-iq.com
 EOF
 
 # README
