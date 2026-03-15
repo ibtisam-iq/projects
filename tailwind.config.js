@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -12,7 +13,7 @@ export default {
         primary: "#7C3AED",
         secondary: "#10B981",
         muted: "#9CA3AF",
-        border: "#1F2937", // choose your border color here
+        border: "#1F2937",
       },
     },
   },
