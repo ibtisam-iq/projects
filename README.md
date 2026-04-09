@@ -14,7 +14,7 @@
 
 This repository contains the source code for [projects.ibtisam-iq.com](https://projects.ibtisam-iq.com) — a filterable, searchable DevOps projects showcase built with React, TypeScript, and Tailwind CSS.
 
-The site is **data-driven**. Project content lives in a separate repository ([silver-ops](https://github.com/ibtisam-iq/silver-ops)) as a YAML file. Any change to that YAML file automatically triggers a rebuild and redeployment of this site — without touching any code here.
+The site is **data-driven**. Project content lives in [`data/projects.yaml`](./data/projects.yaml) — the single source of truth. Any change to that file automatically triggers a rebuild and redeployment of this site.
 
 ---
 
@@ -32,15 +32,15 @@ The site is **data-driven**. Project content lives in a separate repository ([si
 - ✅ **Status filter** — Completed / In Progress
 - 📄 **Detail pages** — full project page with highlights, tech stack, GitHub and blog links
 - 📱 **Fully responsive** — mobile, tablet, desktop
-- ⚡ **Auto-deploy** — pushes to `silver-ops/data/projects.yaml` trigger a full rebuild automatically
+- ⚡ **Auto-deploy** — any push to `data/projects.yaml` triggers a full rebuild automatically
 
 ---
 
 ## How to Add a New Project
 
-> You never need to edit this repository to add a project.
+> You never need to touch any source code to add a project.
 
-1. Open [`silver-ops/data/projects.yaml`](https://github.com/ibtisam-iq/silver-ops/blob/main/data/projects.yaml)
+1. Open [`data/projects.yaml`](./data/projects.yaml) in this repo
 2. Add a new YAML entry:
 
 ```yaml
@@ -94,6 +94,8 @@ The site rebuilds and deploys automatically within ~2 minutes.
 
 ```
 projects/
+├── data/
+│   └── projects.yaml           # Single source of truth — edit this to add/update projects
 ├── docs/
 │   └── architecture.md         # Full architecture and pipeline documentation
 ├── scripts/
@@ -145,7 +147,7 @@ npm run dev
 npm run build
 ```
 
-> The `generate-projects.js` script runs only inside GitHub Actions. For local development, `src/data/projects.ts` is used directly.
+> The `generate-projects.js` script runs automatically during the build. For local development, `src/data/projects.ts` is used directly.
 
 ---
 
@@ -155,16 +157,15 @@ The pipeline (`.github/workflows/deploy.yml`) handles three triggers:
 
 | Trigger | When |
 |---|---|
-| `push` to `main` | Code or UI changes pushed directly |
+| `push` to `main` | Any change pushed to the main branch |
 | `workflow_dispatch` | Manual re-run from GitHub Actions UI |
-| `repository_dispatch` | Fired automatically by `silver-ops` when `projects.yaml` changes |
 
 Pipeline steps:
 1. Checkout code
-2. Setup Node.js 20
+2. Setup Node.js 24
 3. `npm ci`
-4. Fetch `projects.yaml` from `silver-ops` via GitHub API
-5. Run `generate-projects.js` → writes `src/data/projects.ts`
+4. `npm install yaml --no-save`
+5. Run `generate-projects.js` → reads `data/projects.yaml`, writes `src/data/projects.ts`
 6. `npm run build` (Vite)
 7. Add `CNAME` and `404.html`
 8. Deploy to GitHub Pages
@@ -183,7 +184,6 @@ For a detailed explanation of the data pipeline, why it was designed this way, a
 
 | Repository | Purpose |
 |---|---|
-| [`silver-ops`](https://github.com/ibtisam-iq/silver-ops) | Source of truth — `data/projects.yaml` lives here |
 | [`portfolio-site`](https://github.com/ibtisam-iq/portfolio-site) | Main portfolio at `ibtisam-iq.com` |
 | [`nectar`](https://github.com/ibtisam-iq/nectar) | Technical documentation at `nectar.ibtisam-iq.com` |
 

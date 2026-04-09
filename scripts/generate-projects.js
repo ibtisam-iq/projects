@@ -1,17 +1,17 @@
 // AUTO-RUNS during GitHub Actions build
-// Reads: projects-data.yaml (fetched from silver-ops)
+// Reads: data/projects.yaml (in this repo)
 // Writes: src/data/projects.ts
 
 import { readFileSync, writeFileSync } from 'fs'
 import { parse } from 'yaml'
 
-const yaml = readFileSync('projects-data.yaml', 'utf8')
+const yaml = readFileSync('data/projects.yaml', 'utf8')
 const projects = parse(yaml)
 
 const output = `// ================================================================
 // AUTO-GENERATED FILE — DO NOT EDIT MANUALLY
-// Source of truth: ibtisam-iq/silver-ops/data/projects.yaml
-// To add/edit a project, update the YAML file in silver-ops repo.
+// Source of truth: data/projects.yaml (in this repo)
+// To add/edit a project, update data/projects.yaml and push.
 // ================================================================
 
 import type { Project } from "@/types/project"
