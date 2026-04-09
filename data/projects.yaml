@@ -70,7 +70,7 @@
   featured: false
 
 - slug: ci-cd-stack
-  title: "Complete CI/CD Stack"
+  title: "Complete CI-CD Stack"
   category: production-grade
   status: completed
   shortDescription: "Full-stack DevOps environment with Jenkins, SonarQube, Nexus, and GitLab integration. Docker Compose orchestration for rapid environment provisioning."
