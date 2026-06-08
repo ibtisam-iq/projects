@@ -151,6 +151,19 @@ npm run build
 
 ---
 
+## Local CI Testing (`act`)
+
+The full build pipeline can be run locally using [`act`](https://github.com/nektos/act).
+
+```bash
+act push \
+  -W .github/workflows/deploy.yml
+```
+
+> Artifact upload and GitHub Pages deployment are automatically skipped via `if: ${{ env.ACT != 'true' }}` guards — `act` sets this environment variable automatically.
+
+---
+
 ## CI/CD Pipeline
 
 The pipeline (`.github/workflows/deploy.yml`) handles three triggers:
