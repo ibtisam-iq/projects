@@ -2,7 +2,7 @@
 
 > DevOps Projects Portfolio — Production-grade deployments, real CI/CD pipelines, and documented infrastructure work.
 
-[![CI/CD](https://github.com/ibtisam-iq/projects/actions/workflows/deploy.yml/badge.svg)](https://github.com/ibtisam-iq/projects/actions/workflows/deploy.yml)
+[![CI/CD](https://github.com/ibtisam-iq/projects/actions/workflows/pages.yml/badge.svg)](https://github.com/ibtisam-iq/projects/actions/workflows/pages.yml)
 [![Live Site](https://img.shields.io/badge/live-projects.ibtisam-iq.com-7C3AED)](https://projects.ibtisam-iq.com)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)](https://www.typescriptlang.org)
@@ -118,7 +118,7 @@ projects/
 │   └── vite-env.d.ts
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml          # CI/CD pipeline
+│       └── pages.yml          # CI/CD pipeline
 ├── public/
 │   └── CNAME
 ├── index.html
@@ -157,7 +157,7 @@ The full build pipeline can be run locally using [`act`](https://github.com/nekt
 
 ```bash
 act push \
-  -W .github/workflows/deploy.yml
+  -W .github/workflows/pages.yml
 ```
 
 > Artifact upload and GitHub Pages deployment are automatically skipped via `if: ${{ env.ACT != 'true' }}` guards — `act` sets this environment variable automatically.
@@ -166,7 +166,7 @@ act push \
 
 ## CI/CD Pipeline
 
-The pipeline (`.github/workflows/deploy.yml`) handles three triggers:
+The pipeline (`.github/workflows/pages.yml`) handles three triggers:
 
 | Trigger | When |
 |---|---|
