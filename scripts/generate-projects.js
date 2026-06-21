@@ -35,6 +35,18 @@ export const getAllTechTags = (): string[] => {
   projects.forEach((p) => p.tech.forEach((t: string) => techSet.add(t)))
   return Array.from(techSet).sort()
 }
+
+export const getAllCapabilityTags = (): string[] => {
+  const tagSet = new Set<string>()
+  projects.forEach((p) => p.tags.forEach((t) => tagSet.add(t)))
+  return Array.from(tagSet).sort()
+}
+
+export const getAllYears = (): number[] => {
+  const yearSet = new Set<number>()
+  projects.forEach((p) => yearSet.add(p.year))
+  return Array.from(yearSet).sort((a, b) => b - a)
+}
 `
 
 writeFileSync('src/data/projects.ts', output)

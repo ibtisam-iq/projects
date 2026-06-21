@@ -1,6 +1,14 @@
 import { useParams, Link } from "react-router-dom"
 import { projects } from "@/data/projects"
-import { FaGithub, FaExternalLinkAlt, FaArrowLeft } from "react-icons/fa"
+import { FaGithub, FaBook, FaGlobe, FaExternalLinkAlt, FaArrowLeft } from "react-icons/fa"
+import { IconType } from "react-icons"
+
+const linkConfig: Record<string, { icon: IconType; label: string }> = {
+  github:  { icon: FaGithub,          label: "View on GitHub" },
+  runbook: { icon: FaBook,            label: "View Runbook" },
+  blog:    { icon: FaExternalLinkAlt, label: "Read Blog Post" },
+  website: { icon: FaGlobe,           label: "Visit Website" },
+}
 
 const ProjectDetail = () => {
   const { slug } = useParams<{ slug: string }>()
@@ -19,16 +27,16 @@ const ProjectDetail = () => {
     )
   }
 
-  const categoryColors = {
-    "open-source": "text-green-400 border-green-400",
-    documentation: "text-blue-400 border-blue-400",
-    "production-grade": "text-purple-400 border-purple-400",
-  } as const
+  const categoryColors: Record<string, string> = {
+    tool: "text-green-400 border-green-400",
+    reference: "text-blue-400 border-blue-400",
+    platform: "text-purple-400 border-purple-400",
+  }
 
   return (
     <div className="min-h-screen bg-bg text-white">
       <div className="max-w-5xl mx-auto px-6 py-12">
-        {/* Back + Category chip */}
+        {/* Back + Category chip + Year */}
         <div className="flex items-center gap-3 mb-6">
           <Link
             to="/"
@@ -38,10 +46,12 @@ const ProjectDetail = () => {
           </Link>
 
           <span
-            className={`text-xs font-semibold px-3 py-1 rounded-full border ${categoryColors[project.category]}`}
+            className={`text-xs font-semibold px-3 py-1 rounded-full border ${categoryColors[project.category] || "text-gray-400 border-gray-400"}`}
           >
             {project.category.toUpperCase().replace("-", " ")}
           </span>
+
+          <span className="text-sm text-gray-500">{project.year}</span>
         </div>
 
         {/* Title */}
@@ -79,6 +89,25 @@ const ProjectDetail = () => {
           ))}
         </ul>
 
+        {/* Tags (capability domains) */}
+        {project.tags && project.tags.length > 0 && (
+          <>
+            <h2 className="text-3xl font-bold mb-4 text-purple-400">
+              Skills Demonstrated
+            </h2>
+            <div className="flex flex-wrap gap-3 mb-8">
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="bg-purple-900/30 text-purple-300 px-4 py-2 rounded-lg font-semibold border border-purple-800/50"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </>
+        )}
+
         {/* Tech */}
         <h2 className="text-3xl font-bold mb-4 text-purple-400">
           Technologies Used
@@ -94,26 +123,27 @@ const ProjectDetail = () => {
           ))}
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-4">
-          <a
-            href={project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2"
-          >
-            <FaGithub /> View on GitHub
-          </a>
-          {project.blogUrl && (
-            <a
-              href={project.blogUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2"
-            >
-              <FaExternalLinkAlt /> Read Blog Post
-            </a>
-          )}
+        {/* Link buttons */}
+        <div className="flex gap-4 flex-wrap">
+          {project.links.map((link) => {
+            const config = linkConfig[link.type] || {
+              icon: FaExternalLinkAlt,
+              label: link.type.charAt(0).toUpperCase() + link.type.slice(1),
+            }
+            const Icon = config.icon
+            const isGithub = link.type === "github"
+            return (
+              <a
+                key={link.type}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${isGithub ? "bg-purple-600 hover:bg-purple-700" : "bg-gray-700 hover:bg-gray-600"} text-white px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2`}
+              >
+                <Icon /> {config.label}
+              </a>
+            )
+          })}
         </div>
       </div>
     </div>

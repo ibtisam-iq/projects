@@ -1,14 +1,18 @@
-import { getAllTechTags } from "@/data/projects"
+import { getAllTechTags, getAllCapabilityTags, getAllYears } from "@/data/projects"
 
 interface SidebarProps {
   searchQuery: string
   setSearchQuery: (query: string) => void
   selectedCategory: string
   setSelectedCategory: (category: string) => void
+  selectedTags: string[]
+  setSelectedTags: (tags: string[]) => void
   selectedTech: string[]
   setSelectedTech: (tech: string[]) => void
   selectedStatus: string
   setSelectedStatus: (status: string) => void
+  selectedYear: string
+  setSelectedYear: (year: string) => void
 }
 
 const Sidebar = ({
@@ -16,18 +20,32 @@ const Sidebar = ({
   setSearchQuery,
   selectedCategory,
   setSelectedCategory,
+  selectedTags,
+  setSelectedTags,
   selectedTech,
   setSelectedTech,
   selectedStatus,
   setSelectedStatus,
+  selectedYear,
+  setSelectedYear,
 }: SidebarProps) => {
   const allTech = getAllTechTags()
+  const allTags = getAllCapabilityTags()
+  const allYears = getAllYears()
 
   const toggleTech = (tech: string) => {
     if (selectedTech.includes(tech)) {
       setSelectedTech(selectedTech.filter((t) => t !== tech))
     } else {
       setSelectedTech([...selectedTech, tech])
+    }
+  }
+
+  const toggleTag = (tag: string) => {
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(selectedTags.filter((t) => t !== tag))
+    } else {
+      setSelectedTags([...selectedTags, tag])
     }
   }
 
@@ -48,7 +66,7 @@ const Sidebar = ({
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-3 text-purple-400">CATEGORY</h3>
         <div className="space-y-2">
-          {["all", "open-source", "documentation", "production-grade"].map(
+          {["all", "platform", "tool", "reference"].map(
             (cat) => (
               <label
                 key={cat}
@@ -71,12 +89,35 @@ const Sidebar = ({
         </div>
       </div>
 
+      {/* Capabilities (tags) */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3 text-purple-400">
+          SKILLS
+        </h3>
+        <div className="space-y-2 max-h-48 overflow-y-auto">
+          {allTags.map((tag) => (
+            <label
+              key={tag}
+              className="flex items-center cursor-pointer hover:text-purple-400 transition"
+            >
+              <input
+                type="checkbox"
+                checked={selectedTags.includes(tag)}
+                onChange={() => toggleTag(tag)}
+                className="mr-2 accent-purple-400"
+              />
+              <span>{tag}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
       {/* Technology */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-3 text-purple-400">
-          TECHNOLOGY
+          TOOLS
         </h3>
-        <div className="space-y-2 max-h-64 overflow-y-auto">
+        <div className="space-y-2 max-h-48 overflow-y-auto">
           {allTech.map((tech) => (
             <label
               key={tech}
@@ -94,28 +135,53 @@ const Sidebar = ({
         </div>
       </div>
 
-      {/* Status */}
-      <div>
-        <h3 className="text-lg font-semibold mb-3 text-purple-400">STATUS</h3>
+      {/* Year */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3 text-purple-400">YEAR</h3>
         <div className="space-y-2">
-          {["all", "completed", "in-progress"].map((stat) => (
+          {["all", ...allYears.map(String)].map((yr) => (
             <label
-              key={stat}
+              key={yr}
               className="flex items-center cursor-pointer hover:text-purple-400 transition"
             >
               <input
                 type="radio"
-                name="status"
-                value={stat}
-                checked={selectedStatus === stat}
-                onChange={() => setSelectedStatus(stat)}
+                name="year"
+                value={yr}
+                checked={selectedYear === yr}
+                onChange={() => setSelectedYear(yr)}
                 className="mr-2 accent-purple-400"
               />
-              <span className="capitalize">
-                {stat.replace("-", " ")}
-              </span>
+              <span>{yr === "all" ? "All" : yr}</span>
             </label>
           ))}
+        </div>
+      </div>
+
+      {/* Status */}
+      <div>
+        <h3 className="text-lg font-semibold mb-3 text-purple-400">STATUS</h3>
+        <div className="space-y-2">
+          {["all", "completed", "in-progress", "maintained", "archived"].map(
+            (stat) => (
+              <label
+                key={stat}
+                className="flex items-center cursor-pointer hover:text-purple-400 transition"
+              >
+                <input
+                  type="radio"
+                  name="status"
+                  value={stat}
+                  checked={selectedStatus === stat}
+                  onChange={() => setSelectedStatus(stat)}
+                  className="mr-2 accent-purple-400"
+                />
+                <span className="capitalize">
+                  {stat.replace("-", " ")}
+                </span>
+              </label>
+            ),
+          )}
         </div>
       </div>
     </aside>

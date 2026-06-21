@@ -27,10 +27,12 @@ The site is **data-driven**. Project content lives in [`data/projects.yaml`](./d
 ## Features
 
 - 🔍 **Search** — filter projects by title, description, or technology
-- 🗂️ **Category filter** — Open Source, Documentation, Production-grade
-- 🏷️ **Technology filter** — multi-select tech stack tags
-- ✅ **Status filter** — Completed / In Progress
-- 📄 **Detail pages** — full project page with highlights, tech stack, GitHub and blog links
+- 🗂️ **Category filter** — Platform, Tool, Reference
+- 🏷️ **Skills filter** — multi-select capability domain tags (ci-cd, gitops, kubernetes, etc.)
+- 🔧 **Tools filter** — multi-select tech stack tags
+- 📅 **Year filter** — filter by completion/update year
+- ✅ **Status filter** — Completed / In Progress / Maintained / Archived
+- 📄 **Detail pages** — full project page with highlights, skills, tech stack, and link buttons
 - 📱 **Fully responsive** — mobile, tablet, desktop
 - ⚡ **Auto-deploy** — any push to `data/projects.yaml` triggers a full rebuild automatically
 
@@ -46,19 +48,26 @@ The site is **data-driven**. Project content lives in [`data/projects.yaml`](./d
 ```yaml
 - slug: my-new-project
   title: "My New Project"
-  category: production-grade        # open-source | documentation | production-grade
-  status: completed                 # completed | in-progress
+  category: platform                # platform | tool | reference
+  status: completed                 # completed | in-progress | maintained | archived
+  year: 2025
   shortDescription: "One line summary shown on the project card."
   description: "Longer description shown on the project detail page."
   highlights:
     - "Achievement 1 with measurable impact"
     - "Achievement 2 with measurable impact"
+  tags:
+    - ci-cd
+    - kubernetes
   tech:
     - Docker
     - Kubernetes
     - Terraform
-  githubUrl: "https://github.com/ibtisam-iq/my-new-project"
-  blogUrl: "https://blog.ibtisam-iq.com/my-new-project"   # optional
+  links:
+    - type: github
+      url: "https://github.com/ibtisam-iq/my-new-project"
+    - type: runbook                  # optional: runbook | blog | website
+      url: "https://runbook.ibtisam-iq.com/my-new-project/"
   featured: true
 ```
 
@@ -140,6 +149,9 @@ cd projects
 # Install dependencies
 npm install
 
+# Generate projects.ts from YAML (run after any YAML changes)
+node scripts/generate-projects.js
+
 # Start dev server
 npm run dev
 
@@ -147,7 +159,7 @@ npm run dev
 npm run build
 ```
 
-> The `generate-projects.js` script runs automatically during the build. For local development, `src/data/projects.ts` is used directly.
+> **Note:** After editing `data/projects.yaml`, always run `node scripts/generate-projects.js` to regenerate `src/data/projects.ts` before starting the dev server. In CI, this step runs automatically during the build pipeline.
 
 ---
 
@@ -198,6 +210,7 @@ For a detailed explanation of the data pipeline, why it was designed this way, a
 | Repository | Purpose |
 |---|---|
 | [`portfolio-site`](https://github.com/ibtisam-iq/portfolio-site) | Main portfolio at `ibtisam-iq.com` |
+| [`runbook`](https://github.com/ibtisam-iq/runbook) | Engineering runbook at `runbook.ibtisam-iq.com` |
 | [`nectar`](https://github.com/ibtisam-iq/nectar) | Technical documentation at `nectar.ibtisam-iq.com` |
 
 ---

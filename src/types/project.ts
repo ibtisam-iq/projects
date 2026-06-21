@@ -1,14 +1,20 @@
+export interface ProjectLink {
+  type: string
+  url: string
+}
+
 export interface Project {
   slug: string
   title: string
-  category: "open-source" | "documentation" | "production-grade"
-  status: "completed" | "in-progress"
+  category: string
+  status: string
+  year: number
   shortDescription: string
   description: string
   highlights: string[]
+  tags: string[]
   tech: string[]
-  githubUrl: string
-  blogUrl?: string
+  links: ProjectLink[]
   imageUrl?: string
   featured: boolean
 }
