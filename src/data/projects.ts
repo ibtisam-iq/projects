@@ -1,139 +1,351 @@
-import { Project } from "@/types/project"
+// ================================================================
+// AUTO-GENERATED FILE — DO NOT EDIT MANUALLY
+// Source of truth: data/projects.yaml (in this repo)
+// To add/edit a project, update data/projects.yaml and push.
+// ================================================================
+
+import type { Project } from "@/types/project"
 
 export const projects: Project[] = [
   {
-    slug: "bankingapp-java-mysql",
-    title: "BankingApp Java MySQL",
-    category: "production-grade",
-    status: "completed",
-    shortDescription:
-      "2-tier Spring Boot banking application with full CI/CD pipeline, SonarQube quality gates, and Nexus artifact management.",
-    description:
-      "Production-grade deployment of a Spring Boot banking application demonstrating complete DevOps lifecycle from source to deployment. Implemented Jenkins CI/CD pipeline with SonarQube code quality enforcement and Nexus artifact repository integration.",
-    highlights: [
-      "Containerized multi-tier Java application; reduced environment setup from 2 hours to `docker compose up`",
+    "slug": "microservices-demo",
+    "title": "End-to-End DevOps: Polyglot Microservices GitOps on EKS",
+    "category": "platform",
+    "status": "completed",
+    "year": 2025,
+    "shortDescription": "10-service polyglot app on Amazon EKS with DevSecOps CI, ArgoCD GitOps, full observability, and autoscaling. 6-phase runbook with 24 decisions and 9 terminal sessions.",
+    "description": "Forked Google's Online Boutique (10-service polyglot monorepo), built a production-grade DevOps pipeline from scratch. CI pipeline uses GitHub Actions with monorepo change detection, Trivy security scanning, and GHCR publish. Helm chart packaged from upstream and published to GHCR as an OCI artifact. Deployed via ArgoCD with Image Updater (digest strategy) for continuous delivery. Platform includes Gateway API (single shared ALB, 5 subdomains), ExternalDNS (zero manual DNS records), kube-prometheus-stack with Slack alerting, ELK stack for log aggregation, and HPA autoscaling. Infrastructure provisioned via Terraform on KodeKloud AWS Playground. Documented across 6 runbook phases with 24 architectural decisions, 9 terminal session recordings, and 12 verification screenshots.",
+    "highlights": [
+      "Built 3 GitHub Actions workflows: monorepo change detection with matrix dispatch, Trivy FS + image scanning, Helm chart OCI publish to GHCR",
+      "Evolved image tagging through 3 iterations (chart version, SHA, digest), landing on ArgoCD Image Updater after debugging BuildKit epoch timestamp incompatibility",
+      "Deployed 10 microservices via ArgoCD from a Helm chart on GHCR, with patch-only values (5 fields) and zero upstream file modifications",
+      "Configured Gateway API with a single shared ALB serving 5 subdomains behind one wildcard ACM certificate",
+      "Implemented full observability: Prometheus + Grafana + AlertManager (Slack), Elasticsearch + Filebeat + Kibana",
+      "Documented 24 architectural decisions, recorded 9 terminal sessions, captured 12 verification screenshots across 6 runbook phases"
+    ],
+    "tags": [
+      "ci-cd",
+      "gitops",
+      "observability",
+      "iac",
+      "kubernetes",
+      "networking",
+      "security",
+      "autoscaling",
+      "containerization"
+    ],
+    "tech": [
+      "GitHub Actions",
+      "Trivy",
+      "Docker",
+      "Helm",
+      "Kustomize",
+      "ArgoCD",
+      "Terraform",
+      "Amazon EKS",
+      "Gateway API",
+      "Prometheus",
+      "Grafana",
+      "Elasticsearch",
+      "Kibana",
+      "Route 53",
+      "GHCR"
+    ],
+    "links": [
+      {
+        "type": "github",
+        "url": "https://github.com/ibtisam-iq/microservices-demo"
+      },
+      {
+        "type": "runbook",
+        "url": "https://runbook.ibtisam-iq.com/projects/deployments/microservices-demo/"
+      }
+    ],
+    "featured": true
+  },
+  {
+    "slug": "bankingapp-java-mysql",
+    "title": "BankingApp Java MySQL",
+    "category": "platform",
+    "status": "completed",
+    "year": 2024,
+    "shortDescription": "2-tier Spring Boot banking app with Jenkins CI/CD, SonarQube quality gates, Nexus artifact management, and Kubernetes deployment with HPA.",
+    "description": "Production-grade deployment of a Spring Boot banking application demonstrating the complete DevOps lifecycle from source to deployment. Implemented Jenkins CI/CD pipeline with SonarQube code quality enforcement, Nexus artifact repository integration, and Kubernetes deployment with Horizontal Pod Autoscaling.",
+    "highlights": [
+      "Containerized multi-tier Java application; reduced environment setup from 2 hours to docker compose up",
       "Implemented SonarQube quality gate blocking deployment on critical vulnerabilities",
       "Automated artifact versioning via Nexus; eliminated manual JAR management",
       "Configured Jenkins pipeline with parallel stages reducing build time by 40%",
-      "Deployed on Kubernetes with Horizontal Pod Autoscaling based on CPU metrics",
+      "Deployed on Kubernetes with Horizontal Pod Autoscaling based on CPU metrics"
     ],
-    tech: [
+    "tags": [
+      "ci-cd",
+      "containerization",
+      "kubernetes",
+      "security"
+    ],
+    "tech": [
       "Docker",
       "Jenkins",
       "SonarQube",
       "Nexus",
       "MySQL",
       "Kubernetes",
-      "Spring Boot",
+      "Spring Boot"
     ],
-    githubUrl: "https://github.com/ibtisam-iq/BankingApp-Java-MySQL",
-    blogUrl: "https://blog.ibtisam-iq.com/bankingapp-deployment",
-    featured: true,
+    "links": [
+      {
+        "type": "github",
+        "url": "https://github.com/ibtisam-iq/BankingApp-Java-MySQL"
+      }
+    ],
+    "featured": true
   },
   {
-    slug: "debugbox",
-    title: "DebugBox",
-    category: "open-source",
-    status: "completed",
-    shortDescription:
-      "Interactive debugging container with 50+ networking and troubleshooting tools pre-installed. Multi-architecture support (amd64/arm64).",
-    description:
-      "Purpose-built Docker image for infrastructure debugging and network troubleshooting. Designed for Kubernetes pod debugging, container networking issues, and production incident response.",
-    highlights: [
-      "Built multi-architecture images (amd64/arm64) using Docker Buildx with 95% build time reduction via layer caching",
-      "Automated image publishing to Docker Hub via GitHub Actions on tag creation",
-      "Reduced average debugging session setup time from 15 minutes to under 30 seconds",
-      "Implemented health check endpoints for container orchestration compatibility",
-      "Maintained comprehensive tool inventory with version pinning for reproducibility",
-    ],
-    tech: ["Docker", "Bash", "GitHub Actions", "Kubernetes"],
-    githubUrl: "https://github.com/ibtisam-iq/debugbox",
-    imageUrl:
-      "https://raw.githubusercontent.com/ibtisam-iq/debugbox/main/docs/screenshot.png",
-    featured: true,
-  },
-  {
-    slug: "nectar",
-    title: "Nectar Documentation Hub",
-    category: "documentation",
-    status: "completed",
-    shortDescription:
-      "Comprehensive technical knowledge base built with MkDocs Material. 200+ pages covering DevOps tools, cloud platforms, and infrastructure patterns.",
-    description:
-      "Centralized documentation platform for DevOps knowledge management. Features automated deployment pipeline with version control and search indexing.",
-    highlights: [
-      "Deployed static site generation with MkDocs Material theme; 100% uptime since launch",
-      "Implemented GitHub Actions workflow for automatic deployment on content updates",
-      "Configured Cloudflare CDN with 95+ PageSpeed score and global edge caching",
-      "Structured content taxonomy enabling search through 200+ documentation pages",
-      "Integrated dark mode theme matching broader portfolio site design system",
-    ],
-    tech: ["MkDocs", "GitHub Actions", "Cloudflare Pages", "Python"],
-    githubUrl: "https://github.com/ibtisam-iq/nectar",
-    blogUrl: "https://nectar.ibtisam-iq.com",
-    featured: false,
-  },
-  {
-    slug: "ci-cd-stack",
-    title: "Complete CI/CD Stack",
-    category: "production-grade",
-    status: "completed",
-    shortDescription:
-      "Full-stack DevOps environment with Jenkins, SonarQube, Nexus, and GitLab integration. Docker Compose orchestration for rapid environment provisioning.",
-    description:
-      "Self-hosted CI/CD infrastructure stack demonstrating enterprise DevOps tool integration. Designed for rapid environment provisioning and reproducible builds.",
-    highlights: [
-      "Orchestrated 4-service stack (Jenkins, SonarQube, Nexus, GitLab) with Docker Compose; single-command environment provisioning",
+    "slug": "ci-cd-stack",
+    "title": "Complete CI/CD Stack",
+    "category": "tool",
+    "status": "completed",
+    "year": 2024,
+    "shortDescription": "Self-hosted DevOps environment: Jenkins, SonarQube, Nexus, GitLab orchestrated via Docker Compose. Single-command provisioning.",
+    "description": "Self-hosted CI/CD infrastructure stack demonstrating enterprise DevOps tool integration. Orchestrates Jenkins, SonarQube, Nexus, and GitLab via Docker Compose for rapid, reproducible environment provisioning.",
+    "highlights": [
+      "Orchestrated 4-service stack (Jenkins, SonarQube, Nexus, GitLab) with Docker Compose; single-command provisioning",
       "Configured Jenkins shared libraries for DRY pipeline code; reduced pipeline duplication by 70%",
       "Integrated LDAP authentication across all services; centralized user management",
       "Implemented automated backup strategy with 7-day retention for artifact repository",
-      "Documented complete setup process enabling team onboarding in under 1 hour",
+      "Documented complete setup process enabling team onboarding in under 1 hour"
     ],
-    tech: ["Docker", "Jenkins", "SonarQube", "Nexus", "GitLab", "Nginx"],
-    githubUrl: "https://github.com/ibtisam-iq/silver-stack",
-    featured: true,
+    "tags": [
+      "ci-cd",
+      "containerization"
+    ],
+    "tech": [
+      "Docker",
+      "Jenkins",
+      "SonarQube",
+      "Nexus",
+      "GitLab",
+      "Nginx"
+    ],
+    "links": [
+      {
+        "type": "github",
+        "url": "https://github.com/ibtisam-iq/ci-cd-stack"
+      }
+    ],
+    "featured": true
   },
   {
-    slug: "custom-ubuntu-rootfs",
-    title: "Custom Ubuntu Rootfs",
-    category: "production-grade",
-    status: "completed",
-    shortDescription:
-      "Minimal Ubuntu base filesystem optimized for container workloads. 40% smaller than official images with security-hardened configuration.",
-    description:
-      "Custom-built Ubuntu root filesystem for containerized applications. Focused on minimal attack surface and optimal layer caching for CI/CD pipelines.",
-    highlights: [
+    "slug": "custom-ubuntu-rootfs",
+    "title": "Custom Ubuntu Rootfs",
+    "category": "tool",
+    "status": "completed",
+    "year": 2024,
+    "shortDescription": "Minimal Ubuntu base filesystem for containers. 40% smaller than official images, security-hardened, published to GHCR.",
+    "description": "Custom-built Ubuntu root filesystem optimized for container workloads. Focused on minimal attack surface, optimal layer caching for CI/CD pipelines, and reproducible builds.",
+    "highlights": [
       "Built minimal Ubuntu rootfs from debootstrap; reduced image size from 180MB to 110MB",
       "Removed 47 unnecessary packages while maintaining essential utilities",
       "Configured automatic security updates via unattended-upgrades",
       "Implemented multi-stage Docker build pattern for optimal layer caching",
-      "Published to GitHub Container Registry with automated versioning",
+      "Published to GitHub Container Registry with automated versioning"
     ],
-    tech: ["Docker", "Ubuntu", "Bash", "GitHub Actions"],
-    githubUrl: "https://github.com/ibtisam-iq/silver-stack",
-    featured: false,
+    "tags": [
+      "containerization",
+      "security"
+    ],
+    "tech": [
+      "Docker",
+      "Ubuntu",
+      "Bash",
+      "GitHub Actions"
+    ],
+    "links": [
+      {
+        "type": "github",
+        "url": "https://github.com/ibtisam-iq/custom-ubuntu-rootfs"
+      }
+    ],
+    "featured": false
   },
+  {
+    "slug": "debugbox",
+    "title": "DebugBox",
+    "category": "tool",
+    "status": "maintained",
+    "year": 2024,
+    "shortDescription": "Interactive debugging container with 50+ networking and troubleshooting tools. Multi-arch (amd64/arm64). Published on Docker Hub and GHCR.",
+    "description": "Purpose-built Docker image for infrastructure debugging and network troubleshooting. Designed for Kubernetes pod debugging, container networking issues, and production incident response. Available on Docker Hub and GitHub Container Registry with multi-architecture support.",
+    "highlights": [
+      "Built multi-architecture images (amd64/arm64) using Docker Buildx with 95% build time reduction via layer caching",
+      "Automated image publishing to Docker Hub and GHCR via GitHub Actions on tag creation",
+      "Reduced average debugging session setup time from 15 minutes to under 30 seconds",
+      "Implemented health check endpoints for container orchestration compatibility",
+      "Maintained comprehensive tool inventory with version pinning for reproducibility"
+    ],
+    "tags": [
+      "containerization",
+      "kubernetes",
+      "networking"
+    ],
+    "tech": [
+      "Docker",
+      "Bash",
+      "GitHub Actions",
+      "Kubernetes"
+    ],
+    "links": [
+      {
+        "type": "github",
+        "url": "https://github.com/ibtisam-iq/DebugBox"
+      },
+      {
+        "type": "website",
+        "url": "https://debugbox.ibtisam-iq.com"
+      },
+      {
+        "type": "runbook",
+        "url": "https://runbook.ibtisam-iq.com/containers/debugbox/"
+      }
+    ],
+    "featured": true
+  },
+  {
+    "slug": "silverstack",
+    "title": "SilverStack Dev Machine",
+    "category": "tool",
+    "status": "maintained",
+    "year": 2025,
+    "shortDescription": "Custom rootfs micro VM on iximiuz Labs with 15+ DevOps tools pre-installed. Reusable Terraform configs for EKS, VPC, and bastion hosts.",
+    "description": "A custom-built cloud-native development workstation and infrastructure code repository. The dev machine is a custom rootfs micro VM on iximiuz Labs with kubectl, eksctl, terraform, helm, helmfile, aws cli, and more pre-installed. Also contains reusable, tested Terraform configurations for EKS on KodeKloud (SCP-aware), VPC, and bastion hosts.",
+    "highlights": [
+      "Built custom root filesystem image for iximiuz Labs; zero local machine setup required",
+      "Pre-installed 15+ DevOps tools with tab completion and shell aliases configured",
+      "Maintained reusable Terraform configs for EKS, VPC, and bastion across multiple projects",
+      "Documented rootfs build process in a standalone runbook"
+    ],
+    "tags": [
+      "iac",
+      "containerization"
+    ],
+    "tech": [
+      "Docker",
+      "Terraform",
+      "Bash",
+      "AWS",
+      "Kubernetes"
+    ],
+    "links": [
+      {
+        "type": "github",
+        "url": "https://github.com/ibtisam-iq/silver-stack"
+      },
+      {
+        "type": "runbook",
+        "url": "https://runbook.ibtisam-iq.com/containers/iximiuz/rootfs/setup-dev-machine-rootfs-image/"
+      }
+    ],
+    "featured": false
+  },
+  {
+    "slug": "runbook",
+    "title": "Engineering Runbook",
+    "category": "reference",
+    "status": "maintained",
+    "year": 2025,
+    "shortDescription": "Production engineering runbook documenting real deployments, troubleshooting, and architectural decisions. Engineering journal format with MkDocs Material.",
+    "description": "Personal engineering runbook documenting every project deployment, bug fix, and architectural decision. Written in first-person past tense (engineering journal format) with MkDocs admonition blocks for decisions, terminal session recordings as evidence, and hyperlinked cross-references across runbooks. Covers AWS, Kubernetes, Terraform, CI/CD, GitOps, and observability.",
+    "highlights": [
+      "Documented 6 production project phases with 24 architectural decisions in the microservices-demo runbook alone",
+      "Engineering journal format: first-person, past tense, bugs inline where they happened, decisions as admonitions",
+      "Cross-linked runbook ecosystem: Route 53, ACM, EKS, Gateway API, ArgoCD, and tool installation runbooks all interlinked",
+      "Deployed on Cloudflare Pages with GitHub Actions CI; auto-deploys on push"
+    ],
+    "tags": [
+      "documentation"
+    ],
+    "tech": [
+      "MkDocs",
+      "GitHub Actions",
+      "Cloudflare Pages",
+      "Python"
+    ],
+    "links": [
+      {
+        "type": "github",
+        "url": "https://github.com/ibtisam-iq/runbook"
+      },
+      {
+        "type": "website",
+        "url": "https://runbook.ibtisam-iq.com"
+      }
+    ],
+    "featured": true
+  },
+  {
+    "slug": "nectar",
+    "title": "Nectar Documentation Hub",
+    "category": "reference",
+    "status": "maintained",
+    "year": 2024,
+    "shortDescription": "Technical knowledge base with 200+ pages covering DevOps tools, cloud platforms, and infrastructure patterns. Built with MkDocs Material.",
+    "description": "Centralized documentation platform for DevOps knowledge management. Features automated deployment pipeline with version control and search indexing. Covers Docker, Kubernetes, Terraform, AWS, CI/CD, Linux, networking, and more.",
+    "highlights": [
+      "Structured content taxonomy enabling search through 200+ documentation pages",
+      "Deployed on Cloudflare Pages with GitHub Actions CI; auto-deploys on push",
+      "Configured Cloudflare CDN with 95+ PageSpeed score and global edge caching",
+      "Integrated dark mode theme matching broader portfolio site design system"
+    ],
+    "tags": [
+      "documentation"
+    ],
+    "tech": [
+      "MkDocs",
+      "GitHub Actions",
+      "Cloudflare Pages",
+      "Python"
+    ],
+    "links": [
+      {
+        "type": "github",
+        "url": "https://github.com/ibtisam-iq/nectar"
+      },
+      {
+        "type": "website",
+        "url": "https://nectar.ibtisam-iq.com"
+      }
+    ],
+    "featured": false
+  }
 ]
 
-// Utility functions for filtering
-export const getProjectsByCategory = (category: Project["category"]) => {
-  return projects.filter((p) => p.category === category)
-}
+export const getProjectsByCategory = (category: Project["category"]) =>
+  projects.filter((p) => p.category === category)
 
-export const getProjectsByStatus = (status: Project["status"]) => {
-  return projects.filter((p) => p.status === status)
-}
+export const getProjectsByStatus = (status: Project["status"]) =>
+  projects.filter((p) => p.status === status)
 
-export const getProjectsByTech = (tech: string) => {
-  return projects.filter((p) => p.tech.includes(tech))
-}
+export const getProjectsByTech = (tech: string) =>
+  projects.filter((p) => p.tech.includes(tech))
 
-export const getFeaturedProjects = () => {
-  return projects.filter((p) => p.featured)
-}
+export const getFeaturedProjects = () =>
+  projects.filter((p) => p.featured)
 
 export const getAllTechTags = (): string[] => {
   const techSet = new Set<string>()
-  projects.forEach((p) => p.tech.forEach((t) => techSet.add(t)))
+  projects.forEach((p) => p.tech.forEach((t: string) => techSet.add(t)))
   return Array.from(techSet).sort()
+}
+
+export const getAllCapabilityTags = (): string[] => {
+  const tagSet = new Set<string>()
+  projects.forEach((p) => p.tags.forEach((t) => tagSet.add(t)))
+  return Array.from(tagSet).sort()
+}
+
+export const getAllYears = (): number[] => {
+  const yearSet = new Set<number>()
+  projects.forEach((p) => yearSet.add(p.year))
+  return Array.from(yearSet).sort((a, b) => b - a)
 }
