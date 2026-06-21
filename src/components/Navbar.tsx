@@ -27,7 +27,7 @@ const Navbar = () => {
         <Link to="/" className="hover:text-purple-400 transition">All Projects</Link>
         <a href="https://ibtisam-iq.com" className="hover:text-purple-400 transition">Portfolio</a>
         <a href="https://blog.ibtisam-iq.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition">Blog</a>
-        <a href="https://nectar.ibtisam-iq.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition">Nectar</a>
+        <a href="https://runbook.ibtisam-iq.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition">Runbook</a>
         <a href="https://github.com/ibtisam-iq/silver-stack" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition">SilverStack</a>
         <a href="https://linkedin.com/in/ibtisam-iq" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition">LinkedIn</a>
       </div>
@@ -38,7 +38,7 @@ const Navbar = () => {
           <Link to="/" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>All Projects</Link>
           <a href="https://ibtisam-iq.com" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>Portfolio</a>
           <a href="https://blog.ibtisam-iq.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>Blog</a>
-          <a href="https://nectar.ibtisam-iq.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>Nectar</a>
+          <a href="https://runbook.ibtisam-iq.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>Runbook</a>
           <a href="https://github.com/ibtisam-iq/silver-stack" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>SilverStack</a>
           <a href="https://linkedin.com/in/ibtisam-iq" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>LinkedIn</a>
         </div>
