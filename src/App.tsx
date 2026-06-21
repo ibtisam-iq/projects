@@ -13,6 +13,8 @@ const HomePage = () => {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedTech, setSelectedTech] = useState<string[]>([])
   const [selectedStatus, setSelectedStatus] = useState("all")
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [selectedYear, setSelectedYear] = useState("all")
 
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
@@ -33,11 +35,18 @@ const HomePage = () => {
       const matchesStatus =
         selectedStatus === "all" || project.status === selectedStatus
 
+      const matchesTags =
+        selectedTags.length === 0 ||
+        selectedTags.every((t) => project.tags.includes(t))
+
+      const matchesYear =
+        selectedYear === "all" || project.year === Number(selectedYear)
+
       return (
-        matchesSearch && matchesCategory && matchesTech && matchesStatus
+        matchesSearch && matchesCategory && matchesTech && matchesStatus && matchesTags && matchesYear
       )
     })
-  }, [searchQuery, selectedCategory, selectedTech, selectedStatus])
+  }, [searchQuery, selectedCategory, selectedTech, selectedStatus, selectedTags, selectedYear])
 
   return (
     <>
@@ -57,6 +66,10 @@ const HomePage = () => {
               setSelectedTech={setSelectedTech}
               selectedStatus={selectedStatus}
               setSelectedStatus={setSelectedStatus}
+              selectedTags={selectedTags}
+              setSelectedTags={setSelectedTags}
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
             />
           </div>
 
