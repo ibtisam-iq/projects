@@ -66,7 +66,7 @@ const Sidebar = ({
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-3 text-purple-400">CATEGORY</h3>
         <div className="space-y-2">
-          {["all", "platform", "tool", "reference"].map(
+          {["all", "platform", "reference", "tool"].map(
             (cat) => (
               <label
                 key={cat}

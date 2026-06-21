@@ -27,7 +27,7 @@ The site is **data-driven**. Project content lives in [`data/projects.yaml`](./d
 ## Features
 
 - 🔍 **Search** — filter projects by title, description, or technology
-- 🗂️ **Category filter** — Platform, Tool, Reference
+- 🗂️ **Category filter** — Platform, Reference, Tool
 - 🏷️ **Skills filter** — multi-select capability domain tags (ci-cd, gitops, kubernetes, etc.)
 - 🔧 **Tools filter** — multi-select tech stack tags
 - 📅 **Year filter** — filter by completion/update year
@@ -40,7 +40,8 @@ The site is **data-driven**. Project content lives in [`data/projects.yaml`](./d
 
 ## How to Add a New Project
 
-> You never need to touch any source code to add a project.
+> [!TIP]
+> No source code changes needed to add a project.
 
 1. Open [`data/projects.yaml`](./data/projects.yaml) in this repo
 2. Add a new YAML entry:
@@ -159,7 +160,8 @@ npm run dev
 npm run build
 ```
 
-> **Note:** After editing `data/projects.yaml`, always run `node scripts/generate-projects.js` to regenerate `src/data/projects.ts` before starting the dev server. In CI, this step runs automatically during the build pipeline.
+> [!NOTE]
+> After editing `data/projects.yaml`, always run `node scripts/generate-projects.js` to regenerate `src/data/projects.ts` before starting the dev server. In CI, this step runs automatically during the build pipeline.
 
 ---
 
@@ -172,13 +174,14 @@ act push \
   -W .github/workflows/pages.yml
 ```
 
+> [!NOTE]
 > Artifact upload and GitHub Pages deployment are automatically skipped via `if: ${{ env.ACT != 'true' }}` guards — `act` sets this environment variable automatically.
 
 ---
 
 ## CI/CD Pipeline
 
-The pipeline (`.github/workflows/pages.yml`) handles three triggers:
+The pipeline (`.github/workflows/pages.yml`) handles two triggers:
 
 | Trigger | When |
 |---|---|

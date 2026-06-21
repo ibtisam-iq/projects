@@ -6,7 +6,7 @@
 # Schema:
 #   slug            - URL-safe identifier (used in /project/<slug>)
 #   title           - display name
-#   category        - deliverable type: production-grade | open-source | documentation
+#   category        - deliverable type: platform | tool | reference
 #   status          - lifecycle: completed | in-progress | maintained | archived
 #   year            - completion or last major update year
 #   shortDescription - one-liner for the project card
