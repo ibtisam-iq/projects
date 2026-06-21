@@ -1,10 +1,9 @@
-import { projects, getAllTechTags } from "@/data/projects"
+import { projects } from "@/data/projects"
 
 const Hero = () => {
-  const categories = ["open-source", "documentation", "production-grade"]
-  const totalProjects = projects.length
-  const totalCategories = categories.length
-  const totalTech = getAllTechTags().length
+  const platforms = projects.filter((p) => p.category === "platform").length
+  const tools = projects.filter((p) => p.category === "tool").length
+  const references = projects.filter((p) => p.category === "reference").length
 
   return (
     <section className="bg-gradient-to-b from-bg to-gray-900 py-16 px-6 text-center">
@@ -20,15 +19,19 @@ const Hero = () => {
 
       <div className="flex flex-wrap justify-center gap-8 text-center">
         <div className="bg-card px-6 py-4 rounded-lg border border-gray-700">
-          <p className="text-3xl font-bold text-purple-400">{totalProjects}</p>
-          <p className="text-sm text-gray-400">Projects</p>
+          <p className="text-3xl font-bold text-purple-400">{projects.length}</p>
+          <p className="text-sm text-gray-400">All</p>
         </div>
         <div className="bg-card px-6 py-4 rounded-lg border border-gray-700">
-          <p className="text-3xl font-bold text-purple-400">{totalCategories}</p>
-          <p className="text-sm text-gray-400">Categories</p>
+          <p className="text-3xl font-bold text-purple-400">{platforms}</p>
+          <p className="text-sm text-gray-400">Platforms</p>
         </div>
         <div className="bg-card px-6 py-4 rounded-lg border border-gray-700">
-          <p className="text-3xl font-bold text-purple-400">{totalTech}+</p>
+          <p className="text-3xl font-bold text-purple-400">{references}</p>
+          <p className="text-sm text-gray-400">References</p>
+        </div>
+        <div className="bg-card px-6 py-4 rounded-lg border border-gray-700">
+          <p className="text-3xl font-bold text-purple-400">{tools}</p>
           <p className="text-sm text-gray-400">Tools</p>
         </div>
       </div>
