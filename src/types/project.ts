@@ -3,6 +3,11 @@ export interface ProjectLink {
   url: string
 }
 
+export interface ProjectSection {
+  title: string
+  items: string[]
+}
+
 export interface Project {
   slug: string
   title: string
@@ -11,7 +16,7 @@ export interface Project {
   year: number
   shortDescription: string
   description: string
-  highlights: string[]
+  sections: ProjectSection[]
   tags: string[]
   tech: string[]
   links: ProjectLink[]

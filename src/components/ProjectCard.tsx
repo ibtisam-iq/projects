@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { Project } from "@/types/project"
-import { FaGithub, FaBook, FaGlobe, FaExternalLinkAlt } from "react-icons/fa"
+import { FaGithub, FaBook, FaGlobe, FaExternalLinkAlt, FaPlay } from "react-icons/fa"
 import { IconType } from "react-icons"
 
 const linkConfig: Record<string, { icon: IconType; label: string; style: string }> = {
@@ -8,6 +8,7 @@ const linkConfig: Record<string, { icon: IconType; label: string; style: string 
   runbook: { icon: FaBook,            label: "Runbook", style: "bg-gray-700 hover:bg-gray-600" },
   blog:    { icon: FaExternalLinkAlt, label: "Blog",    style: "bg-gray-700 hover:bg-gray-600" },
   website: { icon: FaGlobe,           label: "Website", style: "bg-gray-700 hover:bg-gray-600" },
+  playground: { icon: FaPlay,         label: "Try It Live",  style: "bg-gray-700 hover:bg-gray-600" },
 }
 
 interface ProjectCardProps {
