@@ -9,6 +9,7 @@ import {
   FaExternalLinkAlt,
   FaArrowLeft,
   FaCheckCircle,
+  FaPlay,
 } from "react-icons/fa"
 import { IconType } from "react-icons"
 
@@ -17,6 +18,7 @@ const linkConfig: Record<string, { icon: IconType; label: string }> = {
   runbook: { icon: FaBook, label: "View Runbook" },
   blog: { icon: FaExternalLinkAlt, label: "Read Blog Post" },
   website: { icon: FaGlobe, label: "Visit Website" },
+  playground: { icon: FaPlay, label: "Try It Live" },
 }
 
 const categoryMeta: Record<string, { label: string; color: string; bg: string }> = {
@@ -85,14 +87,12 @@ const ProjectDetail = () => {
     <>
       <Navbar />
 
-      {/* ── Hero Section ── */}
+      {/* Hero Section */}
       <section className="relative overflow-hidden">
-        {/* Gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-bg to-bg" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
 
         <div className="relative max-w-5xl mx-auto px-6 pt-10 pb-14">
-          {/* Back link */}
           <Link
             to="/"
             className="inline-flex items-center gap-2 text-gray-400 hover:text-purple-400 transition text-sm mb-8 group"
@@ -101,7 +101,6 @@ const ProjectDetail = () => {
             Back to All Projects
           </Link>
 
-          {/* Meta row: category + status + year */}
           <div className="flex flex-wrap items-center gap-3 mb-5">
             <span
               className={`text-xs font-bold tracking-wider px-3 py-1 rounded-full border ${catMeta.color} ${catMeta.bg}`}
@@ -112,16 +111,14 @@ const ProjectDetail = () => {
               <span className={`w-2 h-2 rounded-full ${statMeta.dot}`} />
               {statMeta.label}
             </span>
-            <span className="text-sm text-gray-500">•</span>
+            <span className="text-sm text-gray-500">&bull;</span>
             <span className="text-sm text-gray-400">{project.year}</span>
           </div>
 
-          {/* Title */}
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-6 max-w-4xl">
             {project.title}
           </h1>
 
-          {/* CTA buttons — prominent at top */}
           <div className="flex gap-3 flex-wrap">
             {project.links.map((link) => {
               const config = linkConfig[link.type] || {
@@ -150,9 +147,8 @@ const ProjectDetail = () => {
         </div>
       </section>
 
-      {/* ── Main Content ── */}
+      {/* Main Content */}
       <main className="max-w-5xl mx-auto px-6 py-12 space-y-14">
-        {/* Image */}
         {project.imageUrl && (
           <img
             src={project.imageUrl}
@@ -161,7 +157,7 @@ const ProjectDetail = () => {
           />
         )}
 
-        {/* Overview Card */}
+        {/* Overview */}
         <section className="bg-gray-800/40 border border-gray-700/50 rounded-xl p-8 backdrop-blur-sm">
           <h2 className="text-sm font-bold tracking-widest text-purple-400 uppercase mb-4">
             Overview
@@ -171,33 +167,34 @@ const ProjectDetail = () => {
           </p>
         </section>
 
-        {/* Highlights — numbered cards */}
-        <section>
-          <h2 className="text-sm font-bold tracking-widest text-purple-400 uppercase mb-6">
-            Key Achievements
-          </h2>
-          <div className="space-y-4">
-            {project.highlights.map((highlight, idx) => (
-              <div
-                key={idx}
-                className="flex gap-4 items-start bg-gray-800/30 border border-gray-700/40 rounded-lg p-5 hover:border-purple-500/30 transition-colors"
-              >
-                <div className="flex-shrink-0 mt-0.5">
-                  <FaCheckCircle className="text-purple-400 text-lg" />
+        {/* Dynamic Sections */}
+        {project.sections.map((section, sIdx) => (
+          <section key={sIdx}>
+            <h2 className="text-sm font-bold tracking-widest text-purple-400 uppercase mb-6">
+              {section.title}
+            </h2>
+            <div className="space-y-4">
+              {section.items.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex gap-4 items-start bg-gray-800/30 border border-gray-700/40 rounded-lg p-5 hover:border-purple-500/30 transition-colors"
+                >
+                  <div className="flex-shrink-0 mt-0.5">
+                    <FaCheckCircle className="text-purple-400 text-lg" />
+                  </div>
+                  <p className="text-gray-300 leading-relaxed">{item}</p>
                 </div>
-                <p className="text-gray-300 leading-relaxed">{highlight}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+              ))}
+            </div>
+          </section>
+        ))}
 
-        {/* Skills & Tech — side by side on desktop */}
+        {/* Skills & Tech side by side */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Skills */}
           {project.tags && project.tags.length > 0 && (
             <section className="bg-gray-800/40 border border-gray-700/50 rounded-xl p-8">
               <h2 className="text-sm font-bold tracking-widest text-purple-400 uppercase mb-5">
-                Skills & Capabilities
+                Skills Demonstrated
               </h2>
               <div className="flex flex-wrap gap-2">
                 {project.tags.map((tag) => (
@@ -212,7 +209,6 @@ const ProjectDetail = () => {
             </section>
           )}
 
-          {/* Tech */}
           <section className="bg-gray-800/40 border border-gray-700/50 rounded-xl p-8">
             <h2 className="text-sm font-bold tracking-widest text-purple-400 uppercase mb-5">
               Tech Stack
