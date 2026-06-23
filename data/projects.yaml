@@ -169,7 +169,7 @@
     - Route 53
     - GHCR
   links:
-    - type: github
+    - type: app-repo
       url: "https://github.com/ibtisam-iq/microservices-demo"
     - type: cd-repo
       url: "https://github.com/ibtisam-iq/platform-engineering-systems/tree/main/systems/microservices-demo" 
