@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { Project } from "@/types/project"
-import { FaGithub, FaBook, FaGlobe, FaExternalLinkAlt, FaPlay } from "react-icons/fa"
+import { FaGithub, FaBook, FaGlobe, FaExternalLinkAlt, FaPlay, FaBookOpen } from "react-icons/fa"
 import { IconType } from "react-icons"
 
 const linkConfig: Record<string, { icon: IconType; label: string; style: string }> = {
@@ -9,6 +9,13 @@ const linkConfig: Record<string, { icon: IconType; label: string; style: string 
   blog:    { icon: FaExternalLinkAlt, label: "Blog",    style: "bg-gray-700 hover:bg-gray-600" },
   website: { icon: FaGlobe,           label: "Website", style: "bg-gray-700 hover:bg-gray-600" },
   playground: { icon: FaPlay,         label: "Try It Live",  style: "bg-gray-700 hover:bg-gray-600" },
+  docs:    { icon: FaBookOpen,        label: "Docs",    style: "bg-gray-700 hover:bg-gray-600" },
+  
+  // Custom mappings for multi-repo projects
+  "java-monolith-repo": { icon: FaGithub, label: "Java", style: "bg-purple-600/80 hover:bg-purple-700" },
+  "python-monolith-repo": { icon: FaGithub, label: "Python", style: "bg-purple-600/80 hover:bg-purple-700" },
+  "node-monolith-repo": { icon: FaGithub, label: "Node", style: "bg-purple-600/80 hover:bg-purple-700" },
+  "cd-repo": { icon: FaGithub, label: "Platform Repo", style: "bg-purple-600/80 hover:bg-purple-700" },
 }
 
 interface ProjectCardProps {
@@ -18,7 +25,6 @@ interface ProjectCardProps {
 const ProjectCard = ({ project }: ProjectCardProps) => {
   const categoryColors: Record<string, string> = {
     tool: "text-green-400 border-green-400",
-    reference: "text-blue-400 border-blue-400",
     platform: "text-purple-400 border-purple-400",
   }
 
@@ -98,11 +104,19 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
       {/* Link buttons */}
       <div className="flex gap-2 flex-wrap">
         {project.links.map((link) => {
-          const config = linkConfig[link.type] || {
-            icon: FaExternalLinkAlt,
-            label: link.type.charAt(0).toUpperCase() + link.type.slice(1),
-            style: "bg-gray-700 hover:bg-gray-600",
+          let config = linkConfig[link.type]
+          
+          if (!config) {
+            const isRepo = link.type.toLowerCase().includes('repo') || link.url.includes('github.com');
+            const Icon = isRepo ? FaGithub : FaExternalLinkAlt;
+            const label = link.type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            config = {
+              icon: Icon,
+              label: label,
+              style: isRepo ? "bg-purple-600/80 hover:bg-purple-700" : "bg-gray-700 hover:bg-gray-600",
+            }
           }
+          
           const Icon = config.icon
           return (
             <a
@@ -110,9 +124,10 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex-1 min-w-0 ${config.style} text-white px-3 py-2 rounded-lg font-semibold transition flex items-center justify-center gap-2 text-sm`}
+              className={`flex-auto min-w-fit ${config.style} text-white px-3 py-2 rounded-lg font-semibold transition flex items-center justify-center gap-2 text-sm`}
             >
-              <Icon /> {config.label}
+              <Icon className="shrink-0" />
+              <span className="truncate">{config.label}</span>
             </a>
           )
         })}
