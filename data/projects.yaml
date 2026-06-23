@@ -24,7 +24,7 @@
   title: "Self-Hosted CI/CD: Jenkins, SonarQube, Nexus on Custom Domains"
   category: platform
   status: maintained
-  year: 2025
+  year: 2026
   shortDescription: "Self-hosted Jenkins, SonarQube, and Nexus on custom domains (jenkins.ibtisam-iq.com, sonar.ibtisam-iq.com, nexus.ibtisam-iq.com) with Cloudflare Tunnel NAT traversal and production SSL. 5 custom VM images from a single base, 4-node stack, 5 CI pipelines. Published on iximiuz Labs."
   description: "Built and operate a self-hosted CI/CD platform: Jenkins LTS on jenkins.ibtisam-iq.com, SonarQube 26.2 CE with PostgreSQL 18 on sonar.ibtisam-iq.com, and Nexus 3.89.1 CE on nexus.ibtisam-iq.com, all with Cloudflare-managed SSL. Infrastructure is 5 custom Linux VM images in a layered architecture: a hardened Ubuntu 24.04 base (systemd, SSH, security hardening) extended into three production service images (each with systemd boot orchestration, Nginx reverse proxy, restricted daemon sudo, and build-time healthchecks) and a minimal CI/CD jump host with SSH aliases for stack navigation. Platform runs behind NAT with no public IPs; Cloudflare Tunnel provides custom-domain access with zero inbound ports. The 4-node stack provisions from a single manifest matching the platform resource budget (10 vCPU, 16 GiB RAM, 150 GiB disk). All images built via GitHub Actions, published to GHCR, and the stack published as a community playground on iximiuz Labs (a DevOps platform featured in official Kubernetes documentation)."
   sections:
@@ -180,39 +180,6 @@
       url: "https://runbook.ibtisam-iq.com/projects/deployments/retail-store-sample-app/"
   featured: true
 
-- slug: bankingapp-java-mysql
-  title: "BankingApp Java MySQL"
-  category: platform
-  status: completed
-  year: 2024
-  shortDescription: "2-tier Spring Boot banking app with Jenkins CI/CD, SonarQube quality gates, Nexus artifact management, and Kubernetes deployment with HPA."
-  description: "Production-grade deployment of a Spring Boot banking application demonstrating the complete DevOps lifecycle from source to deployment. Implemented Jenkins CI/CD pipeline with SonarQube code quality enforcement, Nexus artifact repository integration, and Kubernetes deployment with Horizontal Pod Autoscaling."
-  sections:
-    - title: "Key Achievements"
-      items:
-        - "Containerized multi-tier Java application; reduced environment setup from 2 hours to docker compose up"
-        - "Implemented SonarQube quality gate blocking deployment on critical vulnerabilities"
-        - "Automated artifact versioning via Nexus; eliminated manual JAR management"
-        - "Configured Jenkins pipeline with parallel stages reducing build time by 40%"
-        - "Deployed on Kubernetes with Horizontal Pod Autoscaling based on CPU metrics"
-  tags:
-    - ci-cd
-    - containerization
-    - kubernetes
-    - security
-  tech:
-    - Docker
-    - Jenkins
-    - SonarQube
-    - Nexus
-    - MySQL
-    - Kubernetes
-    - Spring Boot
-  links:
-    - type: github
-      url: "https://github.com/ibtisam-iq/BankingApp-Java-MySQL"
-  featured: true
-
 # Tool Projects
 
 - slug: debugbox
@@ -283,7 +250,7 @@
   title: "Engineering Runbook"
   category: reference
   status: maintained
-  year: 2025
+  year: 2026
   shortDescription: "Production engineering runbook documenting real deployments, troubleshooting, and architectural decisions. Engineering journal format with MkDocs Material."
   description: "Personal engineering runbook documenting every project deployment, bug fix, and architectural decision. Written in first-person past tense (engineering journal format) with MkDocs admonition blocks for decisions, terminal session recordings as evidence, and hyperlinked cross-references across runbooks. Covers AWS, Kubernetes, Terraform, CI/CD, GitOps, and observability."
   sections:
@@ -317,7 +284,7 @@
   title: "Nectar Documentation Hub"
   category: reference
   status: maintained
-  year: 2024
+  year: 2026
   shortDescription: "Technical knowledge base with 200+ pages covering DevOps tools, cloud platforms, and infrastructure patterns. Built with MkDocs Material."
   description: "Centralized documentation platform for DevOps knowledge management. Features automated deployment pipeline with version control and search indexing. Covers Docker, Kubernetes, Terraform, AWS, CI/CD, Linux, networking, and more."
   sections:
