@@ -32,11 +32,7 @@ const categoryMeta: Record<string, { label: string; color: string; bg: string }>
     color: "text-green-300 border-green-500/60",
     bg: "bg-green-500/10",
   },
-  reference: {
-    label: "REFERENCE",
-    color: "text-blue-300 border-blue-500/60",
-    bg: "bg-blue-500/10",
-  },
+
 }
 
 const statusMeta: Record<string, { label: string; dot: string }> = {

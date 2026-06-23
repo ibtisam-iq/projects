@@ -26,6 +26,7 @@ const Navbar = () => {
       <div className="hidden md:flex gap-8 items-center text-lg">
         <Link to="/" className="hover:text-purple-400 transition">All Projects</Link>
         <a href="https://ibtisam-iq.com" className="hover:text-purple-400 transition">Portfolio</a>
+        <Link to="/how-i-work" className="hover:text-purple-400 transition">How I Work</Link>
         <a href="https://blog.ibtisam-iq.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition">Blog</a>
         <a href="https://runbook.ibtisam-iq.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition">Runbook</a>
         <a href="https://github.com/ibtisam-iq/silver-stack" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition">SilverStack</a>
@@ -37,6 +38,7 @@ const Navbar = () => {
         <div className="absolute top-full left-0 w-full bg-gray-900 md:hidden flex flex-col gap-4 p-6 border-b border-gray-800">
           <Link to="/" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>All Projects</Link>
           <a href="https://ibtisam-iq.com" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>Portfolio</a>
+          <Link to="/how-i-work" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>How I Work</Link>
           <a href="https://blog.ibtisam-iq.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>Blog</a>
           <a href="https://runbook.ibtisam-iq.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>Runbook</a>
           <a href="https://github.com/ibtisam-iq/silver-stack" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition" onClick={() => setMobileMenuOpen(false)}>SilverStack</a>

@@ -4,6 +4,7 @@ import Hero from "@/components/Hero"
 import Sidebar from "@/components/Sidebar"
 import ProjectCard from "@/components/ProjectCard"
 import ProjectDetail from "@/components/ProjectDetail"
+import HowIWork from "@/components/HowIWork"
 import Footer from "@/components/Footer"
 import { projects } from "@/data/projects"
 import { useState, useMemo } from "react"
@@ -103,6 +104,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/how-i-work" element={<HowIWork />} />
         <Route path="/project/:slug" element={<ProjectDetail />} />
       </Routes>
     </Router>

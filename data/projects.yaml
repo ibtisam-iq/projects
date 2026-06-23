@@ -15,7 +15,6 @@
 # Section titles are freeform. Each project defines its own story:
 #   Platform projects: "Key Achievements", "Key Decisions"
 #   Tool projects:     "Motivation", "What It Solves", "Why This Tool"
-#   Reference projects: "What It Covers", "Writing Approach"
 # ============================================================
 
 - slug: silverstack-cicd-platform
@@ -117,7 +116,7 @@
   links:
     - type: github
       url: "https://github.com/ibtisam-iq/debugbox"
-    - type: website
+    - type: docs
       url: "https://debugbox.ibtisam-iq.com"
   featured: true
 
@@ -172,6 +171,8 @@
   links:
     - type: github
       url: "https://github.com/ibtisam-iq/microservices-demo"
+    - type: cd-repo
+      url: "https://github.com/ibtisam-iq/platform-engineering-systems/tree/main/systems/microservices-demo" 
     - type: runbook
       url: "https://runbook.ibtisam-iq.com/projects/deployments/microservices-demo/"
   featured: true
@@ -226,6 +227,57 @@
       url: "https://runbook.ibtisam-iq.com/projects/deployments/retail-store-sample-app/"
   featured: true
 
+- slug: devsecops-pipeline-engineering
+  title: "DevSecOps Pipeline Engineering: Jenkins and GitHub Actions Mirrored"
+  category: platform
+  status: completed
+  year: 2026
+  shortDescription: "One 14-stage DevSecOps pipeline (Trivy scan, SonarQube quality gate, Nexus publish, multi-registry push) implemented twice per project, once as a Jenkinsfile and once as GitHub Actions, run against three language ecosystems and tied into a self-hosted Jenkins/SonarQube/Nexus stack."
+  description: "Designed a single 14-stage build-test-scan-publish pipeline and implemented it identically in two systems for every project: a fully declarative Jenkinsfile run against a self-hosted Jenkins, SonarQube, and Nexus stack, and a mirrored GitHub Actions workflow with no infrastructure dependency. The same structure (checkout, source scan, build and test, static analysis, quality gate, artifact publish, image build, image scan, multi-registry push, GitOps handoff) runs across three different toolchains: Maven and JUnit for Java, pytest for Python, and Jest and ESLint for Node. Every pipeline hard-fails on three independent conditions: a CRITICAL CVE in dependencies, a failed SonarQube Quality Gate, or a failing unit test. CI never touches deployment directly; its only contact with the infrastructure side is writing one new image tag into a handoff file that the deployment repo picks up."
+  sections:
+    - title: "Key Achievements"
+      items:
+        - "Built one 14-stage pipeline design and implemented it twice per project, a self-hosted Jenkinsfile and a mirrored GitHub Actions workflow, giving every app both an infrastructure-dependent and a zero-infrastructure path through the identical process"
+        - "Connected every Jenkins run to a self-hosted Jenkins, SonarQube, and Nexus stack on custom domains with Cloudflare SSL, rather than a managed SaaS tool, so the quality gate, artifact storage, and Docker registry are all infrastructure built and operated personally"
+        - "Enforced the same three hard-fail conditions, CRITICAL CVEs, a failed Quality Gate, or a failing test, across three completely different toolchains: JUnit and JaCoCo for Java, pytest for Python, Jest and ESLint for Node"
+        - "Solved pipeline-specific bugs that only show up under repeated CI runs: a SonarQube Quality Gate working-directory pin needed to reliably locate report-task.txt every time, and splitting Trivy into separate passes with different exit codes so an OS-package CVE warns while an application-level CRITICAL blocks the build"
+        - "Published every build to three destinations from one image, a versioned tag plus latest to Docker Hub, to GHCR, and to the self-hosted Nexus Docker registry, with AWS ECR wired in as the next planned target"
+    - title: "Key Decisions"
+      items:
+        - "Mirrored Jenkins and GitHub Actions deliberately instead of picking one, to prove the same DevSecOps discipline holds whether or not self-hosted infrastructure is available"
+        - "Made every gate a hard fail, not a warning, because a pipeline that lets a known CRITICAL CVE or a failed quality gate through isn't doing security scanning, it's just generating a report nobody has to act on"
+        - "Split Trivy into OS-package and application-dependency passes with different exit codes, so a base-image CVE that's out of the team's control doesn't block a deploy the way an app-level CRITICAL should"
+        - "Found the Node pipeline's test and lint configuration being generated inline inside Jenkinsfile shell blocks, called it what it was, technical debt, and moved it into version-controlled config files with a real smoke test before considering the pipeline done"
+        - "Kept the pipeline's contact with deployment to a single line: writing one new image tag to a handoff file. Build logic and deployment logic stay in separate repos so neither side has to understand the other to be reviewed"
+  tags:
+    - ci-cd
+    - security
+    - containerization
+    - documentation
+  tech:
+    - Jenkins
+    - GitHub Actions
+    - SonarQube
+    - Trivy
+    - Nexus
+    - Docker
+    - Maven
+    - npm
+    - pytest
+    - JUnit
+    - GHCR
+    - Docker Hub
+  links:
+    - type: java-monolith-repo
+      url: "https://github.com/ibtisam-iq/java-monolith-app"
+    - type: python-monolith-repo
+      url: "https://github.com/ibtisam-iq/python-monolith-app"
+    - type: node-monolith-repo
+      url: "https://github.com/ibtisam-iq/node-monolith-3tier-app"
+    - type: runbook
+      url: "https://runbook.ibtisam-iq.com/self-hosted/ci-cd/iximiuz/cicd-stack-operations/"
+  featured: true
+
 - slug: polyglot-monolith-deployment
   title: "Multi-Language Monolith Deployment: Bare-Metal Kubeadm to AWS EKS"
   category: platform
@@ -271,133 +323,14 @@
     - Nginx
     - Bash
   links:
-    - type: github
+    - type: java-monolith-repo
       url: "https://github.com/ibtisam-iq/java-monolith-app"
-    - type: github
+    - type: python-monolith-repo
       url: "https://github.com/ibtisam-iq/python-monolith-app"
-    - type: github
+    - type: node-monolith-repo
       url: "https://github.com/ibtisam-iq/node-monolith-3tier-app"
-    - type: github
+    - type: cd-repo
       url: "https://github.com/ibtisam-iq/platform-engineering-systems"
     - type: runbook
       url: "https://runbook.ibtisam-iq.com/bootstrap/kubernetes/cluster-kubeadm/"
   featured: true
-
-- slug: devsecops-pipeline-engineering
-  title: "DevSecOps Pipeline Engineering: Jenkins and GitHub Actions Mirrored"
-  category: platform
-  status: completed
-  year: 2026
-  shortDescription: "One 14-stage DevSecOps pipeline (Trivy scan, SonarQube quality gate, Nexus publish, multi-registry push) implemented twice per project, once as a Jenkinsfile and once as GitHub Actions, run against three language ecosystems and tied into a self-hosted Jenkins/SonarQube/Nexus stack."
-  description: "Designed a single 14-stage build-test-scan-publish pipeline and implemented it identically in two systems for every project: a fully declarative Jenkinsfile run against a self-hosted Jenkins, SonarQube, and Nexus stack, and a mirrored GitHub Actions workflow with no infrastructure dependency. The same structure (checkout, source scan, build and test, static analysis, quality gate, artifact publish, image build, image scan, multi-registry push, GitOps handoff) runs across three different toolchains: Maven and JUnit for Java, pytest for Python, and Jest and ESLint for Node. Every pipeline hard-fails on three independent conditions: a CRITICAL CVE in dependencies, a failed SonarQube Quality Gate, or a failing unit test. CI never touches deployment directly; its only contact with the infrastructure side is writing one new image tag into a handoff file that the deployment repo picks up."
-  sections:
-    - title: "Key Achievements"
-      items:
-        - "Built one 14-stage pipeline design and implemented it twice per project, a self-hosted Jenkinsfile and a mirrored GitHub Actions workflow, giving every app both an infrastructure-dependent and a zero-infrastructure path through the identical process"
-        - "Connected every Jenkins run to a self-hosted Jenkins, SonarQube, and Nexus stack on custom domains with Cloudflare SSL, rather than a managed SaaS tool, so the quality gate, artifact storage, and Docker registry are all infrastructure built and operated personally"
-        - "Enforced the same three hard-fail conditions, CRITICAL CVEs, a failed Quality Gate, or a failing test, across three completely different toolchains: JUnit and JaCoCo for Java, pytest for Python, Jest and ESLint for Node"
-        - "Solved pipeline-specific bugs that only show up under repeated CI runs: a SonarQube Quality Gate working-directory pin needed to reliably locate report-task.txt every time, and splitting Trivy into separate passes with different exit codes so an OS-package CVE warns while an application-level CRITICAL blocks the build"
-        - "Published every build to three destinations from one image, a versioned tag plus latest to Docker Hub, to GHCR, and to the self-hosted Nexus Docker registry, with AWS ECR wired in as the next planned target"
-    - title: "Key Decisions"
-      items:
-        - "Mirrored Jenkins and GitHub Actions deliberately instead of picking one, to prove the same DevSecOps discipline holds whether or not self-hosted infrastructure is available"
-        - "Made every gate a hard fail, not a warning, because a pipeline that lets a known CRITICAL CVE or a failed quality gate through isn't doing security scanning, it's just generating a report nobody has to act on"
-        - "Split Trivy into OS-package and application-dependency passes with different exit codes, so a base-image CVE that's out of the team's control doesn't block a deploy the way an app-level CRITICAL should"
-        - "Found the Node pipeline's test and lint configuration being generated inline inside Jenkinsfile shell blocks, called it what it was, technical debt, and moved it into version-controlled config files with a real smoke test before considering the pipeline done"
-        - "Kept the pipeline's contact with deployment to a single line: writing one new image tag to a handoff file. Build logic and deployment logic stay in separate repos so neither side has to understand the other to be reviewed"
-  tags:
-    - ci-cd
-    - security
-    - containerization
-    - documentation
-  tech:
-    - Jenkins
-    - GitHub Actions
-    - SonarQube
-    - Trivy
-    - Nexus
-    - Docker
-    - Maven
-    - npm
-    - pytest
-    - JUnit
-    - GHCR
-    - Docker Hub
-  links:
-    - type: github
-      url: "https://github.com/ibtisam-iq/java-monolith-app"
-    - type: github
-      url: "https://github.com/ibtisam-iq/python-monolith-app"
-    - type: github
-      url: "https://github.com/ibtisam-iq/node-monolith-3tier-app"
-    - type: runbook
-      url: "https://runbook.ibtisam-iq.com/self-hosted/ci-cd/iximiuz/cicd-stack-operations/"
-  featured: true
-
-# Reference Projects
-
-- slug: runbook
-  title: "Engineering Runbook"
-  category: reference
-  status: maintained
-  year: 2026
-  shortDescription: "Production engineering runbook documenting real deployments, troubleshooting, and architectural decisions. Engineering journal format with MkDocs Material."
-  description: "Personal engineering runbook documenting every project deployment, bug fix, and architectural decision. Written in first-person past tense (engineering journal format) with MkDocs admonition blocks for decisions, terminal session recordings as evidence, and hyperlinked cross-references across runbooks. Covers AWS, Kubernetes, Terraform, CI/CD, GitOps, and observability."
-  sections:
-    - title: "What It Covers"
-      items:
-        - "6-phase microservices-demo runbook with 24 architectural decisions and 9 terminal session recordings"
-        - "AWS runbooks: Route 53, ACM, EKS provisioning on KodeKloud with SCP constraints"
-        - "Kubernetes add-on runbooks: ALB Controller, EBS CSI, Gateway API, ExternalDNS, ArgoCD"
-        - "Infrastructure runbooks: Terraform for EKS, CloudFormation for self-managed nodes, client tool installation"
-    - title: "Writing Approach"
-      items:
-        - "Engineering journal format: first person, past tense, recording what was done and why"
-        - "Bugs documented inline where they happened, not in a separate troubleshooting appendix"
-        - "Architectural decisions as MkDocs admonition blocks (abstract, info, warning, danger)"
-        - "Cross-linked ecosystem: runbooks reference each other via hyperlinks, forming a navigable knowledge graph"
-  tags:
-    - documentation
-  tech:
-    - MkDocs
-    - GitHub Actions
-    - Cloudflare Pages
-    - Python
-  links:
-    - type: github
-      url: "https://github.com/ibtisam-iq/runbook"
-    - type: website
-      url: "https://runbook.ibtisam-iq.com"
-  featured: true
-
-- slug: nectar
-  title: "Nectar Documentation Hub"
-  category: reference
-  status: maintained
-  year: 2026
-  shortDescription: "Technical knowledge base with 200+ pages covering DevOps tools, cloud platforms, and infrastructure patterns. Built with MkDocs Material."
-  description: "Centralized documentation platform for DevOps knowledge management. Features automated deployment pipeline with version control and search indexing. Covers Docker, Kubernetes, Terraform, AWS, CI/CD, Linux, networking, and more."
-  sections:
-    - title: "What It Covers"
-      items:
-        - "200+ pages across Docker, Kubernetes, Terraform, AWS, CI/CD, Linux, and networking"
-        - "Structured content taxonomy with search indexing across all pages"
-        - "Dark mode theme matching the broader portfolio site design system"
-    - title: "How It Is Built"
-      items:
-        - "MkDocs Material with GitHub Actions CI: auto-deploys on push"
-        - "Cloudflare Pages hosting with CDN, 95+ PageSpeed score and global edge caching"
-        - "Version-controlled content with full Git history for every page"
-  tags:
-    - documentation
-  tech:
-    - MkDocs
-    - GitHub Actions
-    - Cloudflare Pages
-    - Python
-  links:
-    - type: github
-      url: "https://github.com/ibtisam-iq/nectar"
-    - type: website
-      url: "https://nectar.ibtisam-iq.com"
-  featured: false
