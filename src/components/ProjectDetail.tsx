@@ -10,15 +10,24 @@ import {
   FaArrowLeft,
   FaCheckCircle,
   FaPlay,
+  FaBookOpen,
 } from "react-icons/fa"
 import { IconType } from "react-icons"
 
 const linkConfig: Record<string, { icon: IconType; label: string }> = {
-  github: { icon: FaGithub, label: "View on GitHub" },
-  runbook: { icon: FaBook, label: "View Runbook" },
-  blog: { icon: FaExternalLinkAlt, label: "Read Blog Post" },
-  website: { icon: FaGlobe, label: "Visit Website" },
+  github: { icon: FaGithub, label: "GitHub" },
+  runbook: { icon: FaBook, label: "Runbook" },
+  blog: { icon: FaExternalLinkAlt, label: "Blog" },
+  website: { icon: FaGlobe, label: "Website" },
   playground: { icon: FaPlay, label: "Try It Live" },
+  docs: { icon: FaBookOpen, label: "Docs" },
+  
+  // Custom mappings for multi-repo projects
+  "app-repo": { icon: FaGithub, label: "App Repo" },
+  "java-monolith-repo": { icon: FaGithub, label: "Java Repo" },
+  "python-monolith-repo": { icon: FaGithub, label: "Python Repo" },
+  "node-monolith-repo": { icon: FaGithub, label: "Node Repo" },
+  "cd-repo": { icon: FaGithub, label: "Platform Repo" },
 }
 
 const categoryMeta: Record<string, { label: string; color: string; bg: string }> = {
@@ -117,12 +126,18 @@ const ProjectDetail = () => {
 
           <div className="flex gap-3 flex-wrap">
             {project.links.map((link) => {
-              const config = linkConfig[link.type] || {
-                icon: FaExternalLinkAlt,
-                label: link.type.charAt(0).toUpperCase() + link.type.slice(1),
+              let config = linkConfig[link.type]
+              let isPrimary = link.type === "github" || link.type.includes("repo")
+
+              if (!config) {
+                const isRepo = link.type.toLowerCase().includes("repo") || link.url.includes("github.com")
+                const Icon = isRepo ? FaGithub : FaExternalLinkAlt
+                const label = link.type.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+                config = { icon: Icon, label }
+                if (isRepo) isPrimary = true
               }
+
               const Icon = config.icon
-              const isGithub = link.type === "github"
               return (
                 <a
                   key={link.type}
@@ -130,7 +145,7 @@ const ProjectDetail = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`${
-                    isGithub
+                    isPrimary
                       ? "bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/20"
                       : "bg-gray-800 hover:bg-gray-700 border border-gray-700"
                   } text-white px-5 py-2.5 rounded-lg font-semibold transition-all flex items-center gap-2 text-sm`}
@@ -226,12 +241,18 @@ const ProjectDetail = () => {
         <section className="text-center pt-4 pb-2">
           <div className="inline-flex gap-4 flex-wrap justify-center">
             {project.links.map((link) => {
-              const config = linkConfig[link.type] || {
-                icon: FaExternalLinkAlt,
-                label: link.type.charAt(0).toUpperCase() + link.type.slice(1),
+              let config = linkConfig[link.type]
+              let isPrimary = link.type === "github" || link.type.includes("repo")
+
+              if (!config) {
+                const isRepo = link.type.toLowerCase().includes("repo") || link.url.includes("github.com")
+                const Icon = isRepo ? FaGithub : FaExternalLinkAlt
+                const label = link.type.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+                config = { icon: Icon, label }
+                if (isRepo) isPrimary = true
               }
+
               const Icon = config.icon
-              const isGithub = link.type === "github"
               return (
                 <a
                   key={link.type}
@@ -239,7 +260,7 @@ const ProjectDetail = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`${
-                    isGithub
+                    isPrimary
                       ? "bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/20"
                       : "bg-gray-800 hover:bg-gray-700 border border-gray-700"
                   } text-white px-8 py-3 rounded-lg font-semibold transition-all flex items-center gap-2`}

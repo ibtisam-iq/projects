@@ -12,6 +12,7 @@ const linkConfig: Record<string, { icon: IconType; label: string; style: string 
   docs:    { icon: FaBookOpen,        label: "Docs",    style: "bg-gray-700 hover:bg-gray-600" },
   
   // Custom mappings for multi-repo projects
+  "app-repo": { icon: FaGithub, label: "App Repo", style: "bg-purple-600/80 hover:bg-purple-700" },
   "java-monolith-repo": { icon: FaGithub, label: "Java", style: "bg-purple-600/80 hover:bg-purple-700" },
   "python-monolith-repo": { icon: FaGithub, label: "Python", style: "bg-purple-600/80 hover:bg-purple-700" },
   "node-monolith-repo": { icon: FaGithub, label: "Node", style: "bg-purple-600/80 hover:bg-purple-700" },
