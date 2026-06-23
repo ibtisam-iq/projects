@@ -18,8 +18,6 @@
 #   Reference projects: "What It Covers", "Writing Approach"
 # ============================================================
 
-# Flagship Project
-
 - slug: silverstack-cicd-platform
   title: "Self-Hosted CI/CD: Jenkins, SonarQube, Nexus on Custom Domains"
   category: platform
@@ -72,6 +70,55 @@
       url: "https://labs.iximiuz.com/playgrounds/SilverStack-CICD-Stack-1766a8a1"
     - type: website
       url: "https://labs.iximiuz.com/a/ibtisam-iq"
+  featured: true
+
+- slug: debugbox
+  title: "DebugBox: Right-Sized Kubernetes Debugging Containers"
+  category: tool
+  status: maintained
+  year: 2026
+  shortDescription: "Open-source debugging toolkit with 3 size-tiered variants (14 MB to 104 MB), up to 14x smaller than netshoot. Trivy-gated releases, pinned tool versions, multi-arch (amd64/arm64), published to GHCR and Docker Hub with a 20-tag versioning strategy."
+  description: "Rebuilt from a single 50-plus-tool debugging image into 3 purpose-sized variants after seeing the real cost of pulling a 200 MB netshoot image onto a bandwidth-constrained or edge cluster just to run one DNS check. Lite (14.36 MB) covers connectivity checks, balanced (46.16 MB, the default) covers daily Kubernetes troubleshooting with tcpdump and kubectx/kubens, and power (104.45 MB) covers packet-level forensics with tshark, iptables, and Python. Every release is gated by Trivy (HIGH and CRITICAL findings block the build) and every tool version is pinned for deterministic builds, unlike netshoot's floating versions. Shipped with full open-source project hygiene: a security policy, contribution guidelines, a semantic changelog, and a dedicated MkDocs documentation site, published to GHCR and Docker Hub with 20 tags per release spanning variant-discovery tags, floating-latest tags, and immutable pinned-version tags."
+  sections:
+    - title: "Motivation"
+      items:
+        - "kubectl debug my-pod --image=netshoot pulls 201 MB for a one-off DNS check. On an edge cluster, a mobile network, or any bandwidth-constrained environment, every megabyte is time lost before debugging even starts"
+        - "netshoot is all-or-nothing: the same image ships tshark, iptables, and full packet forensics whether the task needs them or not, while busybox and bare Alpine are too minimal to debug anything beyond the basics"
+        - "Existing debugging images use floating tool versions, so the same tag can resolve to different tool versions on different days, making bug reports and incident reproductions unreliable"
+    - title: "What It Solves"
+      items:
+        - "Three purpose-built variants in one repository: lite (14.36 MB) for DNS and connectivity, balanced (46.16 MB, the default) for daily Kubernetes troubleshooting with tcpdump and kubectx/kubens, and power (104.45 MB) for packet-level forensics with tshark, iptables, and Python"
+        - "Lite is 14x smaller than netshoot's 201.67 MB; even power, the largest variant, is 48% smaller. At 50 pulls a week, switching from netshoot to DebugBox lite saves roughly 37 GB of registry bandwidth a month"
+        - "Every release is gated by Trivy, HIGH and CRITICAL findings block the build before it ships, and every tool version is pinned for deterministic, reproducible builds instead of netshoot's floating versions"
+        - "Built-in Kubernetes ergonomics: kubectx/kubens for multi-cluster context switching, and shell helper functions (ports, connections, routes, k8s-info, sniff(), cert-check()) so common debugging tasks are one word instead of a remembered flag combination"
+        - "20 tags per release across two registries (GHCR and Docker Hub): variant-discovery tags for casual use, floating per-variant tags, and immutable pinned-version tags so incident response can pin an exact, auditable version"
+    - title: "Why DebugBox"
+      items:
+        - "Split into 3 variants instead of one configurable image, because a build-time flag still means rebuilding or maintaining branching logic. Separate variants let anyone pull a different tag with zero extra tooling"
+        - "Chose pinned tool versions over the more common floating-latest pattern in debugging images, accepting a manual version-bump maintenance cost in exchange for a guarantee that the same tag always behaves the same way"
+        - "Security scanning blocks the release pipeline rather than just reporting findings afterward, because a debugging image that ships with a known CRITICAL CVE defeats the purpose of using a purpose-built tool over a random base image"
+        - "Explicitly scoped DebugBox out of production use, it runs as root by design for full debugging access, and documented that boundary in the FAQ rather than letting users discover it the hard way"
+        - "Shipped with the same hygiene as supported open source: a security policy, contribution guidelines, a semantic changelog, and a dedicated documentation site, not just a Dockerfile and a README"
+  tags:
+    - containerization
+    - kubernetes
+    - networking
+    - security
+    - documentation
+  tech:
+    - Docker
+    - Bash
+    - Alpine Linux
+    - GitHub Actions
+    - Trivy
+    - Kubernetes
+    - Makefile
+    - MkDocs
+  links:
+    - type: github
+      url: "https://github.com/ibtisam-iq/debugbox"
+    - type: website
+      url: "https://debugbox.ibtisam-iq.com"
   featured: true
 
 - slug: microservices-demo
@@ -129,7 +176,6 @@
       url: "https://runbook.ibtisam-iq.com/projects/deployments/microservices-demo/"
   featured: true
 
-# Platform Projects
 - slug: retail-store-sample-app
   title: "Retail Microservices: End-to-End Platform Engineering on EKS"
   category: platform
@@ -184,7 +230,7 @@
   title: "Multi-Language Monolith Deployment: Bare-Metal Kubeadm to AWS EKS"
   category: platform
   status: completed
-  year: 2025
+  year: 2026
   shortDescription: "Java/Spring Boot + MySQL, Python/Flask + PostgreSQL, and Node/Express + React + MySQL monoliths taken from codebase audit to containerized deployment on self-provisioned kubeadm bare-metal clusters and AWS EKS, using one Kustomize base patched per platform."
   description: "Took three independent monolith codebases (Java 3-tier, Python 2-tier, Node 3-tier) through the same disciplined path: codebase modernization, environment-variable standardization, bare-metal validation, multi-stage Docker containerization with non-root users and real health probes, then Kubernetes deployment. Every Kubernetes cluster was self-provisioned from scratch with a homegrown idempotent kubeadm automation tool (version-pinned against the live Kubernetes release API, dry-run mode, safe reset, choice of Calico or Flannel). Deployment manifests live once in a Kustomize base/ and are patched per platform in overlays/, so the same Ingress-NGINX-and-MetalLB bare-metal setup and the AWS-Load-Balancer-Controller EKS setup share roughly 80% of their YAML with zero duplication. Application code and CI live in each app's own repo; deployment infrastructure lives in a separate platform-engineering-systems repo, connected by a single image.env handoff file, the same separation of concerns used in real GitOps pipelines."
   sections:
@@ -241,7 +287,7 @@
   title: "DevSecOps Pipeline Engineering: Jenkins and GitHub Actions Mirrored"
   category: platform
   status: completed
-  year: 2025
+  year: 2026
   shortDescription: "One 14-stage DevSecOps pipeline (Trivy scan, SonarQube quality gate, Nexus publish, multi-registry push) implemented twice per project, once as a Jenkinsfile and once as GitHub Actions, run against three language ecosystems and tied into a self-hosted Jenkins/SonarQube/Nexus stack."
   description: "Designed a single 14-stage build-test-scan-publish pipeline and implemented it identically in two systems for every project: a fully declarative Jenkinsfile run against a self-hosted Jenkins, SonarQube, and Nexus stack, and a mirrored GitHub Actions workflow with no infrastructure dependency. The same structure (checkout, source scan, build and test, static analysis, quality gate, artifact publish, image build, image scan, multi-registry push, GitOps handoff) runs across three different toolchains: Maven and JUnit for Java, pytest for Python, and Jest and ESLint for Node. Every pipeline hard-fails on three independent conditions: a CRITICAL CVE in dependencies, a failed SonarQube Quality Gate, or a failing unit test. CI never touches deployment directly; its only contact with the infrastructure side is writing one new image tag into a handoff file that the deployment repo picks up."
   sections:
@@ -286,70 +332,6 @@
       url: "https://github.com/ibtisam-iq/node-monolith-3tier-app"
     - type: runbook
       url: "https://runbook.ibtisam-iq.com/self-hosted/ci-cd/iximiuz/cicd-stack-operations/"
-  featured: true
-
-# Tool Projects
-
-- slug: debugbox
-  title: "DebugBox: Variant-Based Kubernetes Debugging Container Suite"
-  category: tool
-  status: maintained
-  year: 2026
-  shortDescription: "Open-source Kubernetes debugging container suite with three right-sized variants (14 MB to 104 MB). Multi-arch, Trivy-gated CI, and 20-tag release strategy across GHCR and Docker Hub."
-  description: "DebugBox is an open-source project that solves a real operational pain: netshoot ships 201 MB whether you need packet forensics or just a DNS check. DebugBox introduces a variant model with lite (14.36 MB), balanced (46.16 MB), and power (104.45 MB), each extending a shared Alpine base layer so you pull exactly what the job needs. CI runs a 4x2 strategy matrix (4 variants x amd64/arm64) on every push, verifies OCI labels, measures compressed image size, runs smoke tests, and Trivy-scans with --exit-code 1. The release pipeline implements a scan-before-push pattern: amd64 tarballs are built and all three variants must pass HIGH/CRITICAL gating before a single tag is pushed. On release, 20 multi-platform tags are atomically published across GHCR and Docker Hub. Fully documented with a versioned MkDocs Material site deployed via mike."
-  sections:
-    - title: "Motivation"
-      items:
-        - "netshoot (201 MB) is all-or-nothing; on edge clusters or bandwidth-constrained nodes, pulling 201 MB for a DNS check wastes real time and money"
-        - "Minimal images like busybox and Alpine have no curl, dig, tcpdump, or Kubernetes-aware tooling, leaving engineers installing tools by hand inside ephemeral containers"
-        - "Existing tools offered no choice; DebugBox introduces the variant model so the image size matches the task, not the worst-case scenario"
-    - title: "Key Decisions"
-      items:
-        - "All three variants extend a shared Dockerfile.base (~4 MB Alpine with CA certs, locale, and shell UX via /etc/profile.d/) using FROM debugbox-base; changes to the base propagate to all variants without touching variant Dockerfiles"
-        - "kubectx and kubens are compiled from source inside a Go multi-stage build stage using CGO_ENABLED=0, -trimpath, and -ldflags=-s -w; the resulting binary is copied into the runtime stage, keeping the final image free of the Go toolchain and avoiding untrusted pre-compiled binary downloads"
-        - "The release workflow builds amd64 tarballs first, exports them to /tmp/*.tar, runs trivy image --input against all three files with --exit-code 1, and only proceeds to the multi-platform push if every scan exits 0; a vulnerability in any single variant blocks the entire release"
-        - "Each release publishes 20 tags across GHCR and Docker Hub; every variant gets a pinned version tag for production immutability and a floating latest tag for convenience, and balanced gets additional root aliases (:latest and :VERSION) as the recommended default"
-        - "CI triggers only on changes to dockerfiles/, tests/, scripts/, the CI workflow file, or .trivyignore; documentation-only commits do not consume CI minutes"
-        - "fail-fast is set to true on the CI matrix so a single build or scan failure across any of the 8 jobs immediately cancels the rest"
-        - "Shell helpers are baked in per variant via /etc/profile.d/ scripts; lite gets json(), yaml(), and ll(); balanced adds ports, connections, routes, and k8s-info; power adds sniff(), sniff-http(), sniff-dns(), cert-check(), and conntrack-watch()"
-        - "make check runs the full quality gate locally: hadolint lint (with Docker fallback if not installed) then build-all then test-all then scan; the same gates run in CI so the local and remote pipelines are identical"
-        - "Accepted CVEs in .trivyignore are listed with documented justification rather than silently suppressed, keeping the security posture auditable for contributors"
-    - title: "Variants and Tool Coverage"
-      items:
-        - "lite (~14 MB): curl, netcat-openbsd, iproute2, iputils, bind-tools (dig, nslookup, host), jq, yq, vi, and shell helpers; designed for DNS and connectivity checks from ephemeral containers"
-        - "balanced (~46 MB, default): everything in lite plus bash, bash-completion, vim, nano, git, tar, gzip, less, htop, strace, lsof, procps, psmisc, tcpdump, socat, nmap, mtr, iperf3, ethtool, iftop, kubectx, and kubens; covers daily Kubernetes debugging"
-        - "power (~104 MB): everything in balanced plus tshark, ngrep, tcptraceroute, fping, speedtest-cli, ltrace, openssl, iptables, nftables, conntrack-tools, bird, bridge-utils, and Python 3 with pip3; designed for SRE forensics and deep packet analysis"
-        - "power at 104 MB is 48% smaller than netshoot at 201 MB; lite at 14 MB is 14x smaller than netshoot"
-    - title: "CI/CD Pipeline"
-      items:
-        - "ci.yml runs a 4x2 strategy matrix with QEMU and Buildx for cross-arch builds, OCI label injection via docker/metadata-action, compressed size measurement, ci-smoke.sh validation, and Trivy v0.69.1 scanning with --exit-code 1"
-        - "release.yml implements a three-stage pattern: Stage 1 builds amd64 tarballs, Stage 2 scans all three variants with trivy image --input, Stage 3 atomically pushes 20 multi-platform tags to GHCR and Docker Hub only after all scans pass; triggered on v*.*.* tag push"
-        - "docs.yml versions the MkDocs Material site with mike and deploys to GitHub Pages independently so a documentation update never touches the image pipeline"
-  tags:
-    - containerization
-    - kubernetes
-    - ci-cd
-    - security
-    - open-source
-    - networking
-  tech:
-    - Docker
-    - Alpine Linux
-    - Go
-    - GitHub Actions
-    - Trivy
-    - Docker Buildx
-    - QEMU
-    - GHCR
-    - Docker Hub
-    - MkDocs
-    - Bash
-    - Hadolint
-  links:
-    - type: github
-      url: "https://github.com/ibtisam-iq/debugbox"
-    - type: website
-      url: "https://debugbox.ibtisam-iq.com"
   featured: true
 
 # Reference Projects
