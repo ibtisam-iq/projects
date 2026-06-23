@@ -1,0 +1,467 @@
+// ================================================================
+// AUTO-GENERATED FILE — DO NOT EDIT MANUALLY
+// Source of truth: data/projects.yaml (in this repo)
+// To add/edit a project, update data/projects.yaml and push.
+// ================================================================
+
+import type { Project } from "@/types/project"
+
+export const projects: Project[] = [
+  {
+    "slug": "silverstack-cicd-platform",
+    "title": "Self-Hosted CI/CD: Jenkins, SonarQube, Nexus on Custom Domains",
+    "category": "platform",
+    "status": "maintained",
+    "year": 2026,
+    "shortDescription": "Self-hosted Jenkins, SonarQube, and Nexus on custom domains (jenkins.ibtisam-iq.com, sonar.ibtisam-iq.com, nexus.ibtisam-iq.com) with Cloudflare Tunnel NAT traversal and production SSL. 5 custom VM images from a single base, 4-node stack, 5 CI pipelines. Published on iximiuz Labs.",
+    "description": "Built and operate a self-hosted CI/CD platform: Jenkins LTS on jenkins.ibtisam-iq.com, SonarQube 26.2 CE with PostgreSQL 18 on sonar.ibtisam-iq.com, and Nexus 3.89.1 CE on nexus.ibtisam-iq.com, all with Cloudflare-managed SSL. Infrastructure is 5 custom Linux VM images in a layered architecture: a hardened Ubuntu 24.04 base (systemd, SSH, security hardening) extended into three production service images (each with systemd boot orchestration, Nginx reverse proxy, restricted daemon sudo, and build-time healthchecks) and a minimal CI/CD jump host with SSH aliases for stack navigation. Platform runs behind NAT with no public IPs; Cloudflare Tunnel provides custom-domain access with zero inbound ports. The 4-node stack provisions from a single manifest matching the platform resource budget (10 vCPU, 16 GiB RAM, 150 GiB disk). All images built via GitHub Actions, published to GHCR, and the stack published as a community playground on iximiuz Labs (a DevOps platform featured in official Kubernetes documentation).",
+    "sections": [
+      {
+        "title": "Key Achievements",
+        "items": [
+          "Deployed a production CI/CD platform on custom domains (jenkins.ibtisam-iq.com, sonar.ibtisam-iq.com, nexus.ibtisam-iq.com) with Cloudflare SSL, then configured end-to-end operations: 5 credential stores, SonarQube quality gate webhook, Nexus artifact and Docker registry, Maven publishing via Config File Provider, and 10 pipeline tools on the Jenkins host",
+          "Discovered the target platform has no public IPs and no inbound routing (all nodes share one NAT gateway). Engineered Cloudflare Tunnel to reverse the connectivity model: three services on custom domains with zero inbound ports, zero firewall rules, and zero Certbot",
+          "Built 5 custom Linux VM images from a single base, each with its own GitHub Actions pipeline and build-time healthchecks validating binaries, configs, systemd unit symlinks, directory ownership, and port substitution before any image ships",
+          "Hardened every service image: restricted sudo per daemon (service control and log access only), SSH keys regenerated per instance, OOM-protected systemd services, and Trivy pinned to v0.69.3 after v0.69.4 was confirmed as a supply-chain attack (CVE-2026-33634)",
+          "Published 4 playgrounds on iximiuz Labs (a DevOps platform featured in official Kubernetes documentation): one per service and the full 4-node stack, all launchable from a browser. Documented across 8 runbook pages covering image builds, infrastructure orchestration, and post-provisioning operations"
+        ]
+      },
+      {
+        "title": "Key Decisions",
+        "items": [
+          "Spent 2 to 3 days validating the architecture on AWS EC2 before building for the target platform. The EC2 proof-of-concept produced the reference Nginx configs, systemd units, and boot scripts, so when NAT broke the networking layer, the application stack needed zero rework",
+          "One Cloudflare Tunnel per service, not one tunnel for the whole stack. Each service has its own token, its own lifecycle, and its own failure domain. Taking down the SonarQube tunnel does not affect Jenkins or Nexus",
+          "Tunnel traffic routes through Nginx on port 80, not directly to service ports. Nginx provides health endpoints, request buffering, and port abstraction: if a backend port changes, the tunnel config stays the same",
+          "Services, binaries, and Nginx configs are baked into images, but secrets (tunnel tokens), database state (PostgreSQL), and environment-specific tooling (Jenkins plugins, pipeline tools) run at boot or post-setup. Images stay reusable without rebuilding",
+          "Pipeline tools and Jenkins plugins ship as callable scripts on PATH (/usr/local/bin/install-pipeline-tools, /usr/local/bin/install-plugins), not executed during the image build. This keeps image size minimal, gives per-environment control, and means a Trivy version pin does not require a full image rebuild"
+        ]
+      }
+    ],
+    "tags": [
+      "ci-cd",
+      "containerization",
+      "iac",
+      "networking",
+      "security",
+      "documentation"
+    ],
+    "tech": [
+      "Docker",
+      "Linux",
+      "systemd",
+      "GitHub Actions",
+      "Nginx",
+      "Cloudflare Tunnel",
+      "Jenkins",
+      "SonarQube",
+      "PostgreSQL",
+      "Nexus",
+      "Bash",
+      "GHCR",
+      "iximiuz Labs"
+    ],
+    "links": [
+      {
+        "type": "github",
+        "url": "https://github.com/ibtisam-iq/silver-stack"
+      },
+      {
+        "type": "runbook",
+        "url": "https://runbook.ibtisam-iq.com/self-hosted/ci-cd/iximiuz/"
+      },
+      {
+        "type": "playground",
+        "url": "https://labs.iximiuz.com/playgrounds/SilverStack-CICD-Stack-1766a8a1"
+      },
+      {
+        "type": "website",
+        "url": "https://labs.iximiuz.com/a/ibtisam-iq"
+      }
+    ],
+    "featured": true
+  },
+  {
+    "slug": "debugbox",
+    "title": "DebugBox: Right-Sized Kubernetes Debugging Containers",
+    "category": "tool",
+    "status": "maintained",
+    "year": 2026,
+    "shortDescription": "Open-source debugging toolkit with 3 size-tiered variants (14 MB to 104 MB), up to 14x smaller than netshoot. Trivy-gated releases, pinned tool versions, multi-arch (amd64/arm64), published to GHCR and Docker Hub with a 20-tag versioning strategy.",
+    "description": "Rebuilt from a single 50-plus-tool debugging image into 3 purpose-sized variants after seeing the real cost of pulling a 200 MB netshoot image onto a bandwidth-constrained or edge cluster just to run one DNS check. Lite (14.36 MB) covers connectivity checks, balanced (46.16 MB, the default) covers daily Kubernetes troubleshooting with tcpdump and kubectx/kubens, and power (104.45 MB) covers packet-level forensics with tshark, iptables, and Python. Every release is gated by Trivy (HIGH and CRITICAL findings block the build) and every tool version is pinned for deterministic builds, unlike netshoot's floating versions. Shipped with full open-source project hygiene: a security policy, contribution guidelines, a semantic changelog, and a dedicated MkDocs documentation site, published to GHCR and Docker Hub with 20 tags per release spanning variant-discovery tags, floating-latest tags, and immutable pinned-version tags.",
+    "sections": [
+      {
+        "title": "Motivation",
+        "items": [
+          "kubectl debug my-pod --image=netshoot pulls 201 MB for a one-off DNS check. On an edge cluster, a mobile network, or any bandwidth-constrained environment, every megabyte is time lost before debugging even starts",
+          "netshoot is all-or-nothing: the same image ships tshark, iptables, and full packet forensics whether the task needs them or not, while busybox and bare Alpine are too minimal to debug anything beyond the basics",
+          "Existing debugging images use floating tool versions, so the same tag can resolve to different tool versions on different days, making bug reports and incident reproductions unreliable"
+        ]
+      },
+      {
+        "title": "What It Solves",
+        "items": [
+          "Three purpose-built variants in one repository: lite (14.36 MB) for DNS and connectivity, balanced (46.16 MB, the default) for daily Kubernetes troubleshooting with tcpdump and kubectx/kubens, and power (104.45 MB) for packet-level forensics with tshark, iptables, and Python",
+          "Lite is 14x smaller than netshoot's 201.67 MB; even power, the largest variant, is 48% smaller. At 50 pulls a week, switching from netshoot to DebugBox lite saves roughly 37 GB of registry bandwidth a month",
+          "Every release is gated by Trivy, HIGH and CRITICAL findings block the build before it ships, and every tool version is pinned for deterministic, reproducible builds instead of netshoot's floating versions",
+          "Built-in Kubernetes ergonomics: kubectx/kubens for multi-cluster context switching, and shell helper functions (ports, connections, routes, k8s-info, sniff(), cert-check()) so common debugging tasks are one word instead of a remembered flag combination",
+          "20 tags per release across two registries (GHCR and Docker Hub): variant-discovery tags for casual use, floating per-variant tags, and immutable pinned-version tags so incident response can pin an exact, auditable version"
+        ]
+      },
+      {
+        "title": "Why DebugBox",
+        "items": [
+          "Split into 3 variants instead of one configurable image, because a build-time flag still means rebuilding or maintaining branching logic. Separate variants let anyone pull a different tag with zero extra tooling",
+          "Chose pinned tool versions over the more common floating-latest pattern in debugging images, accepting a manual version-bump maintenance cost in exchange for a guarantee that the same tag always behaves the same way",
+          "Security scanning blocks the release pipeline rather than just reporting findings afterward, because a debugging image that ships with a known CRITICAL CVE defeats the purpose of using a purpose-built tool over a random base image",
+          "Explicitly scoped DebugBox out of production use, it runs as root by design for full debugging access, and documented that boundary in the FAQ rather than letting users discover it the hard way",
+          "Shipped with the same hygiene as supported open source: a security policy, contribution guidelines, a semantic changelog, and a dedicated documentation site, not just a Dockerfile and a README"
+        ]
+      }
+    ],
+    "tags": [
+      "containerization",
+      "kubernetes",
+      "networking",
+      "security",
+      "documentation"
+    ],
+    "tech": [
+      "Docker",
+      "Bash",
+      "Alpine Linux",
+      "GitHub Actions",
+      "Trivy",
+      "Kubernetes",
+      "Makefile",
+      "MkDocs"
+    ],
+    "links": [
+      {
+        "type": "github",
+        "url": "https://github.com/ibtisam-iq/debugbox"
+      },
+      {
+        "type": "docs",
+        "url": "https://debugbox.ibtisam-iq.com"
+      }
+    ],
+    "featured": true
+  },
+  {
+    "slug": "microservices-demo",
+    "title": "End-to-End DevOps: Polyglot Microservices GitOps on EKS",
+    "category": "platform",
+    "status": "completed",
+    "year": 2026,
+    "shortDescription": "10-service polyglot app on Amazon EKS with DevSecOps CI, ArgoCD GitOps, full observability, and autoscaling. 6-phase runbook with 24 decisions and 9 terminal sessions.",
+    "description": "Forked Google's Online Boutique (10-service polyglot monorepo), built a production-grade DevOps pipeline from scratch. CI pipeline uses GitHub Actions with monorepo change detection, Trivy security scanning, and GHCR publish. Helm chart packaged from upstream and published to GHCR as an OCI artifact. Deployed via ArgoCD with Image Updater (digest strategy) for continuous delivery. Platform includes Gateway API (single shared ALB, 5 subdomains), ExternalDNS (zero manual DNS records), kube-prometheus-stack with Slack alerting, ELK stack for log aggregation, and HPA autoscaling. Infrastructure provisioned via Terraform on KodeKloud AWS Playground. Documented across 6 runbook phases with 24 architectural decisions, 9 terminal session recordings, and 12 verification screenshots.",
+    "sections": [
+      {
+        "title": "Key Achievements",
+        "items": [
+          "Built 3 GitHub Actions workflows: monorepo change detection with matrix dispatch, Trivy FS + image scanning, Helm chart OCI publish to GHCR",
+          "Deployed 10 microservices via ArgoCD from a Helm chart on GHCR, with patch-only values (5 fields) and zero upstream file modifications",
+          "Configured Gateway API with a single shared ALB serving 5 subdomains behind one wildcard ACM certificate",
+          "Implemented full observability: Prometheus + Grafana + AlertManager (Slack), Elasticsearch + Filebeat + Kibana",
+          "Documented 24 architectural decisions, recorded 9 terminal sessions, captured 12 verification screenshots across 6 runbook phases"
+        ]
+      },
+      {
+        "title": "Key Decisions",
+        "items": [
+          "Evolved image tagging through 3 iterations (chart version, SHA, digest), landing on ArgoCD Image Updater after debugging BuildKit epoch timestamp incompatibility",
+          "Chose Gateway API over Ingress because the Kubernetes project recommends it and the Ingress API has been frozen",
+          "ArgoCD manages the app, not the platform stack. If ArgoCD breaks, Prometheus and Grafana remain operational for debugging",
+          "Patch-only Helm values: only 5 fields that differ from upstream. If the default is correct, it is not listed",
+          "CI has zero knowledge of the cluster for code pushes. Image Updater owns deployment, eliminating the GIT_TOKEN dependency"
+        ]
+      }
+    ],
+    "tags": [
+      "ci-cd",
+      "gitops",
+      "observability",
+      "iac",
+      "kubernetes",
+      "networking",
+      "security",
+      "autoscaling",
+      "containerization"
+    ],
+    "tech": [
+      "GitHub Actions",
+      "Trivy",
+      "Docker",
+      "Helm",
+      "Kustomize",
+      "ArgoCD",
+      "Terraform",
+      "Amazon EKS",
+      "Gateway API",
+      "Prometheus",
+      "Grafana",
+      "Elasticsearch",
+      "Kibana",
+      "Route 53",
+      "GHCR"
+    ],
+    "links": [
+      {
+        "type": "app-repo",
+        "url": "https://github.com/ibtisam-iq/microservices-demo"
+      },
+      {
+        "type": "cd-repo",
+        "url": "https://github.com/ibtisam-iq/platform-engineering-systems/tree/main/systems/microservices-demo"
+      },
+      {
+        "type": "runbook",
+        "url": "https://runbook.ibtisam-iq.com/projects/deployments/microservices-demo/"
+      }
+    ],
+    "featured": true
+  },
+  {
+    "slug": "retail-store-sample-app",
+    "title": "Retail Microservices: End-to-End Platform Engineering on EKS",
+    "category": "platform",
+    "status": "completed",
+    "year": 2026,
+    "shortDescription": "Advanced deployment of a 5-service polyglot e-commerce platform on Amazon EKS, leveraging eksctl, Helmfile orchestration, and AWS Managed Services.",
+    "description": "Architected and deployed a highly available polyglot microservices architecture on Amazon EKS. Operating within stringent least-privilege IAM boundaries, the infrastructure was provisioned using a hybrid approach: Terraform for precise IAM role definitions, CloudFormation for self-managed worker nodes, and eksctl for the control plane. Implemented production-ready infrastructure patterns by engineering a decoupled, multi-environment release strategy using Helmfile to orchestrate complex deployment dependencies without mutating upstream charts. The platform integrates deeply with native AWS services, utilizing IRSA to securely bind microservices to DynamoDB, SQS, and SNS. The cluster features centralized observability via CloudWatch Container Insights, Prometheus, and Grafana, with external traffic routed through a shared Application Load Balancer using dynamic ACM certificates.",
+    "sections": [
+      {
+        "title": "Key Achievements",
+        "items": [
+          "Authored 3 decoupled Helmfile configurations to orchestrate 5 polyglot microservices without mutating upstream charts",
+          "Offloaded state to AWS Managed Services (DynamoDB, SQS, SNS/Lambda) by establishing secure IRSA trust relationships",
+          "Overcame strict IAM limits (no iam:PassRole) by manually injecting pre-provisioned Terraform roles and CloudFormation nodes into the eksctl deployment",
+          "Shared a single ALB across the application UI, Grafana, and Prometheus endpoints using Ingress grouping",
+          "Produced an in-depth codebase analysis and architectural deep-dive to bridge the transition from 3-tier monoliths to microservices"
+        ]
+      },
+      {
+        "title": "Key Decisions",
+        "items": [
+          "Prioritized Helmfile over ArgoCD to master complex release dependencies natively before abstracting behind a GitOps controller",
+          "Dev-Machine Administration: Used a fully configured dev-machine for cluster operations while reserving a bastion host strictly for SSH node troubleshooting",
+          "Opted for CloudWatch Container Insights over ELK to keep the logging architecture heavily aligned with the native AWS EKS ecosystem",
+          "Adopted modern API_AND_CONFIG_MAP authentication alongside gp3 default storage classes for optimized cost and performance"
+        ]
+      }
+    ],
+    "tags": [
+      "iac",
+      "orchestration",
+      "kubernetes",
+      "cloud-native",
+      "observability",
+      "networking",
+      "microservices"
+    ],
+    "tech": [
+      "Amazon EKS",
+      "Terraform",
+      "CloudFormation",
+      "eksctl",
+      "Helmfile",
+      "Helm",
+      "DynamoDB",
+      "SQS",
+      "SNS",
+      "CloudWatch",
+      "Prometheus",
+      "Grafana",
+      "ALB Ingress Controller"
+    ],
+    "links": [
+      {
+        "type": "github",
+        "url": "https://github.com/ibtisam-iq/retail-store-sample-app"
+      },
+      {
+        "type": "runbook",
+        "url": "https://runbook.ibtisam-iq.com/projects/deployments/retail-store-sample-app/"
+      }
+    ],
+    "featured": true
+  },
+  {
+    "slug": "devsecops-pipeline-engineering",
+    "title": "DevSecOps Pipeline Engineering: Jenkins and GitHub Actions Mirrored",
+    "category": "platform",
+    "status": "completed",
+    "year": 2026,
+    "shortDescription": "One 14-stage DevSecOps pipeline (Trivy scan, SonarQube quality gate, Nexus publish, multi-registry push) implemented twice per project, once as a Jenkinsfile and once as GitHub Actions, run against three language ecosystems and tied into a self-hosted Jenkins/SonarQube/Nexus stack.",
+    "description": "Designed a single 14-stage build-test-scan-publish pipeline and implemented it identically in two systems for every project: a fully declarative Jenkinsfile run against a self-hosted Jenkins, SonarQube, and Nexus stack, and a mirrored GitHub Actions workflow with no infrastructure dependency. The same structure (checkout, source scan, build and test, static analysis, quality gate, artifact publish, image build, image scan, multi-registry push, GitOps handoff) runs across three different toolchains: Maven and JUnit for Java, pytest for Python, and Jest and ESLint for Node. Every pipeline hard-fails on three independent conditions: a CRITICAL CVE in dependencies, a failed SonarQube Quality Gate, or a failing unit test. CI never touches deployment directly; its only contact with the infrastructure side is writing one new image tag into a handoff file that the deployment repo picks up.",
+    "sections": [
+      {
+        "title": "Key Achievements",
+        "items": [
+          "Built one 14-stage pipeline design and implemented it twice per project, a self-hosted Jenkinsfile and a mirrored GitHub Actions workflow, giving every app both an infrastructure-dependent and a zero-infrastructure path through the identical process",
+          "Connected every Jenkins run to a self-hosted Jenkins, SonarQube, and Nexus stack on custom domains with Cloudflare SSL, rather than a managed SaaS tool, so the quality gate, artifact storage, and Docker registry are all infrastructure built and operated personally",
+          "Enforced the same three hard-fail conditions, CRITICAL CVEs, a failed Quality Gate, or a failing test, across three completely different toolchains: JUnit and JaCoCo for Java, pytest for Python, Jest and ESLint for Node",
+          "Solved pipeline-specific bugs that only show up under repeated CI runs: a SonarQube Quality Gate working-directory pin needed to reliably locate report-task.txt every time, and splitting Trivy into separate passes with different exit codes so an OS-package CVE warns while an application-level CRITICAL blocks the build",
+          "Published every build to three destinations from one image, a versioned tag plus latest to Docker Hub, to GHCR, and to the self-hosted Nexus Docker registry, with AWS ECR wired in as the next planned target"
+        ]
+      },
+      {
+        "title": "Key Decisions",
+        "items": [
+          "Mirrored Jenkins and GitHub Actions deliberately instead of picking one, to prove the same DevSecOps discipline holds whether or not self-hosted infrastructure is available",
+          "Made every gate a hard fail, not a warning, because a pipeline that lets a known CRITICAL CVE or a failed quality gate through isn't doing security scanning, it's just generating a report nobody has to act on",
+          "Split Trivy into OS-package and application-dependency passes with different exit codes, so a base-image CVE that's out of the team's control doesn't block a deploy the way an app-level CRITICAL should",
+          "Found the Node pipeline's test and lint configuration being generated inline inside Jenkinsfile shell blocks, called it what it was, technical debt, and moved it into version-controlled config files with a real smoke test before considering the pipeline done",
+          "Kept the pipeline's contact with deployment to a single line: writing one new image tag to a handoff file. Build logic and deployment logic stay in separate repos so neither side has to understand the other to be reviewed"
+        ]
+      }
+    ],
+    "tags": [
+      "ci-cd",
+      "security",
+      "containerization",
+      "documentation"
+    ],
+    "tech": [
+      "Jenkins",
+      "GitHub Actions",
+      "SonarQube",
+      "Trivy",
+      "Nexus",
+      "Docker",
+      "Maven",
+      "npm",
+      "pytest",
+      "JUnit",
+      "GHCR",
+      "Docker Hub"
+    ],
+    "links": [
+      {
+        "type": "java-monolith-repo",
+        "url": "https://github.com/ibtisam-iq/java-monolith-app"
+      },
+      {
+        "type": "python-monolith-repo",
+        "url": "https://github.com/ibtisam-iq/python-monolith-app"
+      },
+      {
+        "type": "node-monolith-repo",
+        "url": "https://github.com/ibtisam-iq/node-monolith-3tier-app"
+      },
+      {
+        "type": "runbook",
+        "url": "https://runbook.ibtisam-iq.com/self-hosted/ci-cd/iximiuz/cicd-stack-operations/"
+      }
+    ],
+    "featured": true
+  },
+  {
+    "slug": "polyglot-monolith-deployment",
+    "title": "Multi-Language Monolith Deployment: Bare-Metal Kubeadm to AWS EKS",
+    "category": "platform",
+    "status": "completed",
+    "year": 2026,
+    "shortDescription": "Java/Spring Boot + MySQL, Python/Flask + PostgreSQL, and Node/Express + React + MySQL monoliths taken from codebase audit to containerized deployment on self-provisioned kubeadm bare-metal clusters and AWS EKS, using one Kustomize base patched per platform.",
+    "description": "Took three independent monolith codebases (Java 3-tier, Python 2-tier, Node 3-tier) through the same disciplined path: codebase modernization, environment-variable standardization, bare-metal validation, multi-stage Docker containerization with non-root users and real health probes, then Kubernetes deployment. Every Kubernetes cluster was self-provisioned from scratch with a homegrown idempotent kubeadm automation tool (version-pinned against the live Kubernetes release API, dry-run mode, safe reset, choice of Calico or Flannel). Deployment manifests live once in a Kustomize base/ and are patched per platform in overlays/, so the same Ingress-NGINX-and-MetalLB bare-metal setup and the AWS-Load-Balancer-Controller EKS setup share roughly 80% of their YAML with zero duplication. Application code and CI live in each app's own repo; deployment infrastructure lives in a separate platform-engineering-systems repo, connected by a single image.env handoff file, the same separation of concerns used in real GitOps pipelines.",
+    "sections": [
+      {
+        "title": "Key Achievements",
+        "items": [
+          "Deployed three production-style monoliths (Java/Spring Boot, Python/Flask, Node/Express + React) across two real Kubernetes platforms each: a self-provisioned kubeadm bare-metal cluster and AWS EKS, using identical Kustomize bases patched per platform",
+          "Built the kubeadm bootstrap as reusable automation, not manual steps: queries the live Kubernetes release API for the exact patch version, pins it with apt-mark hold, detects and safely resets existing cluster state, and supports a full dry-run before touching any system",
+          "Recognized that architecture isn't one-size-fits-all and deployed each project accordingly: Python's Flask app renders its own HTML so it stayed 2-tier with one container, while Java and Node decoupled their presentation layers into separate 3-tier deployments with their own Nginx or reverse-proxy tier",
+          "Debugged and documented real production issues, not just happy-path deployment: an AWS ALB health check failure caused by Spring Security blocking /actuator/health, an HTTPS redirect loop from SSL termination at the ALB layer, and an Nginx www-data home-directory traversal permission issue blocking static file serving on bare metal",
+          "Structured every project as two repos by concern, application code and CI in one, deployment infrastructure in platform-engineering-systems, connected by a single image.env file as the CI-to-CD handoff contract, so either side can be audited independently"
+        ]
+      },
+      {
+        "title": "Key Decisions",
+        "items": [
+          "Built cluster provisioning as idempotent, version-aware automation rather than a one-off runbook: re-running the bootstrap on a partially provisioned node is safe, and a version-skew guard refuses to jump more than one Kubernetes minor version at a time",
+          "Wrote each Kubernetes manifest exactly once in base/ and patched only what differs per platform in overlays/, meaning storage class, service type, and database connection string are the only things that change between a laptop, bare metal, and EKS",
+          "Chose 2-tier vs 3-tier per project based on the actual codebase, not a fixed template: a server-rendered Flask app does not need a second container just to look architecturally bigger",
+          "Caught a real code smell mid-build on the Node pipeline: test and lint configs were being generated inline inside Jenkinsfile shell blocks instead of living in the repo. Refactored them into version-controlled jest.config.js and eslint.config.mjs files with a smoke test before calling the pipeline finished",
+          "Kept the application repo and the platform repo strictly separate, so the CI side never contains deployment logic and the GitOps sync target never needs to know how the image was built"
+        ]
+      }
+    ],
+    "tags": [
+      "containerization",
+      "kubernetes",
+      "iac",
+      "networking",
+      "gitops"
+    ],
+    "tech": [
+      "Java",
+      "Spring Boot",
+      "Python",
+      "Flask",
+      "Node.js",
+      "Express",
+      "React",
+      "MySQL",
+      "PostgreSQL",
+      "Docker",
+      "Kubernetes",
+      "Kustomize",
+      "Amazon EKS",
+      "Nginx",
+      "Bash"
+    ],
+    "links": [
+      {
+        "type": "java-monolith-repo",
+        "url": "https://github.com/ibtisam-iq/java-monolith-app"
+      },
+      {
+        "type": "python-monolith-repo",
+        "url": "https://github.com/ibtisam-iq/python-monolith-app"
+      },
+      {
+        "type": "node-monolith-repo",
+        "url": "https://github.com/ibtisam-iq/node-monolith-3tier-app"
+      },
+      {
+        "type": "cd-repo",
+        "url": "https://github.com/ibtisam-iq/platform-engineering-systems"
+      },
+      {
+        "type": "runbook",
+        "url": "https://runbook.ibtisam-iq.com/bootstrap/kubernetes/cluster-kubeadm/"
+      }
+    ],
+    "featured": true
+  }
+]
+
+export const getProjectsByCategory = (category: Project["category"]) =>
+  projects.filter((p) => p.category === category)
+
+export const getProjectsByStatus = (status: Project["status"]) =>
+  projects.filter((p) => p.status === status)
+
+export const getProjectsByTech = (tech: string) =>
+  projects.filter((p) => p.tech.includes(tech))
+
+export const getFeaturedProjects = () =>
+  projects.filter((p) => p.featured)
+
+export const getAllTechTags = (): string[] => {
+  const techSet = new Set<string>()
+  projects.forEach((p) => p.tech.forEach((t: string) => techSet.add(t)))
+  return Array.from(techSet).sort()
+}
+
+export const getAllCapabilityTags = (): string[] => {
+  const tagSet = new Set<string>()
+  projects.forEach((p) => p.tags.forEach((t) => tagSet.add(t)))
+  return Array.from(tagSet).sort()
+}
+
+export const getAllYears = (): number[] => {
+  const yearSet = new Set<number>()
+  projects.forEach((p) => yearSet.add(p.year))
+  return Array.from(yearSet).sort((a, b) => b - a)
+}
