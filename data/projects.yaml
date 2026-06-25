@@ -334,3 +334,48 @@
     - type: runbook
       url: "https://runbook.ibtisam-iq.com/bootstrap/kubernetes/cluster-kubeadm/"
   featured: true
+
+- slug: aws-secure-static-hosting
+  title: "Secure Static Hosting on AWS: S3, CloudFront, KMS, and Cross-Region Replication"
+  category: platform
+  status: completed
+  year: 2026
+  shortDescription: "Production-grade static site hosting on AWS: private S3 origin behind CloudFront with Origin Access Control, KMS encryption at rest, Cross-Region Replication for disaster recovery, and full CloudTrail audit logging. Verified end-to-end: HTTPS via custom domain, a hard 403 on direct S3 access, and matched object counts across regions."
+  description: "Deployed a production-grade static hosting architecture on a personal AWS account, replacing public S3 website hosting with a fully private origin. A real production build (the personal portfolio site's dist/ output) is served through CloudFront via Origin Access Control, with KMS encryption at rest on a primary bucket in us-east-1 and a fully replicated standby bucket in us-west-2 kept in sync through Cross-Region Replication. A regional ACM certificate, a custom domain, CloudTrail data-event auditing, S3 server access logs, and a Glacier lifecycle policy for old object versions complete the stack. Verification covered HTTPS delivery, a hard 403 on direct S3 access, matched replica object counts, and confirmed Bucket Key savings on both regions. The hardest problem was Cross-Region Replication on KMS-encrypted objects, which silently fails unless the replication rule and the IAM role's KMS permissions are configured exactly right. Full teardown is scripted in reverse dependency order, since every resource in this stack bills by the hour."
+  sections:
+    - title: "Key Achievements"
+      items:
+        - "Replaced public S3 static website hosting with a fully private origin: CloudFront retrieves objects via Origin Access Control with SigV4 signing, public access is blocked at the bucket and account level, and a direct S3 URL returns a verified hard 403"
+        - "Built real disaster recovery, not just a backup: Cross-Region Replication keeps a second S3 bucket in us-west-2 in sync with the us-east-1 primary, re-encrypting every object with a separate regional KMS key, with replication status and object counts verified to match"
+        - "Cut KMS costs at the design stage: enabled S3 Bucket Keys on both regions, which can reduce GenerateDataKey calls by up to 99% on a high-traffic site, confirmed enabled on both buckets after deployment"
+        - "Wired up full operational visibility: a multi-region CloudTrail trail with S3 data-event logging, separate S3 server access logs, and a Glacier lifecycle policy archiving noncurrent object versions after 30 days, all verified by querying real CloudTrail events post-deployment"
+        - "Scripted complete teardown in reverse dependency order across 9 steps, disabling and deleting the CloudFront distribution, removing the OAC and ACM certificate, stopping CloudTrail, clearing the replication config, emptying every bucket version, deleting the IAM role, and scheduling KMS key deletion, since every resource in this stack bills by the hour"
+    - title: "Key Decisions"
+      items:
+        - "Chose CloudFront Origin Access Control over the legacy Origin Access Identity, since OAC uses SigV4 request signing and is AWS's current recommended approach for CDN-to-S3 authentication, while OAI is the older, weaker pattern still found in most tutorials"
+        - "Replicating KMS-encrypted objects across regions is not automatic: the replication rule must explicitly enable SourceSelectionCriteria for KMS-encrypted objects, and the IAM replication role needs kms:Decrypt on the source key and kms:Encrypt on the destination key. Missing either one means S3 silently skips every encrypted object with no error"
+        - "Diagnosed three distinct categories of 403 with three different root causes: a missing DefaultRootObject setting on the CloudFront distribution, a stale S3 bucket policy left over from before OAC was configured, and the expected 403 confirming public S3 access is correctly blocked"
+        - "Caught a DNS validation trap before it cost a debugging session: Cloudflare's proxy mode on the ACM validation CNAME record silently breaks DNS validation, so the record has to stay in DNS-only mode for ACM to see it"
+        - "Treated this as billable infrastructure from the start, not a free lab: every resource (KMS keys, CloudFront, Route 53, CloudTrail) was provisioned with an explicit teardown plan, including the mandatory 7-day KMS key deletion window, rather than left running indefinitely on a personal account"
+  tags:
+    - networking
+    - security
+    - observability
+    - documentation
+  tech:
+    - Amazon S3
+    - Amazon CloudFront
+    - AWS KMS
+    - AWS IAM
+    - Amazon Route 53
+    - AWS Certificate Manager
+    - AWS CloudTrail
+    - Cloudflare
+    - AWS CLI
+    - Bash
+  links:
+    - type: github
+      url: "https://github.com/ibtisam-iq/platform-engineering-systems/tree/main/systems/static-website"
+    - type: runbook
+      url: "https://runbook.ibtisam-iq.com/projects/deployments/static-website/"
+  featured: true
