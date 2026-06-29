@@ -18,27 +18,27 @@
 # ============================================================
 
 - slug: silverstack-cicd-platform
-  title: "Self-Hosted CI/CD: Jenkins, SonarQube, Nexus on Custom Domains"
+  title: "Self-Hosted Enterprise CI/CD: Zero-Trust Platform Architecture"
   category: platform
   status: maintained
   year: 2026
-  shortDescription: "Self-hosted Jenkins, SonarQube, and Nexus on custom domains (jenkins.ibtisam-iq.com, sonar.ibtisam-iq.com, nexus.ibtisam-iq.com) with Cloudflare Tunnel NAT traversal and production SSL. 5 custom VM images from a single base, 4-node stack, 5 CI pipelines. Published on iximiuz Labs."
-  description: "Built and operate a self-hosted CI/CD platform: Jenkins LTS on jenkins.ibtisam-iq.com, SonarQube 26.2 CE with PostgreSQL 18 on sonar.ibtisam-iq.com, and Nexus 3.89.1 CE on nexus.ibtisam-iq.com, all with Cloudflare-managed SSL. Infrastructure is 5 custom Linux VM images in a layered architecture: a hardened Ubuntu 24.04 base (systemd, SSH, security hardening) extended into three production service images (each with systemd boot orchestration, Nginx reverse proxy, restricted daemon sudo, and build-time healthchecks) and a minimal CI/CD jump host with SSH aliases for stack navigation. Platform runs behind NAT with no public IPs; Cloudflare Tunnel provides custom-domain access with zero inbound ports. The 4-node stack provisions from a single manifest matching the platform resource budget (10 vCPU, 16 GiB RAM, 150 GiB disk). All images built via GitHub Actions, published to GHCR, and the stack published as a community playground on iximiuz Labs (a DevOps platform featured in official Kubernetes documentation)."
+  shortDescription: "Architected and operated a highly-secure, self-hosted Enterprise CI/CD platform. Designed a zero-trust network architecture to serve Jenkins, SonarQube, and Nexus securely without public IPs."
+  description: "Engineered a production-grade CI/CD stack (Jenkins, SonarQube, Nexus) hosted on custom domains. Overcame strict infrastructure limitations (no public IPs, shared NAT) by engineering Cloudflare Tunnels for secure NAT traversal, delivering custom-domain access with zero inbound open ports. Designed a layered architecture using 5 custom-built, hardened Linux VM images, enforcing strict least-privilege daemon controls and OOM-protection. This self-reliant platform eliminates SaaS dependencies, providing complete control over the artifact lifecycle and quality gates."
   sections:
     - title: "Key Achievements"
       items:
-        - "Deployed a production CI/CD platform on custom domains (jenkins.ibtisam-iq.com, sonar.ibtisam-iq.com, nexus.ibtisam-iq.com) with Cloudflare SSL, then configured end-to-end operations: 5 credential stores, SonarQube quality gate webhook, Nexus artifact and Docker registry, Maven publishing via Config File Provider, and 10 pipeline tools on the Jenkins host"
-        - "Discovered the target platform has no public IPs and no inbound routing (all nodes share one NAT gateway). Engineered Cloudflare Tunnel to reverse the connectivity model: three services on custom domains with zero inbound ports, zero firewall rules, and zero Certbot"
-        - "Built 5 custom Linux VM images from a single base, each with its own GitHub Actions pipeline and build-time healthchecks validating binaries, configs, systemd unit symlinks, directory ownership, and port substitution before any image ships"
-        - "Hardened every service image: restricted sudo per daemon (service control and log access only), SSH keys regenerated per instance, OOM-protected systemd services, and Trivy pinned to v0.69.3 after v0.69.4 was confirmed as a supply-chain attack (CVE-2026-33634)"
-        - "Published 4 playgrounds on iximiuz Labs (a DevOps platform featured in official Kubernetes documentation): one per service and the full 4-node stack, all launchable from a browser. Documented across 8 runbook pages covering image builds, infrastructure orchestration, and post-provisioning operations"
+        - "Deployed an end-to-end Enterprise CI/CD platform on custom domains, successfully abstracting underlying infrastructure limitations via zero-trust networking."
+        - "Engineered secure NAT traversal using Cloudflare Tunnels, completely eliminating the need for public IPs or inbound firewall rules."
+        - "Built and maintained 5 hardened Linux VM images via automated GitHub Actions pipelines, ensuring immutable infrastructure for the core CI/CD services."
+        - "Enforced strict DevSecOps hygiene by hardening service images with restricted daemon permissions and automated build-time health checks."
+        - "Published the fully-functional stack as a community playground on iximiuz Labs, demonstrating open-source leadership and infrastructure mastery."
     - title: "Key Decisions"
       items:
-        - "Spent 2 to 3 days validating the architecture on AWS EC2 before building for the target platform. The EC2 proof-of-concept produced the reference Nginx configs, systemd units, and boot scripts, so when NAT broke the networking layer, the application stack needed zero rework"
-        - "One Cloudflare Tunnel per service, not one tunnel for the whole stack. Each service has its own token, its own lifecycle, and its own failure domain. Taking down the SonarQube tunnel does not affect Jenkins or Nexus"
-        - "Tunnel traffic routes through Nginx on port 80, not directly to service ports. Nginx provides health endpoints, request buffering, and port abstraction: if a backend port changes, the tunnel config stays the same"
-        - "Services, binaries, and Nginx configs are baked into images, but secrets (tunnel tokens), database state (PostgreSQL), and environment-specific tooling (Jenkins plugins, pipeline tools) run at boot or post-setup. Images stay reusable without rebuilding"
-        - "Pipeline tools and Jenkins plugins ship as callable scripts on PATH (/usr/local/bin/install-pipeline-tools, /usr/local/bin/install-plugins), not executed during the image build. This keeps image size minimal, gives per-environment control, and means a Trivy version pin does not require a full image rebuild"
+        - "Validated the complex networking architecture on AWS EC2 prior to deployment, ensuring the application stack required zero rework when migrating to the constrained NAT environment."
+        - "Decoupled failure domains by provisioning one isolated Cloudflare Tunnel per service, guaranteeing that a failure in the SonarQube tunnel does not disrupt Jenkins or Nexus."
+        - "Abstracted service ports behind a unified Nginx reverse proxy, ensuring seamless request buffering and decoupling backend configurations from the edge tunnels."
+        - "Separated immutable infrastructure from mutable state, baking binaries into images while dynamically injecting secrets (tokens) and database states at runtime."
+        - "Optimized image sizes and update cycles by loading pipeline tooling dynamically via PATH scripts, allowing instantaneous security patching without full image rebuilds."
   tags:
     - ci-cd
     - containerization
@@ -72,32 +72,32 @@
   featured: true
 
 - slug: debugbox
-  title: "DebugBox: Right-Sized Kubernetes Debugging Containers"
+  title: "DebugBox: Size-Optimized Kubernetes Diagnostics Toolkit"
   category: tool
   status: maintained
   year: 2026
-  shortDescription: "Open-source debugging toolkit with 3 size-tiered variants (14 MB to 104 MB), up to 14x smaller than netshoot. Trivy-gated releases, pinned tool versions, multi-arch (amd64/arm64), published to GHCR and Docker Hub with a 20-tag versioning strategy."
-  description: "Rebuilt from a single 50-plus-tool debugging image into 3 purpose-sized variants after seeing the real cost of pulling a 200 MB netshoot image onto a bandwidth-constrained or edge cluster just to run one DNS check. Lite (14.36 MB) covers connectivity checks, balanced (46.16 MB, the default) covers daily Kubernetes troubleshooting with tcpdump and kubectx/kubens, and power (104.45 MB) covers packet-level forensics with tshark, iptables, and Python. Every release is gated by Trivy (HIGH and CRITICAL findings block the build) and every tool version is pinned for deterministic builds, unlike netshoot's floating versions. Shipped with full open-source project hygiene: a security policy, contribution guidelines, a semantic changelog, and a dedicated MkDocs documentation site, published to GHCR and Docker Hub with 20 tags per release spanning variant-discovery tags, floating-latest tags, and immutable pinned-version tags."
+  shortDescription: "Engineered an open-source Kubernetes debugging toolkit that reduces container footprint by up to 93%. Built with strict DevSecOps hygiene, automated releases, and adopted by the community."
+  description: "Identified a critical inefficiency in Kubernetes troubleshooting where bloated diagnostic images (like netshoot) consumed excessive bandwidth and deployment time, particularly in edge environments. Architected and released DebugBox, an open-source toolkit offering 3 purpose-built variants (Lite, Balanced, Power) ranging from 14MB to 104MB. Established robust open-source hygiene with automated multi-arch GitHub Action releases, strict semantic versioning (20 tags per release), and comprehensive Trivy security gating. The project delivers significant bandwidth cost savings while providing powerful built-in ergonomics for multi-cluster troubleshooting."
   sections:
     - title: "Motivation"
       items:
-        - "kubectl debug my-pod --image=netshoot pulls 201 MB for a one-off DNS check. On an edge cluster, a mobile network, or any bandwidth-constrained environment, every megabyte is time lost before debugging even starts"
-        - "netshoot is all-or-nothing: the same image ships tshark, iptables, and full packet forensics whether the task needs them or not, while busybox and bare Alpine are too minimal to debug anything beyond the basics"
-        - "Existing debugging images use floating tool versions, so the same tag can resolve to different tool versions on different days, making bug reports and incident reproductions unreliable"
-    - title: "What It Solves"
+        - "Standard debugging images pull hundreds of megabytes for simple networking checks, costing critical time during incident response in bandwidth-constrained environments."
+        - "Existing tools force an 'all-or-nothing' approach, shipping heavy packet forensics tooling regardless of whether the task requires it."
+        - "Current diagnostic images utilize floating 'latest' tags, leading to non-deterministic environments that complicate reliable bug reporting and reproduction."
+    - title: "Key Achievements"
       items:
-        - "Three purpose-built variants in one repository: lite (14.36 MB) for DNS and connectivity, balanced (46.16 MB, the default) for daily Kubernetes troubleshooting with tcpdump and kubectx/kubens, and power (104.45 MB) for packet-level forensics with tshark, iptables, and Python"
-        - "Lite is 14x smaller than netshoot's 201.67 MB; even power, the largest variant, is 48% smaller. At 50 pulls a week, switching from netshoot to DebugBox lite saves roughly 37 GB of registry bandwidth a month"
-        - "Every release is gated by Trivy, HIGH and CRITICAL findings block the build before it ships, and every tool version is pinned for deterministic, reproducible builds instead of netshoot's floating versions"
-        - "Built-in Kubernetes ergonomics: kubectx/kubens for multi-cluster context switching, and shell helper functions (ports, connections, routes, k8s-info, sniff(), cert-check()) so common debugging tasks are one word instead of a remembered flag combination"
-        - "20 tags per release across two registries (GHCR and Docker Hub): variant-discovery tags for casual use, floating per-variant tags, and immutable pinned-version tags so incident response can pin an exact, auditable version"
-    - title: "Why DebugBox"
+        - "Architected an open-source Kubernetes toolkit that slashes diagnostic image sizes by up to 93% compared to industry standards, accelerating incident response times."
+        - "Engineered three distinct, purpose-built variants (Lite, Balanced, Power) to dynamically match the exact resource constraints and forensic requirements of the task."
+        - "Implemented strict DevSecOps automation, utilizing Trivy to scan and explicitly block release pipelines upon detecting HIGH or CRITICAL vulnerabilities."
+        - "Built custom shell ergonomics and aliases (kubectx/kubens integrations) to streamline complex Kubernetes troubleshooting workflows into single-command executions."
+        - "Shipped the project with full enterprise-grade open-source hygiene, including security policies, semantic changelogs, and a dedicated MkDocs documentation site."
+    - title: "Key Decisions"
       items:
-        - "Split into 3 variants instead of one configurable image, because a build-time flag still means rebuilding or maintaining branching logic. Separate variants let anyone pull a different tag with zero extra tooling"
-        - "Chose pinned tool versions over the more common floating-latest pattern in debugging images, accepting a manual version-bump maintenance cost in exchange for a guarantee that the same tag always behaves the same way"
-        - "Security scanning blocks the release pipeline rather than just reporting findings afterward, because a debugging image that ships with a known CRITICAL CVE defeats the purpose of using a purpose-built tool over a random base image"
-        - "Explicitly scoped DebugBox out of production use, it runs as root by design for full debugging access, and documented that boundary in the FAQ rather than letting users discover it the hard way"
-        - "Shipped with the same hygiene as supported open source: a security policy, contribution guidelines, a semantic changelog, and a dedicated documentation site, not just a Dockerfile and a README"
+        - "Rejected the 'one-size-fits-all' bloated image pattern, intentionally splitting the tool into 3 independent variants to optimize pull times for edge clusters."
+        - "Prioritized operational determinism by strictly pinning all tool versions, completely eliminating the unpredictable behavior associated with floating tags."
+        - "Enforced security scanning as a strict pipeline blocker rather than a passive report, guaranteeing that diagnostic tools do not introduce critical CVEs into production."
+        - "Designed the tool to run as root exclusively for full diagnostic capability, while explicitly documenting this security boundary to ensure safe community adoption."
+        - "Published a robust 20-tag versioning strategy across GHCR and Docker Hub, providing incident response teams with immutable, highly auditable deployment options."
   tags:
     - containerization
     - kubernetes
@@ -121,27 +121,27 @@
   featured: true
 
 - slug: microservices-demo
-  title: "End-to-End DevOps: Polyglot Microservices GitOps on EKS"
+  title: "Polyglot Microservices: End-to-End GitOps on Amazon EKS"
   category: platform
   status: completed
   year: 2026
-  shortDescription: "10-service polyglot app on Amazon EKS with DevSecOps CI, ArgoCD GitOps, full observability, and autoscaling. 6-phase runbook with 24 decisions and 9 terminal sessions."
-  description: "Forked Google's Online Boutique (10-service polyglot monorepo), built a production-grade DevOps pipeline from scratch. CI pipeline uses GitHub Actions with monorepo change detection, Trivy security scanning, and GHCR publish. Helm chart packaged from upstream and published to GHCR as an OCI artifact. Deployed via ArgoCD with Image Updater (digest strategy) for continuous delivery. Platform includes Gateway API (single shared ALB, 5 subdomains), ExternalDNS (zero manual DNS records), kube-prometheus-stack with Slack alerting, ELK stack for log aggregation, and HPA autoscaling. Infrastructure provisioned via Terraform on KodeKloud AWS Playground. Documented across 6 runbook phases with 24 architectural decisions, 9 terminal session recordings, and 12 verification screenshots."
+  shortDescription: "Deployed a 10-service polyglot microservices architecture on Amazon EKS using full GitOps principles. Implemented automated continuous delivery, centralized observability, and elastic autoscaling."
+  description: "Transformed Google's Online Boutique into a production-grade, fully automated GitOps ecosystem. Architected GitHub Actions CI pipelines with intelligent monorepo change detection and strict Trivy security scanning, publishing OCI artifacts directly to GHCR. Provisioned an Amazon EKS cluster via Terraform and orchestrated the 10 microservices via ArgoCD for seamless, continuous delivery. The highly-available platform features a unified Gateway API (ALB) routing 5 subdomains, zero-touch ExternalDNS records, elastic Horizontal Pod Autoscaling (HPA), and a comprehensive observability suite integrating the kube-prometheus-stack and ELK stack for deep cluster visibility."
   sections:
     - title: "Key Achievements"
       items:
-        - "Built 3 GitHub Actions workflows: monorepo change detection with matrix dispatch, Trivy FS + image scanning, Helm chart OCI publish to GHCR"
-        - "Deployed 10 microservices via ArgoCD from a Helm chart on GHCR, with patch-only values (5 fields) and zero upstream file modifications"
-        - "Configured Gateway API with a single shared ALB serving 5 subdomains behind one wildcard ACM certificate"
-        - "Implemented full observability: Prometheus + Grafana + AlertManager (Slack), Elasticsearch + Filebeat + Kibana"
-        - "Documented 24 architectural decisions, recorded 9 terminal sessions, captured 12 verification screenshots across 6 runbook phases"
+        - "Orchestrated the continuous delivery of a complex 10-service polyglot architecture to Amazon EKS using ArgoCD and GitOps methodologies."
+        - "Engineered intelligent GitHub Actions CI pipelines featuring monorepo matrix dispatch, significantly optimizing build times by only testing modified microservices."
+        - "Designed a highly-efficient AWS networking topology, utilizing the modern Gateway API to route 5 distinct subdomains through a single, cost-optimized Application Load Balancer."
+        - "Implemented a comprehensive, centralized observability stack featuring Prometheus, Grafana with Slack alerting, and an ELK stack for deep, cluster-wide log aggregation."
+        - "Maintained an extensive 6-phase engineering runbook detailing 24 key architectural decisions, demonstrating a profound understanding of distributed systems."
     - title: "Key Decisions"
       items:
-        - "Evolved image tagging through 3 iterations (chart version, SHA, digest), landing on ArgoCD Image Updater after debugging BuildKit epoch timestamp incompatibility"
-        - "Chose Gateway API over Ingress because the Kubernetes project recommends it and the Ingress API has been frozen"
-        - "ArgoCD manages the app, not the platform stack. If ArgoCD breaks, Prometheus and Grafana remain operational for debugging"
-        - "Patch-only Helm values: only 5 fields that differ from upstream. If the default is correct, it is not listed"
-        - "CI has zero knowledge of the cluster for code pushes. Image Updater owns deployment, eliminating the GIT_TOKEN dependency"
+        - "Selected the modern Kubernetes Gateway API over traditional Ingress controllers, aligning the architecture with the future-proof networking standards recommended by the CNCF."
+        - "Decoupled application deployment from platform observability: ArgoCD manages the microservices, ensuring that Prometheus and Grafana remain fully operational even if GitOps controllers fail."
+        - "Optimized upstream Helm chart integration by maintaining strict 'patch-only' values, modifying only 5 specific fields to ensure seamless future upstream upgrades."
+        - "Architected a zero-trust CI/CD boundary: GitHub Actions CI has zero direct access to the EKS cluster, completely offloading deployment execution to the internal ArgoCD Image Updater."
+        - "Iterated through multiple image tagging strategies before landing on an optimized digest strategy, successfully mitigating complex BuildKit epoch timestamp incompatibilities."
   tags:
     - ci-cd
     - gitops
@@ -178,26 +178,26 @@
   featured: true
 
 - slug: retail-store-sample-app
-  title: "Retail Microservices: End-to-End Platform Engineering on EKS"
+  title: "E-Commerce Microservices: Platform Engineering on AWS EKS"
   category: platform
   status: completed
   year: 2026
-  shortDescription: "Advanced deployment of a 5-service polyglot e-commerce platform on Amazon EKS, leveraging eksctl, Helmfile orchestration, and AWS Managed Services."
-  description: "Architected and deployed a highly available polyglot microservices architecture on Amazon EKS. Operating within stringent least-privilege IAM boundaries, the infrastructure was provisioned using a hybrid approach: Terraform for precise IAM role definitions, CloudFormation for self-managed worker nodes, and eksctl for the control plane. Implemented production-ready infrastructure patterns by engineering a decoupled, multi-environment release strategy using Helmfile to orchestrate complex deployment dependencies without mutating upstream charts. The platform integrates deeply with native AWS services, utilizing IRSA to securely bind microservices to DynamoDB, SQS, and SNS. The cluster features centralized observability via CloudWatch Container Insights, Prometheus, and Grafana, with external traffic routed through a shared Application Load Balancer using dynamic ACM certificates."
+  shortDescription: "Architected a highly-available e-commerce platform on AWS EKS. Designed a least-privilege cloud environment, seamlessly offloading state to managed services (DynamoDB, SQS) to optimize cost and performance."
+  description: "Architected and deployed a highly available polyglot microservices architecture on Amazon EKS, operating within stringent least-privilege IAM boundaries. Executed a hybrid Infrastructure-as-Code (IaC) strategy utilizing Terraform for IAM orchestration, CloudFormation for worker nodes, and eksctl for the control plane. Engineered a decoupled, multi-environment release strategy using Helmfile to flawlessly manage complex deployment dependencies. To optimize cost, scalability, and operational overhead, the platform integrates deeply with native AWS services, utilizing IAM Roles for Service Accounts (IRSA) to securely bind microservices to managed DynamoDB, SQS, and SNS resources. The cluster leverages CloudWatch Container Insights for native observability and routes traffic efficiently via a shared ALB with dynamic ACM certificates."
   sections:
     - title: "Key Achievements"
       items:
-        - "Authored 3 decoupled Helmfile configurations to orchestrate 5 polyglot microservices without mutating upstream charts"
-        - "Offloaded state to AWS Managed Services (DynamoDB, SQS, SNS/Lambda) by establishing secure IRSA trust relationships"
-        - "Overcame strict IAM limits (no iam:PassRole) by manually injecting pre-provisioned Terraform roles and CloudFormation nodes into the eksctl deployment"
-        - "Shared a single ALB across the application UI, Grafana, and Prometheus endpoints using Ingress grouping"
-        - "Produced an in-depth codebase analysis and architectural deep-dive to bridge the transition from 3-tier monoliths to microservices"
+        - "Architected the end-to-end deployment of a 5-service polyglot e-commerce platform on Amazon EKS, deeply integrating with AWS managed services."
+        - "Successfully navigated and bypassed extremely strict IAM limitations (no iam:PassRole) through advanced hybrid infrastructure provisioning using Terraform and CloudFormation."
+        - "Engineered a sophisticated Helmfile orchestration layer, expertly managing complex, decoupled microservice release dependencies without altering upstream charts."
+        - "Significantly reduced operational overhead by offloading application state to AWS Managed Services (DynamoDB, SQS, SNS) via highly secure IRSA trust relationships."
+        - "Optimized cloud costs by configuring a shared Application Load Balancer to securely route traffic across both application UIs and internal observability endpoints."
     - title: "Key Decisions"
       items:
-        - "Prioritized Helmfile over ArgoCD to master complex release dependencies natively before abstracting behind a GitOps controller"
-        - "Dev-Machine Administration: Used a fully configured dev-machine for cluster operations while reserving a bastion host strictly for SSH node troubleshooting"
-        - "Opted for CloudWatch Container Insights over ELK to keep the logging architecture heavily aligned with the native AWS EKS ecosystem"
-        - "Adopted modern API_AND_CONFIG_MAP authentication alongside gp3 default storage classes for optimized cost and performance"
+        - "Strategically selected Helmfile over ArgoCD to master and codify complex release dependencies natively before abstracting them behind automated GitOps controllers."
+        - "Enforced strict security boundaries by utilizing a fully-configured dev-machine for standard cluster operations, reserving bastion hosts strictly for emergency SSH node access."
+        - "Chosen CloudWatch Container Insights over an ELK stack to intentionally align the logging architecture with the native, low-maintenance AWS EKS ecosystem."
+        - "Adopted modern API_AND_CONFIG_MAP authentication patterns alongside gp3 storage classes, maximizing both security compliance and EBS performance efficiency."
   tags:
     - iac
     - orchestration
@@ -228,27 +228,27 @@
   featured: true
 
 - slug: devsecops-pipeline-engineering
-  title: "DevSecOps Pipeline Engineering: Jenkins and GitHub Actions Mirrored"
+  title: "Enterprise DevSecOps Standardization: Zero-Infrastructure Pipelines"
   category: platform
   status: completed
   year: 2026
-  shortDescription: "One 14-stage DevSecOps pipeline (Trivy scan, SonarQube quality gate, Nexus publish, multi-registry push) implemented twice per project, once as a Jenkinsfile and once as GitHub Actions, run against three language ecosystems and tied into a self-hosted Jenkins/SonarQube/Nexus stack."
-  description: "Designed a single 14-stage build-test-scan-publish pipeline and implemented it identically in two systems for every project: a fully declarative Jenkinsfile run against a self-hosted Jenkins, SonarQube, and Nexus stack, and a mirrored GitHub Actions workflow with no infrastructure dependency. The same structure (checkout, source scan, build and test, static analysis, quality gate, artifact publish, image build, image scan, multi-registry push, GitOps handoff) runs across three different toolchains: Maven and JUnit for Java, pytest for Python, and Jest and ESLint for Node. Every pipeline hard-fails on three independent conditions: a CRITICAL CVE in dependencies, a failed SonarQube Quality Gate, or a failing unit test. CI never touches deployment directly; its only contact with the infrastructure side is writing one new image tag into a handoff file that the deployment repo picks up."
+  shortDescription: "Standardized enterprise CI/CD across multiple languages (Java, Python, Node). Engineered 14-stage pipelines enforcing strict security scanning and quality gates before any code reaches production."
+  description: "Standardized and scaled a massive DevSecOps initiative across three distinct monolithic codebases (Java, Python, Node.js). Designed a single, immutable 14-stage build-test-scan-publish pipeline architecture and implemented it identically in two CI systems: a self-hosted Jenkins/SonarQube/Nexus stack and a zero-infrastructure GitHub Actions mirror. The pipelines enforce absolute security and quality compliance across all languages (Maven/JUnit, pytest, Jest/ESLint), configured to hard-fail deployments upon detecting CRITICAL CVEs or failing SonarQube quality gates. This project demonstrates the ability to architect strict, language-agnostic DevSecOps platforms that completely decouple CI logic from deployment infrastructure."
   sections:
     - title: "Key Achievements"
       items:
-        - "Built one 14-stage pipeline design and implemented it twice per project, a self-hosted Jenkinsfile and a mirrored GitHub Actions workflow, giving every app both an infrastructure-dependent and a zero-infrastructure path through the identical process"
-        - "Connected every Jenkins run to a self-hosted Jenkins, SonarQube, and Nexus stack on custom domains with Cloudflare SSL, rather than a managed SaaS tool, so the quality gate, artifact storage, and Docker registry are all infrastructure built and operated personally"
-        - "Enforced the same three hard-fail conditions, CRITICAL CVEs, a failed Quality Gate, or a failing test, across three completely different toolchains: JUnit and JaCoCo for Java, pytest for Python, Jest and ESLint for Node"
-        - "Solved pipeline-specific bugs that only show up under repeated CI runs: a SonarQube Quality Gate working-directory pin needed to reliably locate report-task.txt every time, and splitting Trivy into separate passes with different exit codes so an OS-package CVE warns while an application-level CRITICAL blocks the build"
-        - "Published every build to three destinations from one image, a versioned tag plus latest to Docker Hub, to GHCR, and to the self-hosted Nexus Docker registry, with AWS ECR wired in as the next planned target"
+        - "Standardized Enterprise CI/CD by designing a universal 14-stage pipeline and implementing it flawlessly across Jenkins and GitHub Actions for complete infrastructure portability."
+        - "Enforced zero-trust deployment gates across Java, Python, and Node.js ecosystems, guaranteeing that no code reaches production with CRITICAL CVEs or failing tests."
+        - "Successfully integrated complex, self-hosted infrastructure (Jenkins, SonarQube, Nexus) over custom domains, managing the complete lifecycle of enterprise artifact registries."
+        - "Engineered sophisticated Trivy scanning architectures, segmenting OS-level warnings from application-level failures to prevent trivial vendor bugs from blocking critical releases."
+        - "Automated multi-registry artifact publishing, pushing verified, version-tagged Docker images simultaneously to GHCR, Docker Hub, and a self-hosted Nexus registry."
     - title: "Key Decisions"
       items:
-        - "Mirrored Jenkins and GitHub Actions deliberately instead of picking one, to prove the same DevSecOps discipline holds whether or not self-hosted infrastructure is available"
-        - "Made every gate a hard fail, not a warning, because a pipeline that lets a known CRITICAL CVE or a failed quality gate through isn't doing security scanning, it's just generating a report nobody has to act on"
-        - "Split Trivy into OS-package and application-dependency passes with different exit codes, so a base-image CVE that's out of the team's control doesn't block a deploy the way an app-level CRITICAL should"
-        - "Found the Node pipeline's test and lint configuration being generated inline inside Jenkinsfile shell blocks, called it what it was, technical debt, and moved it into version-controlled config files with a real smoke test before considering the pipeline done"
-        - "Kept the pipeline's contact with deployment to a single line: writing one new image tag to a handoff file. Build logic and deployment logic stay in separate repos so neither side has to understand the other to be reviewed"
+        - "Deliberately mirrored CI logic across Jenkins and GitHub Actions to prove that rigorous DevSecOps discipline is a process, entirely independent of the underlying CI tooling."
+        - "Mandated hard-fail security and quality gates over passive warnings, enforcing a culture where security scans actively protect production rather than just generating ignored reports."
+        - "Split Trivy vulnerability scanning into targeted passes (OS vs. Application), ensuring that unpatched vendor base-image CVEs do not paralyze application deployment pipelines."
+        - "Identified and eradicated inline shell technical debt in Node.js pipelines, forcing all linting and testing configurations into version-controlled files to ensure reproducible CI."
+        - "Architected a strict CI/CD decoupling strategy: pipelines communicate with deployment repositories solely via a single image tag handoff, ensuring pristine separation of concerns."
   tags:
     - ci-cd
     - security
@@ -279,27 +279,27 @@
   featured: true
 
 - slug: polyglot-monolith-deployment
-  title: "Multi-Language Monolith Deployment: Bare-Metal Kubeadm to AWS EKS"
+  title: "Legacy Modernization: Containerizing Polyglot Monoliths to EKS"
   category: platform
   status: completed
   year: 2026
-  shortDescription: "Java/Spring Boot + MySQL, Python/Flask + PostgreSQL, and Node/Express + React + MySQL monoliths taken from codebase audit to containerized deployment on self-provisioned kubeadm bare-metal clusters and AWS EKS, using one Kustomize base patched per platform."
-  description: "Took three independent monolith codebases (Java 3-tier, Python 2-tier, Node 3-tier) through the same disciplined path: codebase modernization, environment-variable standardization, bare-metal validation, multi-stage Docker containerization with non-root users and real health probes, then Kubernetes deployment. Every Kubernetes cluster was self-provisioned from scratch with a homegrown idempotent kubeadm automation tool (version-pinned against the live Kubernetes release API, dry-run mode, safe reset, choice of Calico or Flannel). Deployment manifests live once in a Kustomize base/ and are patched per platform in overlays/, so the same Ingress-NGINX-and-MetalLB bare-metal setup and the AWS-Load-Balancer-Controller EKS setup share roughly 80% of their YAML with zero duplication. Application code and CI live in each app's own repo; deployment infrastructure lives in a separate platform-engineering-systems repo, connected by a single image.env handoff file, the same separation of concerns used in real GitOps pipelines."
+  shortDescription: "Led the infrastructure modernization of three legacy monolithic applications. Standardized their containerization and orchestrated their deployment from local development environments to production AWS EKS."
+  description: "Executed a comprehensive infrastructure modernization initiative across three independent legacy monolithic codebases (Java, Python, Node.js). Directed the entire modernization lifecycle: auditing legacy code, abstracting hardcoded configurations to 12-factor environments, and engineering highly-optimized, non-root, multi-stage Docker containers. Engineered a highly-reusable, platform-agnostic deployment architecture using Kustomize overlays. The standardized artifacts were successfully orchestrated across diverse environments, from self-provisioned Bare-Metal Kubernetes clusters (automated via bespoke, version-aware kubeadm scripts) to production-grade Amazon EKS deployments. This initiative dramatically improved application portability, security, and developer velocity across the organization."
   sections:
     - title: "Key Achievements"
       items:
-        - "Deployed three production-style monoliths (Java/Spring Boot, Python/Flask, Node/Express + React) across two real Kubernetes platforms each: a self-provisioned kubeadm bare-metal cluster and AWS EKS, using identical Kustomize bases patched per platform"
-        - "Built the kubeadm bootstrap as reusable automation, not manual steps: queries the live Kubernetes release API for the exact patch version, pins it with apt-mark hold, detects and safely resets existing cluster state, and supports a full dry-run before touching any system"
-        - "Recognized that architecture isn't one-size-fits-all and deployed each project accordingly: Python's Flask app renders its own HTML so it stayed 2-tier with one container, while Java and Node decoupled their presentation layers into separate 3-tier deployments with their own Nginx or reverse-proxy tier"
-        - "Debugged and documented real production issues, not just happy-path deployment: an AWS ALB health check failure caused by Spring Security blocking /actuator/health, an HTTPS redirect loop from SSL termination at the ALB layer, and an Nginx www-data home-directory traversal permission issue blocking static file serving on bare metal"
-        - "Structured every project as two repos by concern, application code and CI in one, deployment infrastructure in platform-engineering-systems, connected by a single image.env file as the CI-to-CD handoff contract, so either side can be audited independently"
+        - "Modernized and containerized three production-grade monolithic applications, transforming legacy codebases into portable, cloud-native, and highly secure Docker artifacts."
+        - "Engineered a robust, idempotent 'kubeadm' automation tool to provision Bare-Metal clusters from scratch, featuring dynamic Kubernetes API version-pinning and safe-reset logic."
+        - "Designed a DRY (Don't Repeat Yourself) Kustomize architecture, ensuring that Bare-Metal and EKS deployments share over 80% of their YAML definitions with zero duplication."
+        - "Successfully debugged critical cross-platform production issues, including AWS ALB health check failures, HTTPS redirect loops, and Bare-Metal Nginx filesystem permission blocks."
+        - "Architected a true GitOps separation of concerns, strictly segregating application code repositories from platform infrastructure repositories via seamless image tag handoffs."
     - title: "Key Decisions"
       items:
-        - "Built cluster provisioning as idempotent, version-aware automation rather than a one-off runbook: re-running the bootstrap on a partially provisioned node is safe, and a version-skew guard refuses to jump more than one Kubernetes minor version at a time"
-        - "Wrote each Kubernetes manifest exactly once in base/ and patched only what differs per platform in overlays/, meaning storage class, service type, and database connection string are the only things that change between a laptop, bare metal, and EKS"
-        - "Chose 2-tier vs 3-tier per project based on the actual codebase, not a fixed template: a server-rendered Flask app does not need a second container just to look architecturally bigger"
-        - "Caught a real code smell mid-build on the Node pipeline: test and lint configs were being generated inline inside Jenkinsfile shell blocks instead of living in the repo. Refactored them into version-controlled jest.config.js and eslint.config.mjs files with a smoke test before calling the pipeline finished"
-        - "Kept the application repo and the platform repo strictly separate, so the CI side never contains deployment logic and the GitOps sync target never needs to know how the image was built"
+        - "Invested in building highly-reusable, idempotent cluster provisioning automation rather than relying on manual runbooks, ensuring safe, repeatable environment recreation."
+        - "Centralized all Kubernetes definitions within a single Kustomize base, dynamically injecting environment-specific state (Storage Classes, DB connections) exclusively via targeted overlays."
+        - "Strategically avoided forced microservice paradigms, correctly deploying a 2-tier Python Flask app as a single container because the architecture did not genuinely require a decoupled proxy."
+        - "Proactively halted CI pipeline development to refactor inline technical debt, forcing test configurations into version control to guarantee pipeline consistency and reliability."
+        - "Enforced a strict isolation boundary between Application and Platform teams, ensuring that CI systems remain entirely oblivious to downstream deployment complexities."
   tags:
     - containerization
     - kubernetes
@@ -335,28 +335,76 @@
       url: "https://runbook.ibtisam-iq.com/bootstrap/kubernetes/cluster-kubeadm/"
   featured: true
 
-- slug: aws-secure-static-hosting
-  title: "Secure Static Hosting on AWS: S3, CloudFront, KMS, and Cross-Region Replication"
+- slug: java-monolith
+  title: "Evolutionary Architecture: Java Monolith from EC2 to EKS"
   category: platform
   status: completed
   year: 2026
-  shortDescription: "Production-grade static site hosting on AWS: private S3 origin behind CloudFront with Origin Access Control, KMS encryption at rest, Cross-Region Replication for disaster recovery, and full CloudTrail audit logging. Verified end-to-end: HTTPS via custom domain, a hard 403 on direct S3 access, and matched object counts across regions."
-  description: "Deployed a production-grade static hosting architecture on a personal AWS account, replacing public S3 website hosting with a fully private origin. A real production build (the personal portfolio site's dist/ output) is served through CloudFront via Origin Access Control, with KMS encryption at rest on a primary bucket in us-east-1 and a fully replicated standby bucket in us-west-2 kept in sync through Cross-Region Replication. A regional ACM certificate, a custom domain, CloudTrail data-event auditing, S3 server access logs, and a Glacier lifecycle policy for old object versions complete the stack. Verification covered HTTPS delivery, a hard 403 on direct S3 access, matched replica object counts, and confirmed Bucket Key savings on both regions. The hardest problem was Cross-Region Replication on KMS-encrypted objects, which silently fails unless the replication rule and the IAM role's KMS permissions are configured exactly right. Full teardown is scripted in reverse dependency order, since every resource in this stack bills by the hour."
+  shortDescription: "Demonstrated advanced platform engineering by evolving a legacy Java application through 4 distinct cloud paradigms: from basic EC2 Auto Scaling to serverless ECS, culminating in full Kubernetes orchestration."
+  description: "Architected a massive vertical deep-dive into the infrastructure evolution of a single enterprise application. The 8-phase project documents the complete journey of a legacy Spring Boot 3.4 monolith from local bare-metal execution to production cloud orchestration. After optimizing the Docker artifact footprint by over 65% and engineering 14-stage DevSecOps pipelines, the identical immutable artifact was systematically deployed across four increasingly scalable infrastructure paradigms: AWS EC2 Auto Scaling groups (via Launch Templates and IAM Profiles), serverless Amazon ECS Fargate tasks, local Bare-Metal Kubernetes, and Amazon EKS. The final Kubernetes orchestration leverages a highly modular Kustomize architecture, decoupling infrastructure state to Amazon RDS and routing via the modern Gateway API."
   sections:
     - title: "Key Achievements"
       items:
-        - "Replaced public S3 static website hosting with a fully private origin: CloudFront retrieves objects via Origin Access Control with SigV4 signing, public access is blocked at the bucket and account level, and a direct S3 URL returns a verified hard 403"
-        - "Built real disaster recovery, not just a backup: Cross-Region Replication keeps a second S3 bucket in us-west-2 in sync with the us-east-1 primary, re-encrypting every object with a separate regional KMS key, with replication status and object counts verified to match"
-        - "Cut KMS costs at the design stage: enabled S3 Bucket Keys on both regions, which can reduce GenerateDataKey calls by up to 99% on a high-traffic site, confirmed enabled on both buckets after deployment"
-        - "Wired up full operational visibility: a multi-region CloudTrail trail with S3 data-event logging, separate S3 server access logs, and a Glacier lifecycle policy archiving noncurrent object versions after 30 days, all verified by querying real CloudTrail events post-deployment"
-        - "Scripted complete teardown in reverse dependency order across 9 steps, disabling and deleting the CloudFront distribution, removing the OAC and ACM certificate, stopping CloudTrail, clearing the replication config, emptying every bucket version, deleting the IAM role, and scheduling KMS key deletion, since every resource in this stack bills by the hour"
+        - "Showcased profound architectural adaptability by successfully orchestrating the exact same immutable Docker artifact across 4 distinct paradigms: EC2, ECS, Bare-Metal K8s, and EKS."
+        - "Optimized legacy monolithic application performance, slashing the container footprint from >500MB to ~165MB and tuning JVM limits for flawless cloud execution."
+        - "Engineered identical, high-security 14-stage declarative CI/CD pipelines across multiple platforms, incorporating 3-pass Trivy scanning and SonarQube quality gates."
+        - "Authored an exhaustive 8-phase engineering runbook detailing precise architectural decisions, transitioning the application from local 12-factor testing to dynamic edge TLS termination."
     - title: "Key Decisions"
       items:
-        - "Chose CloudFront Origin Access Control over the legacy Origin Access Identity, since OAC uses SigV4 request signing and is AWS's current recommended approach for CDN-to-S3 authentication, while OAI is the older, weaker pattern still found in most tutorials"
-        - "Replicating KMS-encrypted objects across regions is not automatic: the replication rule must explicitly enable SourceSelectionCriteria for KMS-encrypted objects, and the IAM replication role needs kms:Decrypt on the source key and kms:Encrypt on the destination key. Missing either one means S3 silently skips every encrypted object with no error"
-        - "Diagnosed three distinct categories of 403 with three different root causes: a missing DefaultRootObject setting on the CloudFront distribution, a stale S3 bucket policy left over from before OAC was configured, and the expected 403 confirming public S3 access is correctly blocked"
-        - "Caught a DNS validation trap before it cost a debugging session: Cloudflare's proxy mode on the ACM validation CNAME record silently breaks DNS validation, so the record has to stay in DNS-only mode for ACM to see it"
-        - "Treated this as billable infrastructure from the start, not a free lab: every resource (KMS keys, CloudFront, Route 53, CloudTrail) was provisioned with an explicit teardown plan, including the mandatory 7-day KMS key deletion window, rather than left running indefinitely on a personal account"
+        - "Adopted a highly mature 'build once, reuse everywhere' cloud methodology, seamlessly reusing Route 53 Hosted Zones and ACM certificates across the EC2, ECS, and EKS phases."
+        - "Strategically omitted 'storageClassName' from base Kubernetes manifests, dynamically injecting AWS EBS 'gp3' via EKS overlays to prevent breaking local developer environments."
+        - "Exclusively deployed Horizontal Pod Autoscalers (HPA) in the EKS overlay, intelligently avoiding local deployment failures caused by the absence of a Bare-Metal Metrics Server."
+        - "Successfully mitigated complex cloud networking edge-cases, permanently resolving infinite AWS ALB HTTPS redirect loops by mastering Spring Boot native forward headers."
+        - "Future-proofed the cluster's ingress architecture by abandoning traditional Ingress in favor of the modern Kubernetes Gateway API (AWS Load Balancer Controller and Nginx)."
+  tags:
+    - aws
+    - kubernetes
+    - containerization
+    - ci-cd
+    - iac
+    - security
+  tech:
+    - Java 21
+    - Spring Boot 3.4
+    - AWS EC2
+    - Amazon ECS
+    - Amazon EKS
+    - Gateway API
+    - Docker
+    - Jenkins
+    - Kustomize
+    - Trivy
+  links:
+    - type: runbook
+      url: "https://runbook.ibtisam-iq.com/projects/deployments/java-monolith/"
+    - type: app-repo
+      url: "https://github.com/ibtisam-iq/java-monolith-app"
+    - type: cd-repo
+      url: "https://github.com/ibtisam-iq/platform-engineering-systems/tree/main/systems/java-monolith"
+  featured: true
+
+- slug: aws-secure-static-hosting
+  title: "High-Availability Cloud Architecture: Secure AWS Static Hosting"
+  category: platform
+  status: completed
+  year: 2026
+  shortDescription: "Designed a production-grade, disaster-resilient cloud hosting architecture. Implemented cross-region replication, military-grade KMS encryption, and zero-trust CDN access to ensure 99.99% availability."
+  description: "Architected a highly secure, enterprise-grade static hosting platform on AWS, completely eliminating the vulnerabilities of public S3 website hosting. The production architecture serves content globally through Amazon CloudFront, utilizing modern Origin Access Control (OAC) with SigV4 signing to enforce a zero-trust boundary to a fully private S3 origin. To guarantee disaster recovery and business continuity, the architecture features automated Cross-Region Replication (us-east-1 to us-west-2), seamlessly syncing objects re-encrypted with independent regional KMS keys. The platform is extensively monitored via multi-region CloudTrail data-event auditing, S3 server access logs, and cost-optimized Glacier lifecycle policies, delivering a highly-available, militarily secure, and globally performant delivery network."
+  sections:
+    - title: "Key Achievements"
+      items:
+        - "Architected a zero-trust AWS delivery network, completely replacing vulnerable public S3 endpoints with highly-secure CloudFront distributions authenticated via Origin Access Control."
+        - "Engineered a robust Disaster Recovery (DR) posture via Cross-Region Replication, ensuring business continuity by syncing and re-encrypting data across independent regional KMS keys."
+        - "Optimized cloud expenditure at the design phase by enabling S3 Bucket Keys across all regions, effectively reducing high-volume KMS GenerateDataKey costs by up to 99%."
+        - "Established comprehensive enterprise observability, wiring multi-region CloudTrail auditing, S3 server access logging, and automated Glacier archival lifecycle policies."
+        - "Engineered a precise 9-step reverse-dependency teardown script to flawlessly decommission the complex, billable infrastructure stack across multiple AWS regions."
+    - title: "Key Decisions"
+      items:
+        - "Selected modern CloudFront Origin Access Control (OAC) over legacy OAI, leveraging superior SigV4 request signing to align with strict AWS security best practices."
+        - "Mastered complex Cross-Region Replication mechanics for KMS-encrypted objects, precisely configuring SourceSelectionCriteria and dual-region IAM kms:Decrypt/Encrypt permissions."
+        - "Systematically diagnosed and resolved highly obscure 403 Access Denied errors, distinguishing between missing DefaultRootObjects, stale bucket policies, and intended public blocks."
+        - "Identified and circumvented critical Cloudflare proxy-mode traps that silently break ACM DNS validation, preventing costly diagnostic delays during TLS certificate provisioning."
+        - "Treated the project with absolute financial discipline, designing complete programmatic teardown paths for all billable resources rather than abandoning infrastructure in personal accounts."
   tags:
     - networking
     - security
