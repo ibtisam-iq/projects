@@ -68,7 +68,7 @@
     - GitHub Actions
   links:
     - type: github
-      url: "https://github.com/ibtisam-iq/silver-stack"
+      url: "https://github.com/ibtisam-iq/silver-stack/tree/main/iximiuz/rootfs"
     - type: runbook
       url: "https://runbook.ibtisam-iq.com/self-hosted/ci-cd/iximiuz/"
     - type: playground
@@ -150,6 +150,10 @@
       url: "https://github.com/ibtisam-iq/platform-engineering-systems/tree/main/systems/microservices-demo" 
     - type: runbook
       url: "https://runbook.ibtisam-iq.com/projects/deployments/microservices-demo/"
+    - type: terminal-sessions
+      url: "https://github.com/ibtisam-iq/microservices-demo/tree/main/terminal-session"
+    - type: screenshots
+      url: "https://github.com/ibtisam-iq/microservices-demo/tree/main/assets"
   featured: true
 
 - slug: retail-store-sample-app
@@ -198,6 +202,10 @@
       url: "https://github.com/ibtisam-iq/retail-store-sample-app"
     - type: runbook
       url: "https://runbook.ibtisam-iq.com/projects/deployments/retail-store-sample-app/"
+    - type: terminal-sessions
+      url: "https://github.com/ibtisam-iq/retail-store-sample-app/tree/main/terminal-sessions"
+    - type: screenshots
+      url: "https://github.com/ibtisam-iq/retail-store-sample-app/tree/main/assets"
   featured: true
 
 # --- The Monolithic Architectures ---
@@ -458,5 +466,7 @@
       url: "https://github.com/ibtisam-iq/platform-engineering-systems/tree/main/systems/static-website"
     - type: runbook
       url: "https://runbook.ibtisam-iq.com/projects/deployments/static-website/"
+    - type: terminal-sessions
+      url: "https://github.com/ibtisam-iq/platform-engineering-systems/blob/main/systems/static-website/terminal-session.txt"
   featured: true
   
