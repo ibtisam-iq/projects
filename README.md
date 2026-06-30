@@ -1,6 +1,6 @@
 # projects.ibtisam-iq.com
 
-> DevOps Projects Portfolio — Production-grade deployments, real CI/CD pipelines, and documented infrastructure work.
+> DevOps Projects Portfolio. Production-grade deployments, real CI/CD pipelines, and documented infrastructure work.
 
 [![CI/CD](https://github.com/ibtisam-iq/projects/actions/workflows/pages.yml/badge.svg)](https://github.com/ibtisam-iq/projects/actions/workflows/pages.yml)
 [![Live Site](https://img.shields.io/badge/live-projects.ibtisam-iq.com-7C3AED)](https://projects.ibtisam-iq.com)
@@ -12,9 +12,9 @@
 
 ## What Is This?
 
-This repository contains the source code for [projects.ibtisam-iq.com](https://projects.ibtisam-iq.com) — a filterable, searchable DevOps projects showcase built with React, TypeScript, and Tailwind CSS.
+This repository contains the source code for [projects.ibtisam-iq.com](https://projects.ibtisam-iq.com). It serves as a filterable, searchable DevOps projects showcase built with **React**, **TypeScript**, and **Tailwind CSS**.
 
-The site is **data-driven**. Project content lives in [`data/projects.yaml`](./data/projects.yaml) — the single source of truth. Any change to that file automatically triggers a rebuild and redeployment of this site.
+The site is entirely data-driven. Project content lives in [`data/projects.yaml`](./data/projects.yaml), acting as the single source of truth. Any commit modifying that file automatically triggers a rebuild and redeployment of the frontend.
 
 ---
 
@@ -26,61 +26,59 @@ The site is **data-driven**. Project content lives in [`data/projects.yaml`](./d
 
 ## Features
 
-- 🔍 **Search** — filter projects by title, description, or technology
-- 🗂️ **Category filter** — Platform, Reference, Tool
-- 🏷️ **Skills filter** — multi-select capability domain tags (ci-cd, gitops, kubernetes, etc.)
-- 🔧 **Tools filter** — multi-select tech stack tags
-- 📅 **Year filter** — filter by completion/update year
-- ✅ **Status filter** — Completed / In Progress / Maintained / Archived
-- 📄 **Detail pages** — full project page with highlights, skills, tech stack, and link buttons
-- 📱 **Fully responsive** — mobile, tablet, desktop
-- ⚡ **Auto-deploy** — any push to `data/projects.yaml` triggers a full rebuild automatically
+- 🔍 **Search**: Filters projects by title, short description, or technology.
+- 🗂️ **Category filter**: Platform, Tool.
+- 🏷️ **Skills filter**: Multi-select capability domain tags (ci-cd, gitops, kubernetes, etc.).
+- 🔧 **Tools filter**: Multi-select tech stack tags.
+- 📅 **Year filter**: Filters by completion or update year.
+- ✅ **Status filter**: Completed, In Progress, Maintained, Archived.
+- 📄 **Detail pages**: Full project page rendering dynamic sections, skills, tech stack, and link buttons.
+- 🛠️ **Methodology page**: Dedicated `/how-i-work` section outlining the engineering pipeline.
+- 📱 **Fully responsive**: Mobile, tablet, desktop.
+- ⚡ **Auto-deploy**: Pushes to `data/projects.yaml` trigger a full rebuild automatically.
 
 ---
 
 ## How to Add a New Project
 
-> [!TIP]
-> No source code changes needed to add a project.
+> [!NOTE]
+> No source code changes are required to add a project.
 
-1. Open [`data/projects.yaml`](./data/projects.yaml) in this repo
-2. Add a new YAML entry:
+Projects are added by editing [`data/projects.yaml`](./data/projects.yaml) in this repository. New projects are appended as YAML entries following the specified schema:
 
 ```yaml
 - slug: my-new-project
   title: "My New Project"
-  category: platform                # platform | tool | reference
+  category: platform                # platform | tool
   status: completed                 # completed | in-progress | maintained | archived
-  year: 2025
+  year: 2026
   shortDescription: "One line summary shown on the project card."
   description: "Longer description shown on the project detail page."
-  highlights:
-    - "Achievement 1 with measurable impact"
-    - "Achievement 2 with measurable impact"
-  tags:
+  sections:                         # Flexible content blocks
+    - title: "Key Achievements"
+      items:
+        - "Achievement 1 with measurable impact"
+        - "Achievement 2 with measurable impact"
+    - title: "Architecture"
+      items:
+        - "Designed a modular architecture..."
+  tags:                             # capability domains (recruiter-level)
     - ci-cd
     - kubernetes
-  tech:
+  tech:                             # specific tools (engineer-level)
     - Docker
     - Kubernetes
     - Terraform
-  links:
+  links:                            # type + url pairs: github, runbook, blog, website, playground, docs, etc.
     - type: github
       url: "https://github.com/ibtisam-iq/my-new-project"
-    - type: runbook                  # optional: runbook | blog | website
+    - type: runbook                  
       url: "https://runbook.ibtisam-iq.com/my-new-project/"
-  featured: true
+  imageUrl: "/images/hero.png"      # optional
+  featured: true                    # pinned to top
 ```
 
-3. Commit and push:
-
-```bash
-git add data/projects.yaml
-git commit -m "feat: add my-new-project"
-git push
-```
-
-The site rebuilds and deploys automatically within ~2 minutes.
+The site rebuilds and deploys automatically within approximately 2 minutes upon pushing the commit.
 
 ---
 
@@ -88,28 +86,28 @@ The site rebuilds and deploys automatically within ~2 minutes.
 
 | Layer | Technology |
 |---|---|
-| Framework | React 19 + TypeScript |
-| Styling | Tailwind CSS v3 |
-| Build tool | Vite |
-| Routing | React Router v7 |
-| Icons | React Icons |
-| Data format | YAML → TypeScript (auto-generated at build time) |
-| Hosting | GitHub Pages |
-| CI/CD | GitHub Actions |
+| Framework | **React 19** + **TypeScript** |
+| Styling | **Tailwind CSS v3** |
+| Build tool | **Vite** |
+| Routing | **React Router v7** |
+| Icons | **React Icons** |
+| Data format | YAML to TypeScript (auto-generated at build time) |
+| Hosting | **GitHub Pages** |
+| CI/CD | **GitHub Actions** |
 | Custom domain | `projects.ibtisam-iq.com` |
 
 ---
 
 ## Project Structure
 
-```
+```text
 projects/
 ├── data/
-│   └── projects.yaml           # Single source of truth — edit this to add/update projects
+│   └── projects.yaml           # Single source of truth. Modified to add or update projects.
 ├── docs/
-│   └── architecture.md         # Full architecture and pipeline documentation
+│   └── architecture.md         # Full architecture and pipeline documentation.
 ├── scripts/
-│   └── generate-projects.js    # Converts projects.yaml → src/data/projects.ts
+│   └── generate-projects.js    # Converts projects.yaml to src/data/projects.ts.
 ├── src/
 │   ├── components/
 │   │   ├── Navbar.tsx
@@ -117,20 +115,22 @@ projects/
 │   │   ├── Sidebar.tsx
 │   │   ├── ProjectCard.tsx
 │   │   ├── ProjectDetail.tsx
+│   │   ├── HowIWork.tsx
 │   │   └── Footer.tsx
 │   ├── data/
-│   │   └── projects.ts         # AUTO-GENERATED — do not edit manually
+│   │   └── projects.ts         # AUTO-GENERATED. Do not edit manually.
 │   ├── types/
-│   │   └── project.ts          # Project TypeScript interface
+│   │   └── project.ts          # Project TypeScript interface.
 │   ├── App.tsx
 │   ├── main.tsx
 │   ├── index.css
 │   └── vite-env.d.ts
 ├── .github/
 │   └── workflows/
-│       └── pages.yml          # CI/CD pipeline
+│       └── pages.yml          # CI/CD pipeline.
 ├── public/
-│   └── CNAME
+│   └── (favicon, icons, web manifest)
+├── CNAME
 ├── index.html
 ├── package.json
 ├── tailwind.config.js
@@ -143,31 +143,26 @@ projects/
 ## Local Development
 
 ```bash
-# Clone
 git clone https://github.com/ibtisam-iq/projects.git
 cd projects
 
-# Install dependencies
 npm install
 
 # Generate projects.ts from YAML (run after any YAML changes)
 node scripts/generate-projects.js
 
-# Start dev server
 npm run dev
-
-# Production build
 npm run build
 ```
 
 > [!NOTE]
-> After editing `data/projects.yaml`, always run `node scripts/generate-projects.js` to regenerate `src/data/projects.ts` before starting the dev server. In CI, this step runs automatically during the build pipeline.
+> The generated TypeScript code must be updated after editing `data/projects.yaml` by executing `node scripts/generate-projects.js`. This step executes automatically within the CI build pipeline.
 
 ---
 
 ## Local CI Testing (`act`)
 
-The full build pipeline can be run locally using [`act`](https://github.com/nektos/act).
+The full build pipeline can be verified locally using [`act`](https://github.com/nektos/act).
 
 ```bash
 act push \
@@ -175,7 +170,7 @@ act push \
 ```
 
 > [!NOTE]
-> Artifact upload and GitHub Pages deployment are automatically skipped via `if: ${{ env.ACT != 'true' }}` guards — `act` sets this environment variable automatically.
+> Artifact upload and GitHub Pages deployment are automatically skipped via `if: ${{ env.ACT != 'true' }}` guards. The `act` utility configures this environment variable automatically.
 
 ---
 
@@ -185,24 +180,24 @@ The pipeline (`.github/workflows/pages.yml`) handles two triggers:
 
 | Trigger | When |
 |---|---|
-| `push` to `main` | Any change pushed to the main branch |
-| `workflow_dispatch` | Manual re-run from GitHub Actions UI |
+| `push` to `main` | Any change pushed to the main branch. |
+| `workflow_dispatch` | Manual re-run from GitHub Actions UI. |
 
 Pipeline steps:
-1. Checkout code
-2. Setup Node.js 24
-3. `npm ci`
-4. `npm install yaml --no-save`
-5. Run `generate-projects.js` → reads `data/projects.yaml`, writes `src/data/projects.ts`
-6. `npm run build` (Vite)
-7. Add `CNAME` and `404.html`
-8. Deploy to GitHub Pages
+1. Checkout code.
+2. Setup **Node.js 24**.
+3. Run `npm ci`.
+4. Run `npm install yaml --no-save`.
+5. Run `generate-projects.js`. This reads `data/projects.yaml` and writes `src/data/projects.ts`.
+6. Run `npm run build` using **Vite**.
+7. Add `CNAME` and `404.html`.
+8. Deploy to **GitHub Pages**.
 
 ---
 
 ## Architecture
 
-For a detailed explanation of the data pipeline, why it was designed this way, and how to extend it, see:
+For a detailed explanation of the data pipeline, the design constraints, and extension points, see the documentation:
 
 📄 [`docs/architecture.md`](./docs/architecture.md)
 
@@ -212,9 +207,9 @@ For a detailed explanation of the data pipeline, why it was designed this way, a
 
 | Repository | Purpose |
 |---|---|
-| [`portfolio-site`](https://github.com/ibtisam-iq/portfolio-site) | Main portfolio at `ibtisam-iq.com` |
-| [`runbook`](https://github.com/ibtisam-iq/runbook) | Engineering runbook at `runbook.ibtisam-iq.com` |
-| [`nectar`](https://github.com/ibtisam-iq/nectar) | Technical documentation at `nectar.ibtisam-iq.com` |
+| [`portfolio-site`](https://github.com/ibtisam-iq/portfolio-site) | Main portfolio at `ibtisam-iq.com`. |
+| [`runbook`](https://github.com/ibtisam-iq/runbook) | Engineering runbook at `runbook.ibtisam-iq.com`. |
+| [`nectar`](https://github.com/ibtisam-iq/nectar) | Technical documentation at `nectar.ibtisam-iq.com`. |
 
 ---
 
