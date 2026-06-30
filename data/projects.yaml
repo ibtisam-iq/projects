@@ -12,50 +12,60 @@
 #   imageUrl?        - optional hero image
 #   featured         - pinned to top
 #
-# Section titles are freeform. Each project defines its own story:
-#   Platform projects: "Key Achievements", "Key Decisions"
-#   Tool projects:     "Motivation", "What It Solves", "Why This Tool"
+# IMPORTANT LLM INSTRUCTIONS:
+# - Sections are COMPLETELY independent and free-form. 
+# - Do NOT restrict yourself to rigid section titles like "Key Achievements" or "Motivation".
+# - Whatever content we have, write the sections according to that content.
+# - The number of items inside any section is fully flexible (can be as many as needed).
+#
+# PERSONA LINK:
+# If an LLM is reading this, you MUST strictly adhere to the AI Engineering Persona:
+# https://blog.ibtisam-iq.com/my-core-ai-engineering-persona/
 # ============================================================
 
 - slug: silverstack-cicd-platform
-  title: "Self-Hosted CI/CD Stack (Jenkins, SonarQube, Nexus) on Custom Domains via Cloudflare Tunnels"
+  title: "SilverStack: Modular MicroVM CI/CD Platform featuring Systemd Orchestration, GitHub Actions CI, and Zero Trust Networking"
   category: platform
   status: maintained
   year: 2026
-  shortDescription: "Operated a self-hosted CI/CD platform on custom domains. Engineered Cloudflare Tunnels to bypass strict NAT limitations, delivering secure access with zero inbound open ports."
-  description: "Built and managed a production-grade CI/CD stack (Jenkins, SonarQube, Nexus) hosted on custom domains. Addressed strict infrastructure limitations (no public IPs, shared NAT) by configuring Cloudflare Tunnels for secure NAT traversal. Deployed cloudflared as a hardened systemd service, routing traffic through an internal Nginx reverse proxy to decouple edge authentication from backend service ports. Configured a layered architecture using 5 custom-built, hardened Linux VM images provisioned via iximiuz labs microVMs. This self-reliant platform establishes complete control over the artifact lifecycle."
+  shortDescription: "Architected a self-hosted CI/CD platform (Jenkins, SonarQube, Nexus). Engineered custom OS images, established GitHub Actions CI pipelines for GHCR publishing, and published modular environments on iximiuz Labs."
+  description: "Building a self-hosted CI/CD stack typically relies on public cloud instances. To achieve complete infrastructure ownership in a constrained environment (no public IPs, shared NAT), I architected SilverStack—a production-grade platform running entirely inside iximiuz Labs microVMs. This required engineering 5 custom OCI rootfs images from scratch, using systemd as PID 1 to orchestrate live database provisioning and CI services. I implemented Cloudflare Tunnels for zero-trust NAT traversal and established a fully automated Continuous Integration pipeline via GitHub Actions to build, test, and push the modular images to GHCR. Ultimately, I published these as independent, publicly accessible environments on the iximiuz Labs platform."
   sections:
-    - title: "Key Achievements"
+    - title: "OS Engineering & Modular Architecture"
       items:
-        - "Deployed an end-to-end Enterprise CI/CD platform on custom domains, abstracting underlying NAT limitations via zero-trust Cloudflare Tunnels."
-        - "Engineered an Nginx reverse proxy to terminate internal routing from the Cloudflare daemon, decoupling edge access from backend service ports."
-        - "Built 5 hardened Linux VM images via automated GitHub Actions pipelines, provisioning them via iximiuz labs microVMs."
-        - "Enforced DevSecOps hygiene by hardening service images with restricted daemon permissions and automated build-time health checks."
-        - "Published the stack as a community playground on iximiuz Labs, demonstrating infrastructure automation in isolated environments."
-    - title: "Key Decisions"
+        - "Engineered 5 distinct, purpose-built OCI rootfs images from a custom Ubuntu base. Designed a highly modular architecture where users can launch an independent SonarQube environment, a standalone Nexus registry, a dedicated Dev Machine, or provision the entire unified CI/CD stack."
+        - "Decoupled CI/CD tooling from the base images. Scripted complex runtime initializations using systemd to dynamically provision PostgreSQL databases, configure kernel limits, and reconstruct volatile file systems on the fly during microVM startups."
+    - title: "Continuous Integration & Automated Publishing (GitHub Actions)"
       items:
-        - "Decoupled failure domains by provisioning one isolated Cloudflare Tunnel per service, guaranteeing that a failure in the SonarQube tunnel does not disrupt Jenkins."
-        - "Separated immutable infrastructure from mutable state, baking binaries into images while dynamically injecting secrets at runtime."
-        - "Optimized image update cycles by loading pipeline tooling dynamically via PATH scripts, allowing instantaneous security patching without full image rebuilds."
+        - "Architected comprehensive GitHub Actions workflows for each image (e.g., build-jenkins-rootfs) to establish true Continuous Integration, rather than relying on manual image builds."
+        - "Implemented strict build-time health checks into the CI pipeline to validate systemd configurations, Nginx reverse proxies, and service integrity. Only verified images are automatically pushed to the GitHub Container Registry (GHCR)."
+    - title: "Zero Trust Networking & Edge Routing"
+      items:
+        - "Overcame Carrier-Grade NAT (CGNAT) and the lack of public IPs by engineering outbound-only Cloudflare Tunnels, securely exposing internal CI/CD services on custom domains without opening inbound firewall ports."
+        - "Decoupled edge authentication and standardized traffic routing by configuring Nginx as a local reverse proxy, optimizing artifact streaming for heavy CI/CD workloads."
+    - title: "DevSecOps & Identity Governance"
+      items:
+        - "Hardened the infrastructure by enforcing the Principle of Least Privilege through strict sudoers profiles, daemon user isolation, and dynamic ephemeral SSH key generation per microVM instance."
+        - "Mitigated supply chain risks by implementing cryptographic binary verification for third-party tooling and strictly pinning security scanners to verified, non-compromised releases."
   tags:
     - ci-cd
     - containerization
-    - iac
+    - linux
     - networking
     - security
+    - iac
+    - automation
   tech:
-    - Docker
-    - Linux
     - systemd
-    - GitHub Actions
+    - Bash
+    - Docker
     - Nginx
     - Cloudflare Tunnel
     - Jenkins
     - SonarQube
     - Nexus
-    - Bash
-    - GHCR
-    - iximiuz Labs
+    - PostgreSQL
+    - GitHub Actions
   links:
     - type: github
       url: "https://github.com/ibtisam-iq/silver-stack"
@@ -67,48 +77,7 @@
       url: "https://labs.iximiuz.com/a/ibtisam-iq"
   featured: true
 
-- slug: debugbox
-  title: "DebugBox: Size-Optimized Kubernetes Diagnostics Toolkit for Cost-Efficient Edge Troubleshooting"
-  category: tool
-  status: maintained
-  year: 2026
-  shortDescription: "Built an open-source Kubernetes debugging toolkit featuring 3 size-optimized variants (14MB to 104MB). Designed to reduce bandwidth costs during edge cluster incident response."
-  description: "Identified an inefficiency in Kubernetes troubleshooting where standard diagnostic images pull hundreds of megabytes for simple networking checks, costing time and bandwidth in edge environments. Architected DebugBox, offering 3 purpose-built variants: a 14MB Alpine-based Lite version for basic DNS checks, up to a 104MB Power version pre-loaded with tshark and nmap for advanced packet forensics. Implemented strict semantic versioning (20 tags per release) via GHCR/Docker Hub, and blocked releases on Trivy HIGH/CRITICAL CVEs."
-  sections:
-    - title: "Motivation"
-      items:
-        - "Standard debugging images pull hundreds of megabytes for simple networking checks, costing time during incident response in bandwidth-constrained environments."
-        - "Existing tools force an 'all-or-nothing' approach, shipping packet forensics tooling regardless of whether the task requires it."
-    - title: "Key Achievements"
-      items:
-        - "Architected a Kubernetes toolkit that reduces diagnostic image sizes by up to 93% compared to industry defaults."
-        - "Engineered 3 variants (Lite, Balanced, Power) to dynamically match the resource constraints and forensic requirements of the task (from simple curl to tshark)."
-        - "Injected custom .bashrc profiles pre-configured with kubectx and kubens aliases, transforming multi-step troubleshooting into single-command executions."
-        - "Implemented DevSecOps automation, utilizing Trivy to scan and explicitly block release pipelines upon detecting HIGH or CRITICAL vulnerabilities."
-    - title: "Key Decisions"
-      items:
-        - "Rejected the 'one-size-fits-all' image pattern, intentionally splitting the tool into variants to optimize pull times for edge clusters."
-        - "Prioritized operational determinism by strictly pinning all tool versions, eliminating the unpredictable behavior associated with floating 'latest' tags."
-        - "Designed the tool to run as root exclusively for full diagnostic capability, explicitly documenting this boundary to ensure safe community adoption."
-        - "Published a 20-tag versioning strategy across GHCR and Docker Hub, providing incident response teams with immutable, auditable deployment options."
-  tags:
-    - containerization
-    - kubernetes
-    - networking
-    - security
-  tech:
-    - Docker
-    - Bash
-    - Alpine Linux
-    - GitHub Actions
-    - Trivy
-    - Kubernetes
-  links:
-    - type: github
-      url: "https://github.com/ibtisam-iq/debugbox"
-    - type: docs
-      url: "https://debugbox.ibtisam-iq.com"
-  featured: true
+# --- The Microservices Architectures ---
 
 - slug: microservices-demo
   title: "Event-Driven GitOps: Deploying Polyglot Microservices on Amazon EKS featuring Terraform for infrastructure provisioning; GitHub Actions for matrix CI pipelines; Helm & Kustomize for GitOps overlays; Kubernetes Gateway API for traffic routing; ExternalDNS for automated Route 53; ArgoCD & Image Updater for zero-touch continuous delivery; kube-prometheus-stack for alerting; and the Elastic Stack for logging"
@@ -116,28 +85,28 @@
   status: completed
   year: 2026
   shortDescription: "Deployed a 10-service polyglot application on Amazon EKS using an event-driven GitOps pipeline. Configured zero-touch continuous delivery via ArgoCD Image Updater, Gateway API routing, and centralized observability."
-  description: "Automated the deployment of Google's Online Boutique into a production-grade, event-driven GitOps ecosystem with zero manual intervention required for deployments. Provisioned the underlying infrastructure using Terraform. Engineered 3 CI pipelines for change detection, Trivy security scanning, and automated Helm chart releases to GHCR. Configured ArgoCD for declarative GitOps deployments, utilizing Kustomize to combine raw Gateway API manifests alongside the packaged Helm chart. The platform utilizes the Kubernetes Gateway API for advanced traffic routing, ExternalDNS for automated Route 53 record provisioning, and ArgoCD Image Updater for zero-touch continuous delivery. Comprehensive observability is achieved via kube-prometheus-stack for monitoring, AlertManager and Slack for notifications, and the Elastic Stack for centralized logging."
+  description: "Automated the deployment of Google's Online Boutique into a production-grade, event-driven GitOps ecosystem. Provisioned the underlying infrastructure using Terraform. Engineered 3 CI pipelines for change detection, Trivy security scanning, and automated Helm chart releases to GHCR. Configured ArgoCD for declarative GitOps deployments, utilizing Kustomize to combine raw Gateway API manifests alongside the packaged Helm chart. The platform utilizes the Kubernetes Gateway API for traffic routing, ExternalDNS for automated Route 53 record provisioning, and ArgoCD Image Updater for zero-touch continuous delivery. Comprehensive observability is achieved via kube-prometheus-stack for monitoring, AlertManager and Slack for notifications, and the Elastic Stack for centralized logging."
   sections:
     - title: "AWS Cloud & Platform Engineering"
       items:
         - "Infrastructure Provisioning: Engineered the complete AWS environment (VPCs, Bastion hosts, EKS cluster) using modular Terraform to guarantee immutable infrastructure."
-        - "Bypassing SCP Restrictions: Engineered self-managed AWS Auto Scaling Groups (ASGs) to bypass strict lab Service Control Policies (SCPs) that blocked EKS managed node groups."
+        - "Bypassing SCP Restrictions: Engineered self-managed AWS Auto Scaling Groups (ASGs) to bypass lab Service Control Policies (SCPs) that blocked EKS managed node groups."
         - "Storage Optimization: Configured the AWS EBS CSI driver to enforce 'gp3' as the default StorageClass. This reduced infrastructure costs while fulfilling high-I/O requirements for Elasticsearch PVCs."
         - "Certificate Automation: Provisioned an ACM wildcard certificate (*.ibtisam.qzz.io) and attached it to the shared Application Load Balancer to secure all custom subdomains."
     - title: "Kubernetes & Traffic Management"
       items:
         - "Gateway API Implementation: Adopted the modern Kubernetes Gateway API over the legacy Ingress API. Integrated the AWS Load Balancer Controller to share a single ALB across 5 independent HTTPRoutes."
-        - "Automated Route 53 DNS: Eliminated manual DNS management. Integrated ExternalDNS to automatically create and reconcile AWS Route 53 records directly from Gateway API manifests."
+        - "Automated Route 53 DNS: Integrated ExternalDNS to automatically create and reconcile AWS Route 53 records directly from Gateway API manifests."
         - "Dynamic Workload Scaling: Deployed the Kubernetes Metrics Server and configured Horizontal Pod Autoscalers (HPA) to dynamically scale frontend pods based on real-time CPU utilization."
         - "Immutable Helm Overlays: Kept the upstream Google Online Boutique Helm chart completely pristine. Utilized Kustomize to inject custom Gateway API manifests directly within ArgoCD."
     - title: "GitOps & Zero-Touch Delivery"
       items:
         - "Zero-Touch Continuous Delivery: Architected a fully autonomous workflow. GitHub Actions CI pipelines push OCI artifacts to GHCR, and ArgoCD Image Updater automatically handles the EKS cluster rollout."
-        - "Image Digest Reconciliation: Overcame BuildKit epoch timestamp constraints by configuring Image Updater to trigger deployments based strictly on image SHA-256 digests."
+        - "Image Digest Reconciliation: Configured Image Updater to trigger deployments based strictly on image SHA-256 digests, bypassing BuildKit epoch timestamp constraints."
         - "Clean Git History: Configured Image Updater to use the 'argocd' write method. This patches image overrides directly in-memory and prevents the CD repository from being flooded with automated commits."
     - title: "Security & Zero-Trust CI/CD"
       items:
-        - "Monorepo Matrix CI: Engineered 3 advanced GitHub Actions pipelines using dynamic matrix dispatch. This reduced build times by exclusively compiling and testing modified microservices."
+        - "Monorepo Matrix CI: Engineered 3 GitHub Actions pipelines using dynamic matrix dispatch. This reduced build times by exclusively compiling and testing modified microservices."
         - "Two-Repo Separation: Enforced a strict isolation boundary. The CI repository has zero access to the EKS cluster and relies entirely on pull-based GitOps for deployment execution."
         - "Fine-Grained Token Scoping: Restricted CI deployment tokens to explicit 'Contents: Read+Write' permissions exclusively on the CD repository to prevent lateral movement."
         - "DevSecOps Integration: Embedded Trivy filesystem and container image scanning into the CI pipelines to block vulnerabilities before artifacts reach the registry."
@@ -189,22 +158,22 @@
   status: completed
   year: 2026
   shortDescription: "Engineered platform-agnostic values overrides to deploy an AWS e-commerce demo app across bare-metal and Amazon EKS environments, orchestrating the entire lifecycle via Helmfile."
-  description: "Began by decoupling the AWS microservices demo from its native cloud dependencies, utilizing custom values-*.yaml overrides to prove application portability on a local bare-metal kubeadm cluster (via SilverStack). To eliminate manual deployment toil, I engineered a unified Helmfile orchestration layer. Finally, I returned the application to Amazon EKS within a restricted KodeKloud sandbox, manually engineering around strict Service Control Policies (SCPs) to provision the control plane and self-managed worker nodes, while offloading state to DynamoDB, SQS, Lambda, and SNS via IRSA."
+  description: "Began by decoupling the AWS microservices demo from its native cloud dependencies, utilizing custom values-*.yaml overrides to prove application portability on a local bare-metal kubeadm cluster (via SilverStack). To automate the deployment, I authored a unified Helmfile orchestration layer. Finally, I returned the application to Amazon EKS within a restricted KodeKloud sandbox, provisioning the control plane and self-managed worker nodes via CloudFormation to work within strict Service Control Policies (SCPs), while offloading state to DynamoDB, SQS, Lambda, and SNS via IRSA."
   sections:
     - title: "Bare-Metal Portability & Decoupling"
       items:
-        - "Chart Decoupling: Maintained the pristine state of the 5 upstream microservice charts published by AWS. Instead, engineered decoupled, environment-specific values-*.yaml override files to modify application behavior dynamically at runtime."
-        - "Severing Cloud Dependencies: Systematically ripped out AWS DynamoDB, SQS, ElastiCache, and ALB Ingress to deploy the stack onto a bare-metal kubeadm cluster using local containerized alternatives (RabbitMQ, Redis, NodePort), proving complete platform portability."
+        - "Chart Decoupling: Maintained the pristine state of the 5 upstream microservice charts published by AWS. Engineered decoupled, environment-specific values-*.yaml override files to modify application behavior dynamically at runtime."
+        - "Severing Cloud Dependencies: Ripped out AWS DynamoDB, SQS, ElastiCache, and ALB Ingress to deploy the stack onto a bare-metal kubeadm cluster using local containerized alternatives (RabbitMQ, Redis, NodePort), proving platform portability."
     - title: "Deployment Orchestration"
       items:
-        - "Helmfile Engineering: Eliminated the manual toil of executing 5 separate helm commands by engineering a declarative Helmfile orchestration layer."
+        - "Helmfile Engineering: Authored a declarative Helmfile orchestration layer to consolidate the execution of 5 separate helm deployments."
         - "Dependency Sequencing: Authored 3 target-specific Helmfile configurations, utilizing the 'needs:' directive to ensure databases and message brokers provisioned strictly before microservices across all environments."
     - title: "Amazon EKS Infrastructure Engineering"
       items:
-        - "Bypassing SCP Restrictions: Overcame strict lab Service Control Policies (SCPs) by pre-provisioning IAM roles via Terraform, deploying the control plane via eksctl, and engineering self-managed worker nodes via custom AWS CloudFormation templates to bypass IAM blocks on managed node groups."
+        - "Bypassing SCP Restrictions: Provisioned IAM roles via Terraform, deployed the control plane via eksctl, and engineered self-managed worker nodes via custom AWS CloudFormation templates to bypass IAM blocks on managed node groups."
         - "AWS Managed Services Integration: Offloaded application state back to AWS native services. Configured IAM Roles for Service Accounts (IRSA) to bind the Cart service to DynamoDB and the Orders service to a serverless event pipeline (SQS -> Lambda -> SNS)."
         - "Ingress Optimization: Deployed the AWS Load Balancer Controller and configured an Ingress Group to share a single ALB across the UI, Prometheus, and Grafana."
-        - "Native AWS Logging: Deployed Fluent Bit to stream logs directly to CloudWatch Container Insights, abandoning standard ELK/Prometheus stacks to align strictly with AWS managed observability."
+        - "Native AWS Logging: Deployed Fluent Bit to stream logs directly to CloudWatch Container Insights, aligning with AWS managed observability."
   tags:
     - iac
     - orchestration
@@ -231,72 +200,79 @@
       url: "https://runbook.ibtisam-iq.com/projects/deployments/retail-store-sample-app/"
   featured: true
 
-- slug: devsecops-pipeline-engineering
-  title: "Standardized DevSecOps Pipelines Across Java, Python, and Node.js Monoliths using Jenkins and GitHub Actions"
+# --- The Monolithic Architectures ---
+
+- slug: java-monolith
+  title: "BankApp: Evolutionary Cloud Migration of a monolithic Java 3-tier application featuring EC2 Auto Scaling for baseline virtual machines; Amazon ECS Fargate for serverless containerization; Amazon EKS & Gateway API for scalable orchestration; and Amazon RDS for decoupled state management"
   category: platform
   status: completed
   year: 2026
-  shortDescription: "Designed a universal 14-stage DevSecOps pipeline architecture. Mirrored the exact implementation across Jenkins and GitHub Actions to demonstrate CI/CD portability."
-  description: "Architected a strict, language-agnostic DevSecOps platform across three monolithic codebases (Java, Python, Node.js). To prove that rigorous DevSecOps discipline is a process rather than a tool dependency, I designed a single, immutable 14-stage build-test-scan-publish pipeline and implemented it identically across both Jenkins and GitHub Actions. The pipelines enforce security compliance, utilizing multi-pass Trivy scanning (explicitly isolating --vuln-type library from OS packages) to hard-fail deployments upon detecting CRITICAL CVEs."
+  shortDescription: "Architected the end-to-end cloud migration of an enterprise Java application. Progressively modernized the infrastructure from legacy virtual machines to serverless containers, and ultimately to Amazon EKS."
+  description: "I architected a comprehensive modernization and cloud migration strategy for a monolithic Java application. Instead of a single static deployment, I orchestrated the exact same immutable application across a progression of increasingly scalable compute paradigms: EC2 virtual machines, serverless Amazon ECS Fargate tasks, and finally Amazon EKS. This project showcases the ability to migrate legacy workloads to cloud-native architectures, decoupling application state to Amazon RDS, implementing multi-stage Docker builds, and adopting modern traffic routing via the Kubernetes Gateway API."
   sections:
-    - title: "Key Achievements"
+    - title: "Evolutionary Cloud Migration"
       items:
-        - "Standardized CI/CD by designing a universal 14-stage pipeline and implementing it across both Jenkins and GitHub Actions to prove infrastructure portability."
-        - "Configured multi-pass Trivy scanning, explicitly isolating --vuln-type library from OS packages to ensure unpatched base-image CVEs do not falsely block application releases."
-        - "Eradicated inline shell script sprawl by forcing all Jest and Pytest configurations into strict, version-controlled configuration files."
-        - "Automated multi-registry artifact publishing, pushing version-tagged Docker images simultaneously to GHCR, Docker Hub, and a self-hosted Nexus registry."
-    - title: "Key Decisions"
+        - "Orchestrated a multi-phase infrastructure migration, successfully deploying the application across legacy EC2 instances, serverless ECS Fargate, and production Amazon EKS."
+        - "Adopted a modular 'build once, deploy anywhere' cloud methodology, seamlessly reusing AWS networking and security infrastructure across all three deployment phases."
+    - title: "Cloud-Native Modernization"
       items:
-        - "Mirrored CI logic across Jenkins and GitHub Actions intentionally to demonstrate that DevSecOps is independent of the underlying CI tooling."
-        - "Mandated hard-fail security and quality gates over passive warnings, enforcing a culture where security scans actively protect production."
-        - "Architected a strict CI/CD decoupling strategy: pipelines communicate with deployment repositories solely via a single image tag handoff."
+        - "Modernized the application architecture by decoupling internal database state to a fully managed Amazon RDS instance, drastically improving resilience and backup capabilities."
+        - "Slashed the monolithic container footprint by over 60% by engineering a strict multi-stage Docker pipeline, securing the runtime on a highly optimized Java 21 base image."
+    - title: "Resilience & Traffic Engineering"
+      items:
+        - "Future-proofed the Kubernetes cluster's routing architecture by abandoning legacy Ingress in favor of the modern Kubernetes Gateway API, integrated directly with AWS Application Load Balancers."
+        - "Eliminated production Out-Of-Memory (OOM) crashes by explicitly aligning cloud-native JVM memory parameters with underlying Kubernetes resource constraints."
   tags:
-    - ci-cd
-    - security
+    - aws
+    - kubernetes
     - containerization
-    - documentation
+    - ci-cd
+    - iac
+    - security
   tech:
-    - Jenkins
-    - GitHub Actions
-    - SonarQube
-    - Trivy
-    - Nexus
-    - Docker
+    - Java 21
+    - Spring Boot 3.4
     - Maven
-    - npm
-    - pytest
-    - JUnit
-    - GHCR
-    - Docker Hub
+    - AWS EC2
+    - Amazon ECS
+    - Amazon EKS
+    - Gateway API
+    - Docker
+    - Kustomize
   links:
-    - type: java-monolith-repo
-      url: "https://github.com/ibtisam-iq/java-monolith-app"
-    - type: python-monolith-repo
-      url: "https://github.com/ibtisam-iq/python-monolith-app"
-    - type: node-monolith-repo
-      url: "https://github.com/ibtisam-iq/node-monolith-3tier-app"
     - type: runbook
-      url: "https://runbook.ibtisam-iq.com/self-hosted/ci-cd/iximiuz/cicd-stack-operations/"
+      url: "https://runbook.ibtisam-iq.com/projects/deployments/java-monolith/"
+    - type: app-repo
+      url: "https://github.com/ibtisam-iq/java-monolith-app"
+    - type: cd-repo
+      url: "https://github.com/ibtisam-iq/platform-engineering-systems/tree/main/systems/java-monolith"
   featured: true
 
 - slug: polyglot-monolith-deployment
-  title: "Legacy Containerization and Multi-Environment Deployment to Bare-Metal Kubernetes and Amazon EKS using Kustomize"
+  title: "Polyglot Platform Orchestration featuring Kustomize for DRY GitOps deployments; Kubernetes for bare-metal & EKS container orchestration; Amazon ECS for serverless compute; and EC2 Auto Scaling for virtual machine resilience"
   category: platform
   status: completed
   year: 2026
-  shortDescription: "Modernized three legacy monoliths (Java, Python, Node) into portable Docker artifacts. Deployed to self-provisioned Bare-Metal Kubernetes clusters using Kustomize overlays."
-  description: "Executed an infrastructure modernization initiative focusing on horizontal scale across three independent legacy codebases. After abstracting hardcoded configurations to 12-factor environments, I engineered a platform-agnostic deployment architecture using Kustomize overlays. The standardized artifacts were orchestrated to self-provisioned Bare-Metal Kubernetes clusters. I engineered idempotent kubeadm scripts featuring dynamic Kubernetes API version-pinning to prevent silent upstream upgrades from breaking local cluster bootstrapping."
+  shortDescription: "Modernized three legacy monoliths (Java, Python, Node) into strictly containerized artifacts. Deployed across EC2 ASGs, ECS Fargate, Bare-Metal Kubernetes, and Amazon EKS."
+  description: "Engineered deployment orchestration pipelines for three monolithic codebases (Java, Python, Node.js). Before deploying to the cloud, I audited the codebases (upgrading frameworks, injecting container health probes) and standardized database connectivity across local, Docker Compose, and bare-metal environments. I then refactored the legacy applications into highly optimized Docker images and orchestrated these artifacts across four compute paradigms: EC2 Auto Scaling Groups, Amazon ECS Fargate, Bare-Metal Kubernetes, and Amazon EKS."
   sections:
-    - title: "Key Achievements"
+    - title: "Codebase Auditing & Database Mechanics"
       items:
-        - "Modernized and containerized three production-grade monolithic applications, transforming legacy codebases into portable Docker artifacts."
-        - "Engineered idempotent kubeadm scripts with explicit Kubernetes API version-pinning to safely provision Bare-Metal clusters from scratch."
-        - "Designed a DRY Kustomize architecture, ensuring that Bare-Metal and EKS deployments share over 80% of their YAML definitions."
-    - title: "Key Decisions"
+        - "Code Modernization: Audited and upgraded three legacy codebases (Spring Boot 3.4.5, Java 21, Node.js 22, Python 3.12). Injected native container readiness probes ('/health', '/actuator/health') directly into the application logic to satisfy Kubernetes deployment requirements."
+        - "Database Connectivity Mechanics: Transitioned database resolution from native bare-metal connections ('localhost'), to Docker Compose internal DNS ('mysql' / 'postgres'), and finally to decoupled cloud endpoints (Amazon RDS) without altering source code."
+        - "Environment Troubleshooting: Engineered configuration pipelines, solving edge cases such as 'python-dotenv' URL truncation, PostgreSQL 15+ schema-level grants, and quoting Java JDBC URLs to prevent shell corruption."
+    - title: "Architectural Refactoring & Containerization"
       items:
-        - "Architected Kustomize bases strictly for stateless Deployments, dynamically injecting StatefulSets, StorageClasses, and RDS connection strings exclusively via environment overlays."
-        - "Avoided forced microservice paradigms, correctly deploying a 2-tier Python Flask app as a single container because the architecture did not require a decoupled proxy."
-        - "Invested in building reusable, idempotent cluster provisioning automation rather than relying on manual runbooks, ensuring safe environment recreation."
+        - "2-Tier to 3-Tier Migration: Refactored the legacy Node.js application from a flat 2-tier model (Express serving UI) into a strict 3-tier MVC architecture, deploying an Nginx reverse proxy to serve the compiled React frontend and proxy API requests to the backend."
+        - "Multi-Stage Docker Architecture: Engineered advanced multi-stage Dockerfiles across all stacks. For the Node frontend, I built the React app via Webpack in a Node container and copied the static payload directly into an alpine Nginx runtime, excluding the Node toolchain from the final image entirely."
+    - title: "Compute Paradigm Versatility"
+      items:
+        - "Multi-Platform Deployments: Engineered scalable deployments across four distinct compute abstractions: bare-metal virtual machines (EC2), serverless containers (ECS Fargate), and full orchestration (Kubernetes)."
+        - "Pragmatic Architecture: Avoided forced microservice paradigms, correctly deploying a 2-tier Python Flask application as a single cohesive unit utilizing Gunicorn, demonstrating judgment in applying the right architectural pattern."
+    - title: "Kubernetes & GitOps Engineering"
+      items:
+        - "DRY Overlay Architecture: Designed a DRY (Don't Repeat Yourself) Kustomize architecture, ensuring that Bare-Metal and Amazon EKS deployments share over 80% of their base YAML definitions."
+        - "Dynamic State Injection: Architected Kustomize bases strictly for stateless Deployments, dynamically injecting StatefulSets, StorageClasses, and AWS RDS connection strings exclusively via environment-specific overlays."
   tags:
     - containerization
     - kubernetes
@@ -305,11 +281,8 @@
     - gitops
   tech:
     - Java
-    - Spring Boot
     - Python
-    - Flask
     - Node.js
-    - Express
     - React
     - MySQL
     - PostgreSQL
@@ -332,48 +305,113 @@
       url: "https://runbook.ibtisam-iq.com/bootstrap/kubernetes/cluster-kubeadm/"
   featured: true
 
-- slug: java-monolith
-  title: "Infrastructure Evolution of a Java Application across EC2 Auto Scaling, ECS Fargate, and Amazon EKS"
+# --- CI/CD, Tooling, and Cloud Basics --- 
+
+- slug: devsecops-pipeline-engineering
+  title: "Universal DevSecOps Pipeline Architecture featuring Jenkins for declarative CI; GitHub Actions for mirrored pipelines; SonarQube for quality gating; Trivy for multi-pass CVE scanning; and Nexus & GHCR for immutable multi-registry artifact publishing"
   category: platform
   status: completed
   year: 2026
-  shortDescription: "Documented the vertical infrastructure evolution of a single Java application across 4 distinct compute paradigms: EC2 Auto Scaling, ECS Fargate, Bare-Metal K8s, and Amazon EKS."
-  description: "Architected a vertical deep-dive into the infrastructure evolution of a single application, demonstrating the evolutionary trade-offs of compute abstractions. The identical immutable Spring Boot 3.4 artifact was deployed across four increasingly scalable paradigms: AWS EC2 Auto Scaling groups, serverless Amazon ECS Fargate tasks, local Bare-Metal Kubernetes, and Amazon EKS. I slashed the image size to ~165MB via multi-stage JRE-only distroless builds, and configured strict cloud-native JVM parameters (-XX:+UseContainerSupport, -XX:MaxRAMPercentage) to prevent container OOMKilled events across all execution environments."
+  shortDescription: "Designed a universal 14-stage DevSecOps pipeline architecture. Mirrored the exact implementation across Jenkins and GitHub Actions, incorporating native SAST tooling (Bandit, pip-audit) and strict GitOps handoffs."
+  description: "Architected a strict, language-agnostic DevSecOps platform across three independent monolithic codebases (Java, Python, Node.js). Before engineering the CI pipelines, I manually validated the complete application lifecycle from source compilation to local bare-metal database connections to establish a working baseline. I engineered a single, immutable 14-stage build-test-scan-publish pipeline and implemented it identically across both Jenkins and GitHub Actions. The pipelines enforce hard-fail security compliance, utilizing language-specific SAST tooling (Bandit, pip-audit, ESLint) and multi-pass Trivy scanning (explicitly isolating library dependencies from OS packages) to prevent CRITICAL CVEs from reaching production. All pipelines culminate in a strict GitOps handoff, dynamically injecting OCI artifact SHAs directly into the CD repository."
   sections:
-    - title: "Key Achievements"
+    - title: "Pre-Pipeline Validation & Architecture"
       items:
-        - "Orchestrated the exact same immutable Docker artifact across 4 distinct paradigms: EC2, ECS, Bare-Metal K8s, and EKS."
-        - "Slashed image size to ~165MB via multi-stage Docker builds utilizing JRE-only distroless base images."
-        - "Engineered identical, high-security 14-stage declarative CI/CD pipelines across platforms, incorporating 3-pass Trivy scanning and SonarQube quality gates."
-    - title: "Key Decisions"
+        - "Local Bare-Metal Validation: Established a functional baseline prior to automation by manually validating application compilations (Maven, Webpack) and Native database attachments (MySQL/PostgreSQL) directly on bare-metal hardware."
+        - "Pipeline Portability: Engineered a universal 14-stage pipeline and implemented it across both Jenkins and GitHub Actions, proving tool-agnostic CI/CD portability."
+        - "Decoupled GitOps Handoff: Architected a strict CI/CD separation of concerns; CI pipelines communicate with CD deployment repositories solely via an automated Git commit (via strict shell interpolation of the image SHA), ensuring zero cluster access from CI."
+    - title: "DevSecOps & Quality Gating"
       items:
-        - "Adopted a 'build once, reuse everywhere' cloud methodology, reusing Route 53 Hosted Zones and ACM certificates across the EC2, ECS, and EKS phases."
-        - "Configured strict cloud-native JVM parameters (-XX:+UseContainerSupport, -XX:MaxRAMPercentage) to prevent container OOMKilled events."
-        - "Permanently resolved infinite AWS ALB HTTPS redirect loops by configuring Spring Boot's server.forward-headers-strategy=native."
-        - "Future-proofed the cluster's ingress architecture by abandoning traditional Ingress in favor of the Kubernetes Gateway API."
+        - "Language-Specific SAST: Engineered native security tooling per codebase, integrating Bandit and pip-audit for Python, npm audit and ESLint for Node.js, and OWASP/Trivy FS for Java to catch idiomatic vulnerabilities."
+        - "The Trivy 3-Pass Strategy: Configured Trivy scanning to explicitly isolate '--vuln-type library' (blocking builds on CRITICALs) from '--vuln-type os' (advisory only), ensuring Debian maintainer CVEs do not falsely block application releases."
+        - "Test Isolation: Engineered CI test suites to run completely isolated from live databases (e.g. using 'sqlite://' for Python) while still fulfilling strict JaCoCo and Cobertura XML coverage gates in SonarQube."
+    - title: "Pipeline Optimization & Artifact Management"
+      items:
+        - "Multi-Registry Publishing: Automated simultaneous artifact publishing, pushing version-tagged Docker images to GHCR, Docker Hub, and a self-hosted Nexus registry."
+        - "Immutable Versioning: Eradicated floating 'latest' tags by strictly versioning images via a combination of the semantic version, the exact 7-character Git SHA, and the CI build number."
   tags:
-    - aws
-    - kubernetes
-    - containerization
     - ci-cd
-    - iac
     - security
+    - containerization
+    - gitops
   tech:
-    - Java 21
-    - Spring Boot 3.4
-    - AWS EC2
-    - Amazon ECS
-    - Amazon EKS
-    - Gateway API
+    - Jenkins
+    - GitHub Actions
+    - SonarQube
+    - Trivy
+    - Bandit
+    - pip-audit
+    - Nexus
     - Docker
-    - Kustomize
+    - Maven
+    - npm
+    - pytest
+    - GHCR
+    - Docker Hub
   links:
-    - type: runbook
-      url: "https://runbook.ibtisam-iq.com/projects/deployments/java-monolith/"
-    - type: app-repo
+    - type: java-monolith-repo
       url: "https://github.com/ibtisam-iq/java-monolith-app"
-    - type: cd-repo
-      url: "https://github.com/ibtisam-iq/platform-engineering-systems/tree/main/systems/java-monolith"
+    - type: python-monolith-repo
+      url: "https://github.com/ibtisam-iq/python-monolith-app"
+    - type: node-monolith-repo
+      url: "https://github.com/ibtisam-iq/node-monolith-3tier-app"
+    - type: runbook
+      url: "https://runbook.ibtisam-iq.com/self-hosted/ci-cd/iximiuz/cicd-stack-operations/"
+  featured: true
+
+- slug: debugbox
+  title: "DebugBox: Size-Optimized Kubernetes Diagnostics Toolkit featuring Multi-Arch Docker Builds; GitHub Actions for atomic releases; Trivy for vulnerability gating; and MkDocs for automated documentation"
+  category: tool
+  status: maintained
+  year: 2026
+  shortDescription: "Architected a comprehensive open-source Kubernetes diagnostic toolkit. Engineered 3 size-optimized variants (saving up to 93% bandwidth) and fully automated the DevSecOps lifecycle from local Makefile linting to multi-registry publishing."
+  description: "Standard Kubernetes troubleshooting tools like 'netshoot' are monolithic, pulling hundreds of megabytes for simple connectivity checks. To solve this inefficiency, I architected DebugBox—an open-source toolkit offering 3 right-sized container variants (from a 14MB Lite version for basic DNS checks up to a 104MB Power version for packet forensics). This project demonstrates the ability to engineer an entire open-source software lifecycle. Beyond the containers, I built a modular architecture separating declarative build definitions from procedural installation logic, automated multi-architecture compilation (amd64/arm64) using Docker Buildx and QEMU, integrated hard-fail security scans, and established an automated MkDocs documentation site."
+  sections:
+    - title: "Architectural Engineering & FinOps"
+      items:
+        - "Right-Sizing Workloads: Architected 3 purpose-built variants (Lite, Balanced, Power) based on Alpine Linux. Optimized incident response times on bandwidth-constrained edge clusters by reducing diagnostic image sizes by up to 93% compared to industry defaults."
+        - "Declarative vs Procedural Isolation: Kept Dockerfiles strictly declarative by offloading procedural package installation and validation logic to dedicated '.packages' and '.verify' scripts."
+        - "Cryptographic Binary Verification: Engineered dedicated installer scripts (e.g., install-yq-binary) that handle dynamic architecture detection and enforce strict SHA256 checksum validation for binaries not available in the Alpine package manager."
+        - "Operational Determinism: Eliminated unpredictable behavior by strictly pinning all tool versions and base images, ensuring repeatable and deterministic container builds."
+    - title: "Kubernetes Developer Experience"
+      items:
+        - "Context Switching Automation: Injected custom .bashrc profiles pre-loaded with kubectx and kubens aliases, transforming multi-step context switching into single-command executions during cluster incident response."
+        - "Pre-Loaded Shell Helpers: Embedded custom bash functions (e.g., json(), yaml(), sniff-dns(), cert-check()) directly into the container filesystem to accelerate data parsing and packet analysis without external scripts."
+    - title: "CI/CD & Release Automation"
+      items:
+        - "Multi-Arch Release Pipelines: Automated a multi-stage GitHub Actions pipeline that utilizes Docker Buildx and QEMU to compile cross-platform images (amd64 and arm64)."
+        - "OCI Metadata Injection: Configured the pipeline to dynamically inject standard Open Container Initiative (org.opencontainers.image.*) labels into every image."
+        - "Atomic Multi-Registry Publishing: Configured the release pipelines to publish synchronized artifacts simultaneously to GitHub Container Registry (GHCR) and Docker Hub."
+        - "Immutable Versioning: Implemented a strict 20-tag semantic versioning strategy upon release triggers (v*.*.*), providing response teams with auditable artifacts and eliminating the risk of floating 'latest' tags."
+    - title: "Quality Assurance & DevSecOps"
+      items:
+        - "Hard-Fail Security Gating: Integrated Trivy to scan images mid-pipeline, explicitly blocking the multi-registry push if HIGH or CRITICAL vulnerabilities are detected."
+        - "Container Smoke Testing: Authored custom bash smoke tests (tests/smoke.sh and tests/ci-smoke.sh) that execute inside the built containers during the CI phase to guarantee tool availability before release. These tests dynamically source shared validation logic from an external 'infra-bootstrap' repository."
+        - "Local DevSecOps Automation: Authored a comprehensive Makefile orchestrating Hadolint for Dockerfile linting, local Docker builds, shell testing, and Trivy scanning, enabling strict local validation before Git commits."
+    - title: "Open-Source Ecosystem Management"
+      items:
+        - "Automated Documentation: Engineered a responsive documentation site utilizing MkDocs and GitHub Pages, triggered via a dedicated workflow (docs.yml) to ensure usage guides remain synchronized."
+        - "Community Standards: Implemented standard open-source governance by authoring and maintaining CONTRIBUTING.md, CODE_OF_CONDUCT.md, and SECURITY.md policies."
+  tags:
+    - containerization
+    - kubernetes
+    - networking
+    - security
+    - devsecops
+    - ci-cd
+  tech:
+    - Docker (Buildx & QEMU)
+    - Bash
+    - Alpine Linux
+    - GitHub Actions
+    - Trivy
+    - Hadolint
+    - MkDocs
+  links:
+    - type: github
+      url: "https://github.com/ibtisam-iq/debugbox"
+    - type: docs
+      url: "https://debugbox.ibtisam-iq.com"
   featured: true
 
 - slug: aws-secure-static-hosting
@@ -421,3 +459,4 @@
     - type: runbook
       url: "https://runbook.ibtisam-iq.com/projects/deployments/static-website/"
   featured: true
+  
