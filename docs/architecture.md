@@ -1,10 +1,10 @@
-# Architecture — projects.ibtisam-iq.com
+# Architecture: projects.ibtisam-iq.com
 
 ## Overview
 
-This repository hosts the source code for [projects.ibtisam-iq.com](https://projects.ibtisam-iq.com) — a React + TypeScript + Tailwind CSS portfolio site that showcases DevOps projects.
+This repository hosts the source code for [projects.ibtisam-iq.com](https://projects.ibtisam-iq.com), a React + TypeScript + Tailwind CSS portfolio site that showcases DevOps projects.
 
-The site is **data-driven**. Project content lives in [`data/projects.yaml`](../data/projects.yaml) — the single source of truth. A build-time script converts this YAML into a typed TypeScript module consumed by the React app.
+The site is **data-driven**. Project content lives in [`data/projects.yaml`](../data/projects.yaml) (the single source of truth). A build-time script converts this YAML into a typed TypeScript module consumed by the React app.
 
 ---
 
@@ -40,20 +40,20 @@ The site is **data-driven**. Project content lives in [`data/projects.yaml`](../
 
 ---
 
-## Why This Architecture?
+## Architecture Rationale
 
-### Problem with the naive approach
+### Limitations of Hardcoded TypeScript Data
 The simplest approach is to put all project data directly inside `src/data/projects.ts`. This works initially but has serious long-term problems:
 
 - As projects grow (10, 20, 50+), the TypeScript file becomes extremely long and hard to maintain.
-- Every time a project is added, TypeScript code has to be edited — even though no UI logic is changing.
+- Every time a project is added, TypeScript code has to be edited, even though no UI logic is changing.
 - It mixes **content** (what the projects are) with **code** (how they are displayed). These are fundamentally different concerns.
 
-### Solution: YAML as source of truth
+### Decoupled Content Layer (YAML Source of Truth)
 YAML is the right format for structured content data because:
 - It is human-readable and easy to write.
 - It supports lists, nested objects, and multi-line strings natively.
-- It is the same format used in Kubernetes manifests, GitHub Actions, Docker Compose — a familiar format in the DevOps world.
+- It is the same format used in Kubernetes manifests, GitHub Actions, and Docker Compose. Familiar territory in the DevOps world.
 - It has no TypeScript syntax requirements, no brackets, no commas.
 
 ---
@@ -65,14 +65,16 @@ Each project in `data/projects.yaml` follows this schema:
 ```yaml
 - slug: my-project                     # URL-safe identifier (/project/<slug>)
   title: "My Project"                  # Display name
-  category: platform                   # platform | tool | reference
+  category: platform                   # platform | tool
   status: completed                    # completed | in-progress | maintained | archived
-  year: 2025                           # Completion or last major update year
-  shortDescription: "Card summary."    # One-liner for the project card
-  description: "Full description."     # Full paragraph for the detail page
-  highlights:                          # Achievements with measurable impact
-    - "Achievement 1"
-    - "Achievement 2"
+  year: 2026                           # Completion or last major update year
+  shortDescription: "Card summary."    # Shown on the project card
+  description: "Full overview."        # Shown on the project detail page (supports \n\n for paragraphs)
+  sections:                            # Flexible content blocks (any number of sections/items)
+    - title: "Section Heading"
+      items:
+        - "Bullet point describing what was built and why."
+        - "Another bullet point with specific tools and decisions."
   tags:                                # Capability domains (recruiter-level)
     - ci-cd
     - kubernetes
@@ -80,21 +82,20 @@ Each project in `data/projects.yaml` follows this schema:
     - Docker
     - Terraform
   links:                               # Type + URL pairs
-    - type: github                     # github | runbook | blog | website
+    - type: github                     # github | runbook | blog | website | playground | docs | app-repo | cd-repo
       url: "https://github.com/..."
     - type: runbook
       url: "https://runbook.ibtisam-iq.com/..."
-  imageUrl: "https://..."              # Optional hero image for detail page
+  imageUrl: "/images/hero.png"         # Optional hero image for detail page
   featured: true                       # Pinned to top of the project grid
 ```
 
 ### Categories
 
-| Category | Description | Color |
-|---|---|---|
-| `platform` | Production-grade infrastructure deployments | Purple |
-| `tool` | Open-source tools, dev environments, utilities | Green |
-| `reference` | Documentation sites, runbooks, knowledge bases | Blue |
+| Category | Description |
+|---|---|
+| `platform` | Infrastructure deployments, CI/CD pipelines, cloud architectures |
+| `tool` | Open-source tools, dev environments, utilities |
 
 ### Statuses
 
@@ -107,12 +108,12 @@ Each project in `data/projects.yaml` follows this schema:
 
 ---
 
-## How to Add a New Project
+## Content Management Workflow
 
 > [!TIP]
-> No source code changes needed to add a project.
+> No source code changes needed to add a project. For complete formatting rules and styling best practices, consult the official **[Project Card Authoring Standards](https://blog.ibtisam-iq.com/project-card-authoring-standards/)**.
 
-**1. Edit `data/projects.yaml`** — add a new entry following the schema above.
+**1. Edit `data/projects.yaml`** and add a new entry following the schema above.
 
 **2. Regenerate TypeScript data (local dev only):**
 
@@ -145,31 +146,38 @@ The single source of truth. Contains all project entries in YAML format. Edit th
 A Node.js ESM script that reads `data/projects.yaml` and writes a fully-typed `src/data/projects.ts` file. The generated file includes:
 - A warning comment ("DO NOT EDIT MANUALLY")
 - The projects array typed as `Project[]`
-- Utility functions: `getProjectsByCategory`, `getProjectsByStatus`, `getProjectsByTech`, `getFeaturedProjects`, `getAllTechTags`, `getAllCapabilityTags`, `getAllYears`
+- Utility functions: `getAllTechTags`, `getAllCapabilityTags`, `getAllYears`
 
 ### `src/types/project.ts`
-TypeScript interfaces defining the `Project` and `ProjectLink` types. All components reference these types.
+TypeScript interfaces defining the `Project`, `ProjectSection`, and `ProjectLink` types. All components reference these types.
 
 ### `src/data/projects.ts`
-**AUTO-GENERATED** — do not edit manually. This file is the output of `generate-projects.js` and is the data layer consumed by all React components.
+**AUTO-GENERATED.** Do not edit manually. This file is the output of `generate-projects.js` and is the data layer consumed by all React components.
 
 ### `.github/workflows/pages.yml`
 The CI/CD pipeline. Triggers on:
-- `push` to `main` — for any code or data change
-- `workflow_dispatch` — for manual re-runs from the GitHub Actions UI
+- `push` to `main` (any code or data change)
+- `workflow_dispatch` (manual re-runs from the GitHub Actions UI)
 
 ---
 
 ## Component Architecture
 
 ```
-App.tsx
-├── Navbar.tsx           — Navigation bar with external links
-├── Hero.tsx             — Title, subtitle, and category counters (All / Platform / Reference / Tool)
-├── Sidebar.tsx          — Filters: search, category, skills, tools, year, status
-├── ProjectCard.tsx      — Card view with category badge, year, tags, tech, and link buttons
-├── ProjectDetail.tsx    — Full project page (accessed via /project/<slug>)
-└── Footer.tsx           — Social links and quick navigation
+App.tsx                    : Router, ScrollToTop, ThemeProvider wrapper
+├── context/
+│   └── ThemeContext.tsx    : Dark/light mode provider (class strategy on <html>)
+├── hooks/
+│   ├── useCountUp.ts      : requestAnimationFrame counter with easeOut curve
+│   └── useInView.ts       : IntersectionObserver hook (fires once, respects prefers-reduced-motion)
+├── components/
+│   ├── Navbar.tsx          : Sticky nav with internal links + theme toggle
+│   ├── Hero.tsx            : Heading, animated stat counters (projects, tech count), scroll indicator
+│   ├── Sidebar.tsx         : Filter panel (search, category, skills, tech, year, status)
+│   ├── ProjectCard.tsx     : Card with scroll-triggered reveal, hover lift, staggered tech badges
+│   ├── ProjectDetail.tsx   : Full project page with overview paragraphs, dynamic sections, sidebar metadata
+│   ├── HowIWork.tsx        : /how-i-work methodology page with SVG pipeline and typewriter terminal
+│   └── Footer.tsx          : Social links and external site navigation
 ```
 
 ### Filter Flow
@@ -184,11 +192,12 @@ App.tsx
 
 | Layer | Technology |
 |---|---|
-| Framework | React 19 + TypeScript |
-| Styling | Tailwind CSS v3 |
-| Build tool | Vite |
+| Framework | React 19 + TypeScript 5.9 |
+| Styling | Tailwind CSS v3 (dark mode via `class` strategy) |
+| Build tool | Vite 7 |
 | Routing | React Router v7 |
-| Icons | React Icons (Font Awesome) |
+| Icons | React Icons |
+| Fonts | Inter, DM Sans, JetBrains Mono (Google Fonts) |
 | Data format | YAML → TypeScript (auto-generated at build time) |
 | Hosting | GitHub Pages |
 | CI/CD | GitHub Actions |

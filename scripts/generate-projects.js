@@ -9,7 +9,7 @@ const yaml = readFileSync('data/projects.yaml', 'utf8')
 const projects = parse(yaml)
 
 const output = `// ================================================================
-// AUTO-GENERATED FILE — DO NOT EDIT MANUALLY
+// AUTO-GENERATED FILE. DO NOT EDIT MANUALLY.
 // Source of truth: data/projects.yaml (in this repo)
 // To add/edit a project, update data/projects.yaml and push.
 // ================================================================
@@ -17,18 +17,6 @@ const output = `// =============================================================
 import type { Project } from "@/types/project"
 
 export const projects: Project[] = ${JSON.stringify(projects, null, 2)}
-
-export const getProjectsByCategory = (category: Project["category"]) =>
-  projects.filter((p) => p.category === category)
-
-export const getProjectsByStatus = (status: Project["status"]) =>
-  projects.filter((p) => p.status === status)
-
-export const getProjectsByTech = (tech: string) =>
-  projects.filter((p) => p.tech.includes(tech))
-
-export const getFeaturedProjects = () =>
-  projects.filter((p) => p.featured)
 
 export const getAllTechTags = (): string[] => {
   const techSet = new Set<string>()

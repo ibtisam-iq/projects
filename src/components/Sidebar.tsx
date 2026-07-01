@@ -1,4 +1,6 @@
+import { useEffect } from "react"
 import { getAllTechTags, getAllCapabilityTags, getAllYears } from "@/data/projects"
+import { FiSearch, FiX } from "react-icons/fi"
 
 interface SidebarProps {
   searchQuery: string
@@ -13,6 +15,8 @@ interface SidebarProps {
   setSelectedStatus: (status: string) => void
   selectedYear: string
   setSelectedYear: (year: string) => void
+  isOpen: boolean
+  onClose: () => void
 }
 
 const Sidebar = ({
@@ -28,164 +32,251 @@ const Sidebar = ({
   setSelectedStatus,
   selectedYear,
   setSelectedYear,
+  isOpen,
+  onClose,
 }: SidebarProps) => {
   const allTech = getAllTechTags()
   const allTags = getAllCapabilityTags()
   const allYears = getAllYears()
 
+  const hasActiveFilters =
+    searchQuery !== "" ||
+    selectedCategory !== "all" ||
+    selectedTags.length > 0 ||
+    selectedTech.length > 0 ||
+    selectedStatus !== "all" ||
+    selectedYear !== "all"
+
+  const clearAll = () => {
+    setSearchQuery("")
+    setSelectedCategory("all")
+    setSelectedTags([])
+    setSelectedTech([])
+    setSelectedStatus("all")
+    setSelectedYear("all")
+  }
+
   const toggleTech = (tech: string) => {
-    if (selectedTech.includes(tech)) {
-      setSelectedTech(selectedTech.filter((t) => t !== tech))
-    } else {
-      setSelectedTech([...selectedTech, tech])
-    }
+    setSelectedTech(
+      selectedTech.includes(tech)
+        ? selectedTech.filter((t) => t !== tech)
+        : [...selectedTech, tech],
+    )
   }
 
   const toggleTag = (tag: string) => {
-    if (selectedTags.includes(tag)) {
-      setSelectedTags(selectedTags.filter((t) => t !== tag))
-    } else {
-      setSelectedTags([...selectedTags, tag])
-    }
+    setSelectedTags(
+      selectedTags.includes(tag)
+        ? selectedTags.filter((t) => t !== tag)
+        : [...selectedTags, tag],
+    )
   }
 
-  return (
-    <aside className="bg-card p-6 rounded-lg border border-gray-700 sticky top-6 h-fit">
+  useEffect(() => {
+    if (!isOpen) return
+    document.body.style.overflow = "hidden"
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    document.addEventListener("keydown", onKey)
+    return () => {
+      document.body.style.overflow = ""
+      document.removeEventListener("keydown", onKey)
+    }
+  }, [isOpen, onClose])
+
+  const filterContent = (
+    <div className="space-y-6">
       {/* Search */}
-      <div className="mb-6">
+      <div className="relative">
+        <FiSearch
+          size={15}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-light-muted dark:text-text-faint"
+          aria-hidden="true"
+        />
         <input
           type="text"
-          placeholder="🔍 Search projects..."
+          placeholder="Search projects..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 bg-bg border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-400"
+          className="w-full rounded-md border border-light-border bg-light-surface py-2 pl-9 pr-8 text-sm text-light-text placeholder-light-muted focus:border-teal-accent focus:outline-none dark:border-border-subtle dark:bg-surface-2 dark:text-text-primary dark:placeholder-text-faint"
         />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery("")}
+            aria-label="Clear search"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded p-0.5 text-light-muted hover:text-light-text dark:text-text-faint dark:hover:text-text-muted"
+          >
+            <FiX size={14} />
+          </button>
+        )}
       </div>
+
+      {/* Clear all */}
+      {hasActiveFilters && (
+        <button
+          onClick={clearAll}
+          className="text-xs font-medium text-teal-accent transition-colors hover:text-teal-muted"
+        >
+          Clear all filters
+        </button>
+      )}
 
       {/* Category */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3 text-purple-400">CATEGORY</h3>
-        <div className="space-y-2">
-          {["all", "platform", "tool"].map(
-            (cat) => (
-              <label
-                key={cat}
-                className="flex items-center cursor-pointer hover:text-purple-400 transition"
-              >
-                <input
-                  type="radio"
-                  name="category"
-                  value={cat}
-                  checked={selectedCategory === cat}
-                  onChange={() => setSelectedCategory(cat)}
-                  className="mr-2 accent-purple-400"
-                />
-                <span className="capitalize">
-                  {cat.replace("-", " ")}
-                </span>
-              </label>
-            ),
-          )}
+      <FilterSection label="Category">
+        <div className="flex flex-wrap gap-2">
+          {["all", "platform", "tool"].map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`rounded-md px-3 py-1.5 font-mono text-xs transition-colors ${
+                selectedCategory === cat
+                  ? "bg-teal-accent text-white"
+                  : "border border-light-border bg-light-surface text-light-muted hover:text-light-text dark:border-border-subtle dark:bg-surface-2 dark:text-text-muted dark:hover:text-text-primary"
+              }`}
+            >
+              {cat === "all" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1)}
+            </button>
+          ))}
         </div>
-      </div>
+      </FilterSection>
 
-      {/* Capabilities (tags) */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3 text-purple-400">
-          SKILLS
-        </h3>
-        <div className="space-y-2 max-h-48 overflow-y-auto">
+      {/* Skills */}
+      <FilterSection label="Skills">
+        <div className="flex max-h-44 flex-wrap gap-1.5 overflow-y-auto">
           {allTags.map((tag) => (
-            <label
+            <button
               key={tag}
-              className="flex items-center cursor-pointer hover:text-purple-400 transition"
+              onClick={() => toggleTag(tag)}
+              className={`rounded-full px-2.5 py-1 text-xs transition-colors ${
+                selectedTags.includes(tag)
+                  ? "bg-teal-accent text-white"
+                  : "border border-light-border bg-light-surface text-light-muted hover:text-light-text dark:border-border-subtle dark:bg-surface-2 dark:text-text-muted dark:hover:text-text-primary"
+              }`}
             >
-              <input
-                type="checkbox"
-                checked={selectedTags.includes(tag)}
-                onChange={() => toggleTag(tag)}
-                className="mr-2 accent-purple-400"
-              />
-              <span>{tag}</span>
-            </label>
+              {tag}
+            </button>
           ))}
         </div>
-      </div>
+      </FilterSection>
 
-      {/* Technology */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3 text-purple-400">
-          TOOLS
-        </h3>
-        <div className="space-y-2 max-h-48 overflow-y-auto">
+      {/* Tools */}
+      <FilterSection label="Tools">
+        <div className="flex max-h-44 flex-wrap gap-1.5 overflow-y-auto">
           {allTech.map((tech) => (
-            <label
+            <button
               key={tech}
-              className="flex items-center cursor-pointer hover:text-purple-400 transition"
+              onClick={() => toggleTech(tech)}
+              className={`rounded-full px-2.5 py-1 font-mono text-xs transition-colors ${
+                selectedTech.includes(tech)
+                  ? "bg-teal-accent text-white"
+                  : "border border-light-border bg-light-surface text-light-muted hover:text-light-text dark:border-border-subtle dark:bg-surface-2 dark:text-text-muted dark:hover:text-text-primary"
+              }`}
             >
-              <input
-                type="checkbox"
-                checked={selectedTech.includes(tech)}
-                onChange={() => toggleTech(tech)}
-                className="mr-2 accent-purple-400"
-              />
-              <span>{tech}</span>
-            </label>
+              {tech}
+            </button>
           ))}
         </div>
-      </div>
+      </FilterSection>
 
       {/* Year */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3 text-purple-400">YEAR</h3>
-        <div className="space-y-2">
+      <FilterSection label="Year">
+        <div className="flex flex-wrap gap-2">
           {["all", ...allYears.map(String)].map((yr) => (
-            <label
+            <button
               key={yr}
-              className="flex items-center cursor-pointer hover:text-purple-400 transition"
+              onClick={() => setSelectedYear(yr)}
+              className={`rounded-md px-3 py-1.5 font-mono text-xs transition-colors ${
+                selectedYear === yr
+                  ? "bg-teal-accent text-white"
+                  : "border border-light-border bg-light-surface text-light-muted hover:text-light-text dark:border-border-subtle dark:bg-surface-2 dark:text-text-muted dark:hover:text-text-primary"
+              }`}
             >
-              <input
-                type="radio"
-                name="year"
-                value={yr}
-                checked={selectedYear === yr}
-                onChange={() => setSelectedYear(yr)}
-                className="mr-2 accent-purple-400"
-              />
-              <span>{yr === "all" ? "All" : yr}</span>
-            </label>
+              {yr === "all" ? "All" : yr}
+            </button>
           ))}
         </div>
-      </div>
+      </FilterSection>
 
       {/* Status */}
-      <div>
-        <h3 className="text-lg font-semibold mb-3 text-purple-400">STATUS</h3>
-        <div className="space-y-2">
+      <FilterSection label="Status">
+        <div className="flex flex-wrap gap-2">
           {["all", "completed", "in-progress", "maintained", "archived"].map(
             (stat) => (
-              <label
+              <button
                 key={stat}
-                className="flex items-center cursor-pointer hover:text-purple-400 transition"
+                onClick={() => setSelectedStatus(stat)}
+                className={`rounded-md px-3 py-1.5 text-xs capitalize transition-colors ${
+                  selectedStatus === stat
+                    ? "bg-teal-accent text-white"
+                    : "border border-light-border bg-light-surface text-light-muted hover:text-light-text dark:border-border-subtle dark:bg-surface-2 dark:text-text-muted dark:hover:text-text-primary"
+                }`}
               >
-                <input
-                  type="radio"
-                  name="status"
-                  value={stat}
-                  checked={selectedStatus === stat}
-                  onChange={() => setSelectedStatus(stat)}
-                  className="mr-2 accent-purple-400"
-                />
-                <span className="capitalize">
-                  {stat.replace("-", " ")}
-                </span>
-              </label>
+                {stat === "all" ? "All" : stat.replace("-", " ")}
+              </button>
             ),
           )}
         </div>
-      </div>
-    </aside>
+      </FilterSection>
+    </div>
+  )
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className="hidden w-72 shrink-0 lg:block" aria-label="Project filters">
+        <div className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2">
+          {filterContent}
+        </div>
+      </aside>
+
+      {/* Mobile drawer */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Filters"
+        >
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={onClose}
+            aria-hidden="true"
+          />
+          <aside className="absolute bottom-0 left-0 top-0 w-80 animate-slide-in-left overflow-y-auto bg-light-bg p-6 dark:bg-surface-1">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-base font-semibold text-light-text dark:text-text-primary">
+                Filters
+              </h2>
+              <button
+                onClick={onClose}
+                aria-label="Close filters"
+                className="rounded-md p-2 text-light-muted hover:text-light-text dark:text-text-muted dark:hover:text-text-primary"
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+            {filterContent}
+          </aside>
+        </div>
+      )}
+    </>
   )
 }
+
+const FilterSection = ({
+  label,
+  children,
+}: {
+  label: string
+  children: React.ReactNode
+}) => (
+  <div>
+    <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-[0.15em] text-light-muted dark:text-text-faint">
+      {label}
+    </h3>
+    {children}
+  </div>
+)
 
 export default Sidebar

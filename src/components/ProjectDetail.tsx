@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from "react"
 import { useParams, Link } from "react-router-dom"
 import { projects } from "@/data/projects"
 import Navbar from "@/components/Navbar"
@@ -7,11 +8,12 @@ import {
   FaBook,
   FaGlobe,
   FaExternalLinkAlt,
-  FaArrowLeft,
-  FaCheckCircle,
   FaPlay,
   FaBookOpen,
+  FaTerminal,
+  FaImage,
 } from "react-icons/fa"
+import { FiArrowLeft, FiChevronRight } from "react-icons/fi"
 import { IconType } from "react-icons"
 
 const linkConfig: Record<string, { icon: IconType; label: string }> = {
@@ -21,256 +23,380 @@ const linkConfig: Record<string, { icon: IconType; label: string }> = {
   website: { icon: FaGlobe, label: "Website" },
   playground: { icon: FaPlay, label: "Try It Live" },
   docs: { icon: FaBookOpen, label: "Docs" },
-  
-  // Custom mappings for multi-repo projects
   "app-repo": { icon: FaGithub, label: "App Repo" },
   "java-monolith-repo": { icon: FaGithub, label: "Java Repo" },
   "python-monolith-repo": { icon: FaGithub, label: "Python Repo" },
   "node-monolith-repo": { icon: FaGithub, label: "Node Repo" },
   "cd-repo": { icon: FaGithub, label: "Platform Repo" },
+  "terminal-sessions": { icon: FaTerminal, label: "Terminal" },
+  "screenshots": { icon: FaImage, label: "Screenshots" },
 }
 
-const categoryMeta: Record<string, { label: string; color: string; bg: string }> = {
-  platform: {
-    label: "PLATFORM",
-    color: "text-purple-300 border-purple-500/60",
-    bg: "bg-purple-500/10",
-  },
-  tool: {
-    label: "TOOL",
-    color: "text-green-300 border-green-500/60",
-    bg: "bg-green-500/10",
-  },
-
-}
-
-const statusMeta: Record<string, { label: string; dot: string }> = {
-  completed: { label: "Completed", dot: "bg-green-400" },
-  "in-progress": { label: "In Progress", dot: "bg-yellow-400" },
-  maintained: { label: "Maintained", dot: "bg-blue-400" },
-  archived: { label: "Archived", dot: "bg-gray-400" },
+const statusMeta: Record<string, { label: string; className: string }> = {
+  completed: { label: "Completed", className: "bg-green-500/15 text-green-600 dark:text-green-400" },
+  "in-progress": { label: "In Progress", className: "bg-amber-500/15 text-amber-600 dark:text-amber-400" },
+  maintained: { label: "Maintained", className: "bg-blue-500/15 text-blue-600 dark:text-blue-400" },
+  archived: { label: "Archived", className: "bg-gray-500/15 text-gray-600 dark:text-gray-400" },
 }
 
 const ProjectDetail = () => {
   const { slug } = useParams<{ slug: string }>()
   const project = projects.find((p) => p.slug === slug)
 
+  useEffect(() => {
+    document.title = project
+      ? `${project.title} | Muhammad Ibtisam`
+      : "Projects | Muhammad Ibtisam"
+    return () => {
+      document.title = "Projects | Muhammad Ibtisam"
+    }
+  }, [project])
+
+  const relatedProjects = useMemo(() => {
+    if (!project) return []
+    return projects
+      .filter((p) => p.slug !== project.slug)
+      .map((p) => ({
+        project: p,
+        score:
+          p.tags.filter((t) => project.tags.includes(t)).length +
+          p.tech.filter((t) => project.tech.includes(t)).length * 0.5,
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .filter((r) => r.score > 0)
+      .map((r) => r.project)
+  }, [project])
+
   if (!project) {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-bg text-white flex items-center justify-center">
+        <main className="flex min-h-[60vh] items-center justify-center bg-light-bg dark:bg-surface-0">
           <div className="text-center">
-            <h1 className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+            <h1 className="mb-4 font-mono text-6xl font-bold text-teal-accent">
               404
             </h1>
-            <p className="text-xl text-gray-400 mb-6">Project not found.</p>
+            <p className="mb-6 text-lg text-light-muted dark:text-text-muted">
+              Project not found.
+            </p>
             <Link
               to="/"
-              className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+              className="inline-flex items-center gap-2 rounded-lg bg-teal-accent px-6 py-3 font-semibold text-white transition-colors hover:bg-teal-muted"
             >
-              <FaArrowLeft /> Back to All Projects
+              <FiArrowLeft size={16} />
+              Back to All Projects
             </Link>
           </div>
-        </div>
+        </main>
         <Footer />
       </>
     )
   }
 
-  const catMeta = categoryMeta[project.category] || {
-    label: project.category.toUpperCase(),
-    color: "text-gray-300 border-gray-500/60",
-    bg: "bg-gray-500/10",
-  }
-  const statMeta = statusMeta[project.status] || {
+  const stat = statusMeta[project.status] || {
     label: project.status,
-    dot: "bg-gray-400",
+    className: "bg-gray-500/15 text-gray-400",
+  }
+
+  const resolveLink = (link: { type: string; url: string }) => {
+    let config = linkConfig[link.type]
+    let isPrimary = link.type === "github" || link.type.includes("repo")
+    if (!config) {
+      const isRepo =
+        link.type.toLowerCase().includes("repo") ||
+        link.url.includes("github.com")
+      config = {
+        icon: isRepo ? FaGithub : FaExternalLinkAlt,
+        label: link.type
+          .split("-")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" "),
+      }
+      if (isRepo) isPrimary = true
+    }
+    return { config, isPrimary }
   }
 
   return (
     <>
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-bg to-bg" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-
-        <div className="relative max-w-5xl mx-auto px-6 pt-10 pb-14">
+      <main className="mx-auto max-w-6xl px-6 py-8">
+        {/* Breadcrumb */}
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-6 flex items-center gap-1.5 text-sm"
+        >
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-purple-400 transition text-sm mb-8 group"
+            className="text-light-muted transition-colors hover:text-teal-accent dark:text-text-muted dark:hover:text-teal-accent"
           >
-            <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
-            Back to All Projects
+            Home
           </Link>
-
-          <div className="flex flex-wrap items-center gap-3 mb-5">
-            <span
-              className={`text-xs font-bold tracking-wider px-3 py-1 rounded-full border ${catMeta.color} ${catMeta.bg}`}
-            >
-              {catMeta.label}
-            </span>
-            <span className="flex items-center gap-1.5 text-sm text-gray-400">
-              <span className={`w-2 h-2 rounded-full ${statMeta.dot}`} />
-              {statMeta.label}
-            </span>
-            <span className="text-sm text-gray-500">&bull;</span>
-            <span className="text-sm text-gray-400">{project.year}</span>
-          </div>
-
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-6 max-w-4xl">
-            {project.title}
-          </h1>
-
-          <div className="flex gap-3 flex-wrap">
-            {project.links.map((link) => {
-              let config = linkConfig[link.type]
-              let isPrimary = link.type === "github" || link.type.includes("repo")
-
-              if (!config) {
-                const isRepo = link.type.toLowerCase().includes("repo") || link.url.includes("github.com")
-                const Icon = isRepo ? FaGithub : FaExternalLinkAlt
-                const label = link.type.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
-                config = { icon: Icon, label }
-                if (isRepo) isPrimary = true
-              }
-
-              const Icon = config.icon
-              return (
-                <a
-                  key={link.type}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${
-                    isPrimary
-                      ? "bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/20"
-                      : "bg-gray-800 hover:bg-gray-700 border border-gray-700"
-                  } text-white px-5 py-2.5 rounded-lg font-semibold transition-all flex items-center gap-2 text-sm`}
-                >
-                  <Icon /> {config.label}
-                </a>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-6 py-12 space-y-14">
-        {project.imageUrl && (
-          <img
-            src={project.imageUrl}
-            alt={project.title}
-            className="w-full rounded-xl border border-gray-700/50 shadow-2xl"
+          <FiChevronRight
+            size={14}
+            className="text-light-muted dark:text-text-faint"
+            aria-hidden="true"
           />
-        )}
+          <Link
+            to="/"
+            className="text-light-muted transition-colors hover:text-teal-accent dark:text-text-muted dark:hover:text-teal-accent"
+          >
+            Projects
+          </Link>
+          <FiChevronRight
+            size={14}
+            className="text-light-muted dark:text-text-faint"
+            aria-hidden="true"
+          />
+          <span className="truncate text-light-text dark:text-text-primary">
+            {project.title}
+          </span>
+        </nav>
 
-        {/* Overview */}
-        <section className="bg-gray-800/40 border border-gray-700/50 rounded-xl p-8 backdrop-blur-sm">
-          <h2 className="text-sm font-bold tracking-widest text-purple-400 uppercase mb-4">
-            Overview
-          </h2>
-          <p className="text-lg text-gray-300 leading-relaxed">
-            {project.description}
-          </p>
-        </section>
+        {/* Back button */}
+        <Link
+          to="/"
+          className="group mb-8 inline-flex items-center gap-2 text-sm text-light-muted transition-colors hover:text-teal-accent dark:text-text-muted dark:hover:text-teal-accent"
+        >
+          <FiArrowLeft
+            size={15}
+            className="transition-transform group-hover:-translate-x-0.5"
+          />
+          All Projects
+        </Link>
 
-        {/* Dynamic Sections */}
-        {project.sections.map((section, sIdx) => (
-          <section key={sIdx}>
-            <h2 className="text-sm font-bold tracking-widest text-purple-400 uppercase mb-6">
-              {section.title}
-            </h2>
-            <div className="space-y-4">
-              {section.items.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="flex gap-4 items-start bg-gray-800/30 border border-gray-700/40 rounded-lg p-5 hover:border-purple-500/30 transition-colors"
+        <div className="flex flex-col gap-10 lg:flex-row">
+          {/* Main content */}
+          <div className="min-w-0 flex-1 space-y-10">
+            {/* Header */}
+            <header>
+              <div className="mb-4 flex flex-wrap items-center gap-3">
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${stat.className}`}
                 >
-                  <div className="flex-shrink-0 mt-0.5">
-                    <FaCheckCircle className="text-purple-400 text-lg" />
-                  </div>
-                  <p className="text-gray-300 leading-relaxed">{item}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
+                  {stat.label}
+                </span>
+                <span className="font-mono text-sm text-light-muted dark:text-text-faint">
+                  {project.year}
+                </span>
+                <span className="rounded-md border border-light-border bg-light-surface-2 px-2.5 py-0.5 text-xs capitalize text-light-muted dark:border-border-subtle dark:bg-surface-2 dark:text-text-muted">
+                  {project.category}
+                </span>
+              </div>
 
-        {/* Skills & Tech side by side */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {project.tags && project.tags.length > 0 && (
-            <section className="bg-gray-800/40 border border-gray-700/50 rounded-xl p-8">
-              <h2 className="text-sm font-bold tracking-widest text-purple-400 uppercase mb-5">
-                Skills Demonstrated
+              <h1 className="text-2xl font-bold leading-tight text-light-text dark:text-text-primary md:text-3xl lg:text-4xl">
+                {project.title}
+              </h1>
+            </header>
+
+            {/* Image */}
+            {project.imageUrl && (
+              <img
+                src={project.imageUrl}
+                alt={project.title}
+                loading="lazy"
+                className="w-full rounded-lg border border-light-border dark:border-border-subtle"
+              />
+            )}
+
+            {/* Overview */}
+            <section>
+              <h2 className="mb-4 border-l-2 border-teal-accent pl-3 text-sm font-semibold uppercase tracking-wider text-light-text dark:text-text-primary">
+                Overview
               </h2>
-              <div className="flex flex-wrap gap-2">
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="bg-purple-500/10 text-purple-300 px-3 py-1.5 rounded-lg text-sm font-medium border border-purple-500/20"
+              <div className="space-y-4">
+                {project.description.split("\n\n").map((para, i) => (
+                  <p
+                    key={i}
+                    className="leading-relaxed text-light-muted dark:text-text-muted"
                   >
-                    {tag}
-                  </span>
+                    {para}
+                  </p>
                 ))}
               </div>
             </section>
-          )}
 
-          <section className="bg-gray-800/40 border border-gray-700/50 rounded-xl p-8">
-            <h2 className="text-sm font-bold tracking-widest text-purple-400 uppercase mb-5">
-              Tech Stack
+            {/* Dynamic Sections */}
+            {project.sections.map((section, sIdx) => (
+              <section key={sIdx}>
+                <h2 className="mb-5 border-l-2 border-teal-accent pl-3 text-sm font-semibold uppercase tracking-wider text-light-text dark:text-text-primary">
+                  {section.title}
+                </h2>
+                <div className="rounded-lg border border-light-border bg-light-surface dark:border-border-subtle dark:bg-surface-1">
+                  <ul className="divide-y divide-light-border/50 dark:divide-border-subtle/50">
+                    {section.items.map((item, idx) => (
+                      <li
+                        key={idx}
+                        className="flex gap-3 px-4 py-3"
+                      >
+                        <span
+                          className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-accent"
+                          aria-hidden="true"
+                        />
+                        <p className="text-sm leading-relaxed text-light-muted dark:text-text-muted">
+                          {item}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            ))}
+
+            {/* Bottom links */}
+            <section className="flex flex-wrap gap-3 border-t border-light-border pt-8 dark:border-border-subtle">
+              {project.links.map((link) => {
+                const { config, isPrimary } = resolveLink(link)
+                const Icon = config.icon
+                return (
+                  <a
+                    key={link.type}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-colors ${
+                      isPrimary
+                        ? "bg-teal-accent text-white hover:bg-teal-muted"
+                        : "border border-light-border bg-light-surface text-light-text hover:bg-light-surface-2 dark:border-border-subtle dark:bg-surface-2 dark:text-text-primary dark:hover:bg-surface-3"
+                    }`}
+                  >
+                    <Icon size={15} />
+                    {config.label}
+                  </a>
+                )
+              })}
+            </section>
+          </div>
+
+          {/* Sidebar metadata panel */}
+          <aside className="w-full shrink-0 lg:w-72">
+            <div className="sticky top-20 space-y-6 rounded-lg border border-light-border bg-light-surface p-5 dark:border-border-subtle dark:bg-surface-1">
+              {/* Links */}
+              <div>
+                <h3 className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-light-muted dark:text-text-faint">
+                  Links
+                </h3>
+                <div className="flex flex-col gap-2">
+                  {project.links.map((link) => {
+                    const { config } = resolveLink(link)
+                    const Icon = config.icon
+                    return (
+                      <a
+                        key={link.type}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm text-light-muted transition-colors hover:text-teal-accent dark:text-text-muted dark:hover:text-teal-accent"
+                      >
+                        <Icon size={14} className="shrink-0" />
+                        {config.label}
+                      </a>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Tech Stack */}
+              <div>
+                <h3 className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-light-muted dark:text-text-faint">
+                  Tech Stack
+                </h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {project.tech.map((tech) => (
+                    <span
+                      key={tech}
+                      className="rounded bg-light-surface-2 px-2 py-0.5 font-mono text-[11px] text-light-muted dark:bg-surface-2 dark:text-text-muted"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Skills */}
+              {project.tags.length > 0 && (
+                <div>
+                  <h3 className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-light-muted dark:text-text-faint">
+                    Skills
+                  </h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-teal-accent/20 px-2.5 py-0.5 text-[11px] text-teal-accent"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Meta */}
+              <div className="space-y-2 border-t border-light-border pt-4 dark:border-border-subtle">
+                <div className="flex justify-between text-sm">
+                  <span className="text-light-muted dark:text-text-faint">
+                    Year
+                  </span>
+                  <span className="font-mono text-light-text dark:text-text-primary">
+                    {project.year}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-light-muted dark:text-text-faint">
+                    Status
+                  </span>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs capitalize ${stat.className}`}
+                  >
+                    {stat.label}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-light-muted dark:text-text-faint">
+                    Category
+                  </span>
+                  <span className="capitalize text-light-text dark:text-text-primary">
+                    {project.category}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        {relatedProjects.length > 0 && (
+          <section className="mt-12 border-t border-light-border pt-8 dark:border-border-subtle">
+            <h2 className="mb-5 text-sm font-semibold uppercase tracking-wider text-light-muted dark:text-text-faint">
+              Related Projects
             </h2>
-            <div className="flex flex-wrap gap-2">
-              {project.tech.map((tech) => (
-                <span
-                  key={tech}
-                  className="bg-gray-700/60 text-gray-200 px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-600/40"
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {relatedProjects.map((rp) => (
+                <Link
+                  key={rp.slug}
+                  to={`/project/${rp.slug}`}
+                  className="group rounded-lg border border-light-border bg-light-surface p-4 transition-colors hover:border-teal-accent/30 dark:border-border-subtle dark:bg-surface-1 dark:hover:border-teal-accent/30"
                 >
-                  {tech}
-                </span>
+                  <h3 className="mb-2 text-sm font-semibold text-light-text transition-colors group-hover:text-teal-accent dark:text-text-primary">
+                    {rp.title}
+                  </h3>
+                  <div className="flex flex-wrap gap-1">
+                    {rp.tech.slice(0, 5).map((t) => (
+                      <span
+                        key={t}
+                        className="rounded bg-light-surface-2 px-1.5 py-0.5 font-mono text-[10px] text-light-muted dark:bg-surface-2 dark:text-text-muted"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </Link>
               ))}
             </div>
           </section>
-        </div>
-
-        {/* Bottom CTA */}
-        <section className="text-center pt-4 pb-2">
-          <div className="inline-flex gap-4 flex-wrap justify-center">
-            {project.links.map((link) => {
-              let config = linkConfig[link.type]
-              let isPrimary = link.type === "github" || link.type.includes("repo")
-
-              if (!config) {
-                const isRepo = link.type.toLowerCase().includes("repo") || link.url.includes("github.com")
-                const Icon = isRepo ? FaGithub : FaExternalLinkAlt
-                const label = link.type.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
-                config = { icon: Icon, label }
-                if (isRepo) isPrimary = true
-              }
-
-              const Icon = config.icon
-              return (
-                <a
-                  key={link.type}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${
-                    isPrimary
-                      ? "bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/20"
-                      : "bg-gray-800 hover:bg-gray-700 border border-gray-700"
-                  } text-white px-8 py-3 rounded-lg font-semibold transition-all flex items-center gap-2`}
-                >
-                  <Icon /> {config.label}
-                </a>
-              )
-            })}
-          </div>
-        </section>
+        )}
       </main>
 
       <Footer />
