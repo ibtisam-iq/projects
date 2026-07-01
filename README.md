@@ -1,16 +1,17 @@
 # projects.ibtisam-iq.com
 
-> DevOps Projects Portfolio. Production-grade deployments, real CI/CD pipelines, and documented infrastructure work.
+> DevOps Projects Portfolio. Kubernetes deployments, AWS infrastructure, CI/CD pipelines, and GitOps workflows. Built from scratch with source code and runbooks.
 
 [![CI/CD](https://github.com/ibtisam-iq/projects/actions/workflows/pages.yml/badge.svg)](https://github.com/ibtisam-iq/projects/actions/workflows/pages.yml)
 [![Live Site](https://img.shields.io/badge/live-projects.ibtisam-iq.com-7C3AED)](https://projects.ibtisam-iq.com)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-06B6D4?logo=tailwindcss)](https://tailwindcss.com)
+[![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite)](https://vite.dev)
 
 ---
 
-## What Is This?
+## Overview
 
 This repository contains the source code for [projects.ibtisam-iq.com](https://projects.ibtisam-iq.com). It serves as a filterable, searchable DevOps projects showcase built with **React**, **TypeScript**, and **Tailwind CSS**.
 
@@ -18,67 +19,35 @@ The site is entirely data-driven. Project content lives in [`data/projects.yaml`
 
 ---
 
-## Live Site
-
-🌐 [projects.ibtisam-iq.com](https://projects.ibtisam-iq.com)
-
----
-
 ## Features
 
-- 🔍 **Search**: Filters projects by title, short description, or technology.
-- 🗂️ **Category filter**: Platform, Tool.
-- 🏷️ **Skills filter**: Multi-select capability domain tags (ci-cd, gitops, kubernetes, etc.).
-- 🔧 **Tools filter**: Multi-select tech stack tags.
-- 📅 **Year filter**: Filters by completion or update year.
-- ✅ **Status filter**: Completed, In Progress, Maintained, Archived.
-- 📄 **Detail pages**: Full project page rendering dynamic sections, skills, tech stack, and link buttons.
-- 🛠️ **Methodology page**: Dedicated `/how-i-work` section outlining the engineering pipeline.
-- 📱 **Fully responsive**: Mobile, tablet, desktop.
-- ⚡ **Auto-deploy**: Pushes to `data/projects.yaml` trigger a full rebuild automatically.
+- **Search**: Filters projects by title, short description, or technology.
+- **Category filter**: Platform, Tool.
+- **Skills filter**: Multi-select capability domain tags (ci-cd, gitops, kubernetes, etc.).
+- **Tools filter**: Multi-select tech stack tags.
+- **Year filter**: Filters by completion or update year.
+- **Status filter**: Completed, In Progress, Maintained, Archived.
+- **Detail pages**: Full project page rendering dynamic sections, skills, tech stack, and link buttons.
+- **Methodology page**: Dedicated `/how-i-work` section outlining the engineering pipeline.
+- **Dark/Light mode**: Theme toggle with system preference detection via `ThemeContext`.
+- **Animated stats**: Count-up animations on hero stats using `requestAnimationFrame` with easeOut curve.
+- **Scroll reveals**: Cards animate in on scroll via `IntersectionObserver` with staggered delays.
+- **Fully responsive**: Mobile sidebar overlay, tablet, desktop.
+- **Auto-deploy**: Pushes to `data/projects.yaml` trigger a full rebuild automatically.
 
 ---
 
-## How to Add a New Project
+## Content Management Workflow
 
 > [!NOTE]
 > No source code changes are required to add a project.
 
-Projects are added by editing [`data/projects.yaml`](./data/projects.yaml) in this repository. New projects are appended as YAML entries following the specified schema:
+Projects are managed centrally through [`data/projects.yaml`](./data/projects.yaml), acting as the single source of truth. New entries are appended to this file and are automatically validated, compiled to TypeScript, and deployed via GitHub Actions within approximately 2 minutes upon pushing to the main branch.
 
-```yaml
-- slug: my-new-project
-  title: "My New Project"
-  category: platform                # platform | tool
-  status: completed                 # completed | in-progress | maintained | archived
-  year: 2026
-  shortDescription: "One line summary shown on the project card."
-  description: "Longer description shown on the project detail page."
-  sections:                         # Flexible content blocks
-    - title: "Key Achievements"
-      items:
-        - "Achievement 1 with measurable impact"
-        - "Achievement 2 with measurable impact"
-    - title: "Architecture"
-      items:
-        - "Designed a modular architecture..."
-  tags:                             # capability domains (recruiter-level)
-    - ci-cd
-    - kubernetes
-  tech:                             # specific tools (engineer-level)
-    - Docker
-    - Kubernetes
-    - Terraform
-  links:                            # type + url pairs: github, runbook, blog, website, playground, docs, etc.
-    - type: github
-      url: "https://github.com/ibtisam-iq/my-new-project"
-    - type: runbook                  
-      url: "https://runbook.ibtisam-iq.com/my-new-project/"
-  imageUrl: "/images/hero.png"      # optional
-  featured: true                    # pinned to top
-```
+For complete schema specifications, field formatting guidelines, and engineering writing conventions, refer to:
 
-The site rebuilds and deploys automatically within approximately 2 minutes upon pushing the commit.
+- **[Project Card Authoring Standards](https://blog.ibtisam-iq.com/project-card-authoring-standards/)**: Official authoring guide and writing standards.
+- **[Architecture & Schema Reference](./docs/architecture.md#project-schema)**: Internal data pipeline and schema specification.
 
 ---
 
@@ -86,11 +55,12 @@ The site rebuilds and deploys automatically within approximately 2 minutes upon 
 
 | Layer | Technology |
 |---|---|
-| Framework | **React 19** + **TypeScript** |
-| Styling | **Tailwind CSS v3** |
-| Build tool | **Vite** |
+| Framework | **React 19** + **TypeScript 5.9** |
+| Styling | **Tailwind CSS v3** (dark mode via `class` strategy) |
+| Build tool | **Vite 7** |
 | Routing | **React Router v7** |
 | Icons | **React Icons** |
+| Fonts | **Inter**, **DM Sans**, **JetBrains Mono** (Google Fonts) |
 | Data format | YAML to TypeScript (auto-generated at build time) |
 | Hosting | **GitHub Pages** |
 | CI/CD | **GitHub Actions** |
@@ -110,30 +80,34 @@ projects/
 │   └── generate-projects.js    # Converts projects.yaml to src/data/projects.ts.
 ├── src/
 │   ├── components/
-│   │   ├── Navbar.tsx
-│   │   ├── Hero.tsx
-│   │   ├── Sidebar.tsx
-│   │   ├── ProjectCard.tsx
-│   │   ├── ProjectDetail.tsx
-│   │   ├── HowIWork.tsx
+│   │   ├── Navbar.tsx          # Top nav with theme toggle and mobile menu.
+│   │   ├── Hero.tsx            # Landing section with animated stat counters and scroll indicator.
+│   │   ├── Sidebar.tsx         # Filter panel (search, category, skills, tech, year, status).
+│   │   ├── ProjectCard.tsx     # Card with scroll-triggered reveal and hover effects.
+│   │   ├── ProjectDetail.tsx   # Full project page with dynamic sections and sidebar metadata.
+│   │   ├── HowIWork.tsx        # /how-i-work methodology page.
 │   │   └── Footer.tsx
+│   ├── context/
+│   │   └── ThemeContext.tsx    # Dark/light mode provider with system preference detection.
+│   ├── hooks/
+│   │   ├── useCountUp.ts       # requestAnimationFrame counter with easeOut curve.
+│   │   └── useInView.ts        # IntersectionObserver hook for scroll-triggered animations.
 │   ├── data/
 │   │   └── projects.ts         # AUTO-GENERATED. Do not edit manually.
 │   ├── types/
 │   │   └── project.ts          # Project TypeScript interface.
-│   ├── App.tsx
+│   ├── App.tsx                 # Router setup, ScrollToTop, ThemeProvider wrapper.
 │   ├── main.tsx
-│   ├── index.css
-│   └── vite-env.d.ts
+│   └── index.css               # Tailwind directives, custom properties, animations.
 ├── .github/
 │   └── workflows/
-│       └── pages.yml          # CI/CD pipeline.
+│       └── pages.yml           # CI/CD pipeline.
 ├── public/
 │   └── (favicon, icons, web manifest)
 ├── CNAME
 ├── index.html
 ├── package.json
-├── tailwind.config.js
+├── tailwind.config.js          # Custom colors, fonts, keyframes (bounce-gentle, fade-in).
 ├── vite.config.ts
 └── tsconfig.app.json
 ```
@@ -199,23 +173,14 @@ Pipeline steps:
 
 For a detailed explanation of the data pipeline, the design constraints, and extension points, see the documentation:
 
-📄 [`docs/architecture.md`](./docs/architecture.md)
-
----
-
-## Related Repositories
-
-| Repository | Purpose |
-|---|---|
-| [`portfolio-site`](https://github.com/ibtisam-iq/portfolio-site) | Main portfolio at `ibtisam-iq.com`. |
-| [`runbook`](https://github.com/ibtisam-iq/runbook) | Engineering runbook at `runbook.ibtisam-iq.com`. |
-| [`nectar`](https://github.com/ibtisam-iq/nectar) | Technical documentation at `nectar.ibtisam-iq.com`. |
+[`docs/architecture.md`](./docs/architecture.md)
 
 ---
 
 ## Author
 
 **Muhammad Ibtisam**
-- 🌐 [ibtisam-iq.com](https://ibtisam-iq.com)
-- 💼 [linkedin.com/in/ibtisam-iq](https://linkedin.com/in/ibtisam-iq)
-- 🐙 [github.com/ibtisam-iq](https://github.com/ibtisam-iq)
+
+- [ibtisam-iq.com](https://ibtisam-iq.com)
+- [linkedin.com/in/ibtisam-iq](https://linkedin.com/in/ibtisam-iq)
+- [github.com/ibtisam-iq](https://github.com/ibtisam-iq)

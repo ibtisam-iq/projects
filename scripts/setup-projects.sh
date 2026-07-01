@@ -278,20 +278,20 @@ cat > index.html << 'EOF'
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Muhammad Ibtisam — DevOps Projects Portfolio. Production-grade deployments, real CI/CD pipelines, and documented infrastructure work." />
+    <meta name="description" content="Muhammad Ibtisam | DevOps Projects Portfolio. Real deployments, CI/CD pipelines, and documented infrastructure work." />
     <meta name="keywords" content="DevOps, Docker, Kubernetes, Jenkins, Terraform, CI/CD, Infrastructure, Muhammad Ibtisam" />
     <meta name="author" content="Muhammad Ibtisam" />
 
-    <meta property="og:title" content="Projects — Muhammad Ibtisam" />
-    <meta property="og:description" content="DevOps Projects Portfolio — Production-grade deployments and infrastructure work" />
+    <meta property="og:title" content="Projects | Muhammad Ibtisam" />
+    <meta property="og:description" content="DevOps Projects Portfolio. Real deployments and infrastructure work" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://projects.ibtisam-iq.com" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Projects — Muhammad Ibtisam" />
-    <meta name="twitter:description" content="DevOps Projects Portfolio — Production-grade deployments, real CI/CD pipelines, and documented infrastructure work" />
+    <meta name="twitter:title" content="Projects | Muhammad Ibtisam" />
+    <meta name="twitter:description" content="DevOps Projects Portfolio. Real deployments, CI/CD pipelines, and documented infrastructure work" />
 
-    <title>Projects — Muhammad Ibtisam</title>
+    <title>Projects | Muhammad Ibtisam</title>
   </head>
   <body>
     <div id="root"></div>
@@ -429,7 +429,7 @@ EOF
 
 # GitHub Actions workflow
 cat > .github/workflows/deploy.yml << 'EOF'
-name: CI/CD — projects.ibtisam-iq.com
+name: CI/CD: projects.ibtisam-iq.com
 
 on:
   push:
@@ -478,7 +478,7 @@ EOF
 
 # README
 cat > README.md << 'EOF'
-# Projects — Muhammad Ibtisam
+# Projects | Muhammad Ibtisam
 
 DevOps projects showcase site skeleton created by setup script.
 

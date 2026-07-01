@@ -1,73 +1,67 @@
-import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa"
+import { FaGithub, FaLinkedin } from "react-icons/fa"
 
-const Footer = () => {
-  return (
-    <footer className="bg-card border-t border-gray-800 py-8 px-6 text-center text-gray-400">
-      <div className="max-w-6xl mx-auto">
-        {/* Social */}
-        <div className="flex justify-center gap-6 mb-4">
+const externalLinks = [
+  { label: "Portfolio", href: "https://ibtisam-iq.com" },
+  { label: "Blog", href: "https://blog.ibtisam-iq.com" },
+  { label: "Nectar", href: "https://nectar.ibtisam-iq.com" },
+  { label: "Runbook", href: "https://runbook.ibtisam-iq.com" },
+  { label: "Cert Vault", href: "https://cert-vault.ibtisam-iq.com" },
+  { label: "SilverStack", href: "https://github.com/ibtisam-iq/silver-stack" },
+  { label: "iximiuz Labs", href: "https://labs.iximiuz.com/a/ibtisam-iq" },
+  { label: "Credly", href: "https://www.credly.com/users/ibtisam-iq/badges/credly" },
+]
+
+const Footer = () => (
+  <footer className="border-t border-light-border bg-light-surface dark:border-border-subtle dark:bg-surface-1">
+    <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-10 md:flex-row md:items-center md:justify-between">
+      <div className="flex items-center gap-4">
+        <span className="font-mono text-sm font-semibold text-light-text dark:text-text-primary">
+          ibtisam<span className="text-teal-accent">.</span>iq
+        </span>
+        <div className="flex items-center gap-3">
           <a
             href="https://github.com/ibtisam-iq"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-purple-400 transition text-2xl"
+            aria-label="GitHub"
+            className="text-light-muted transition-colors hover:text-teal-accent dark:text-text-muted dark:hover:text-teal-accent"
           >
-            <FaGithub />
+            <FaGithub size={18} />
           </a>
           <a
             href="https://linkedin.com/in/ibtisam-iq"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-purple-400 transition text-2xl"
+            aria-label="LinkedIn"
+            className="text-light-muted transition-colors hover:text-teal-accent dark:text-text-muted dark:hover:text-teal-accent"
           >
-            <FaLinkedin />
-          </a>
-          <a
-            href="https://twitter.com/ibtisam_iq"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-purple-400 transition text-2xl"
-          >
-            <FaTwitter />
-          </a>
-        </div>
-
-        {/* Copyright */}
-        <p className="text-sm">
-          © {new Date().getFullYear()} Muhammad Ibtisam. Built with React,
-          TypeScript, and Tailwind CSS.
-        </p>
-
-        {/* Quick links */}
-        <div className="flex justify-center gap-4 mt-4 text-sm">
-          <a
-            href="https://ibtisam-iq.com"
-            className="hover:text-purple-400 transition"
-          >
-            Portfolio
-          </a>
-          <span>•</span>
-          <a
-            href="https://blog.ibtisam-iq.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-purple-400 transition"
-          >
-            Blog
-          </a>
-          <span>•</span>
-          <a
-            href="https://nectar.ibtisam-iq.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-purple-400 transition"
-          >
-            Nectar
+            <FaLinkedin size={18} />
           </a>
         </div>
       </div>
-    </footer>
-  )
-}
+
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+        {externalLinks.map((link) => (
+          <a
+            key={link.label}
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-light-muted transition-colors hover:text-teal-accent dark:text-text-muted dark:hover:text-teal-accent"
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <div className="border-t border-light-border dark:border-border-subtle">
+      <p className="mx-auto max-w-7xl px-6 py-4 text-xs text-light-muted dark:text-text-faint">
+        &copy; {new Date().getFullYear()} Muhammad Ibtisam. Built with React +
+        TypeScript + Tailwind + Vite &middot; Deployed on GitHub Pages
+      </p>
+    </div>
+  </footer>
+)
 
 export default Footer

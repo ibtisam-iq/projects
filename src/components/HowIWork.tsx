@@ -1,11 +1,8 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-
-/* ---------------------------------------------------------------- */
-/* Helpers                                                          */
-/* ---------------------------------------------------------------- */
+import { useInView } from "@/hooks/useInView"
 
 function prefersReducedMotion() {
   return (
@@ -14,71 +11,6 @@ function prefersReducedMotion() {
   )
 }
 
-function useInView<T extends HTMLElement>(threshold = 0.25) {
-  const ref = useRef<T | null>(null)
-  const [inView, setInView] = useState(false)
-
-  useEffect(() => {
-    if (prefersReducedMotion()) {
-      setInView(true)
-      return
-    }
-    const el = ref.current
-    if (!el) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true)
-          observer.disconnect()
-        }
-      },
-      { threshold }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [threshold])
-
-  return { ref, inView }
-}
-
-/** A connector line that draws itself from 0 to full length once `inView` is true. */
-const DrawPath = ({
-  d,
-  inView,
-  gradientId,
-  delay = 0,
-}: {
-  d: string
-  inView: boolean
-  gradientId: string
-  delay?: number
-}) => {
-  const pathRef = useRef<SVGPathElement | null>(null)
-  const [length, setLength] = useState(0)
-
-  useEffect(() => {
-    if (pathRef.current) setLength(pathRef.current.getTotalLength())
-  }, [d])
-
-  return (
-    <path
-      ref={pathRef}
-      d={d}
-      fill="none"
-      stroke={`url(#${gradientId})`}
-      strokeWidth={1.5}
-      strokeLinecap="round"
-      style={{
-        strokeDasharray: length,
-        strokeDashoffset: inView ? 0 : length,
-        transition: `stroke-dashoffset 0.9s ease-out ${delay}ms`,
-      }}
-    />
-  )
-}
-
-/** Typewriter effect for the closing terminal block. Starts only when `start` is true. */
 function useTypewriter(lines: string[], start: boolean) {
   const [output, setOutput] = useState<string[]>([])
 
@@ -120,235 +52,249 @@ function useTypewriter(lines: string[], start: boolean) {
   return output
 }
 
-/* ---------------------------------------------------------------- */
-/* Small presentational pieces                                      */
-/* ---------------------------------------------------------------- */
-
-const Eyebrow = ({ children }: { children: string }) => (
-  <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gray-500 mb-2">
-    {children}
-  </p>
-)
-
-const StageCard = ({
-  eyebrow,
-  title,
-  body,
-  link,
-  accent = "text-gray-300",
-}: {
-  eyebrow: string
-  title: string
-  body: string
-  link?: { label: string; to: string; external?: boolean }
-  accent?: string
-}) => (
-  <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 h-full flex flex-col">
-    <Eyebrow>{eyebrow}</Eyebrow>
-    <h3 className={`text-lg font-semibold mb-2 ${accent}`}>{title}</h3>
-    <p className="text-gray-400 text-sm flex-1">{body}</p>
-    {link &&
-      (link.external ? (
-        <a
-          href={link.to}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`mt-4 text-sm font-medium hover:opacity-80 transition ${accent}`}
-        >
-          {link.label} ↗
-        </a>
-      ) : (
-        <Link
-          to={link.to}
-          className={`mt-4 text-sm font-medium hover:opacity-80 transition ${accent}`}
-        >
-          {link.label} →
-        </Link>
-      ))}
-  </div>
-)
-
-const MobileConnector = () => (
-  <div className="md:hidden w-px h-10 mx-auto bg-gradient-to-b from-purple-500/50 to-pink-500/50" />
-)
-
-/* ---------------------------------------------------------------- */
-/* Page                                                              */
-/* ---------------------------------------------------------------- */
-
 const LOG_LINES = [
   "$ cat methodology.log",
   "[phase-02] silverstack   -> reusable infra, run again not read once",
   "[phase-02] blog          -> distilled, problem-first write-ups",
-  "[phase-02] projects      -> integrated systems, live in production",
+  "[phase-02] projects      -> integrated systems, end-to-end pipelines",
+  "[phase-02] runbook       -> daily decisions and debugging, written while fresh",
   "[phase-01] nectar        -> 200+ pages, survived contact with reality",
   "---------------------------------------------------------------",
   "status: nothing here is a tutorial followed once",
 ]
 
+const OUTPUTS = [
+  {
+    title: "Repeatable",
+    body: "If I build it more than once, it becomes a script, a module, or a container image. SilverStack collects the reusable pieces: provisioning scripts, OCI rootfs images, systemd units.",
+    accent: "text-green-600 dark:text-green-400",
+    bar: "bg-green-600 dark:bg-green-400",
+    link: {
+      label: "SilverStack",
+      to: "https://github.com/ibtisam-iq/silver-stack",
+      external: true,
+    },
+  },
+  {
+    title: "Explained",
+    body: "If something cost me hours to debug or understand, it becomes a write-up. Problem first, solution second, no filler.",
+    accent: "text-orange-500 dark:text-orange-400",
+    bar: "bg-orange-500 dark:bg-orange-400",
+    link: {
+      label: "Blog",
+      to: "https://blog.ibtisam-iq.com",
+      external: true,
+    },
+  },
+  {
+    title: "Assembled",
+    body: "When the pieces come together into something end-to-end, it becomes a project with its own repo, domain, and deployment pipeline.",
+    accent: "text-purple-600 dark:text-purple-400",
+    bar: "bg-purple-600 dark:bg-purple-400",
+    link: { label: "Projects", to: "/", external: false },
+  },
+  {
+    title: "Documented",
+    body: "Every decision, debugging session, and config change gets written down while it's still fresh. A searchable MkDocs site, not a pile of bookmarks.",
+    accent: "text-blue-500 dark:text-blue-400",
+    bar: "bg-blue-500 dark:bg-blue-400",
+    link: {
+      label: "Runbook",
+      to: "https://runbook.ibtisam-iq.com",
+      external: true,
+    },
+  },
+] as const
+
+const Connector = ({ style }: { style?: React.CSSProperties }) => (
+  <div className="flex justify-center py-3" style={style}>
+    <div className="flex flex-col items-center">
+      <div className="h-6 w-px bg-gradient-to-b from-teal-accent/40 to-transparent" />
+      <div className="my-0.5 h-2 w-2 rounded-full border border-teal-accent/40" />
+      <div className="h-6 w-px bg-gradient-to-b from-transparent to-teal-accent/40" />
+    </div>
+  </div>
+)
+
 const HowIWork = () => {
-  const { ref: pipelineRef, inView } = useInView<HTMLDivElement>(0.15)
+  const { ref: pipelineRef, inView } = useInView({ threshold: 0.15 })
   const typed = useTypewriter(LOG_LINES, inView)
+
+  const fade = (delay: number): React.CSSProperties =>
+    prefersReducedMotion()
+      ? {}
+      : {
+          opacity: inView ? 1 : 0,
+          transform: inView ? "translateY(0)" : "translateY(16px)",
+          transition: `opacity 0.6s ease-out ${delay}ms, transform 0.6s ease-out ${delay}ms`,
+        }
 
   return (
     <>
       <Navbar />
 
-      <div className="max-w-5xl mx-auto px-6 py-16 text-white">
-        {/* Header */}
-        <div className="text-center mb-20">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-gray-500 mb-4">
+      <main className="mx-auto max-w-5xl px-6 py-16 text-light-text dark:text-text-primary">
+        <div className="mb-16 text-center">
+          <p className="mb-4 font-mono text-xs uppercase tracking-[0.3em] text-light-muted dark:text-text-faint">
             Methodology
           </p>
-          <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent mb-4">
+          <h1 className="mb-4 text-4xl font-extrabold text-light-text dark:text-text-primary md:text-5xl">
             How I Work
           </h1>
-          <p className="text-lg text-gray-400 max-w-xl mx-auto">
-            Every project on this site moves through the same pipeline.
-            Two ways in, one synthesis stage, three ways out.
+          <p className="mx-auto max-w-xl text-lg text-light-muted dark:text-text-muted">
+            Every project on this site moves through the same pipeline. Two ways
+            in, one synthesis stage, four ways out.
           </p>
         </div>
 
         <div ref={pipelineRef}>
-          {/* PHASE 00 — two trigger nodes */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <StageCard
-              eyebrow="phase 00 · trigger"
-              title="Don't understand it"
-              body="Build the mental model first, from first principles, before any of it touches real infrastructure."
-              accent="text-red-400"
-            />
-            <StageCard
-              eyebrow="phase 00 · trigger"
-              title="Run it for real"
-              body="Full implementation. The debugging, the 2am redirect loop, the parts that never make it into a README."
-              accent="text-purple-400"
-            />
+          {/* ── PHASE 00: TRIGGER ── */}
+          <div className="mb-5 flex items-baseline gap-3" style={fade(0)}>
+            <span className="font-mono text-[40px] font-bold leading-none text-red-500/20 dark:text-red-400/20">
+              00
+            </span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-red-500 dark:text-red-400">
+              trigger
+            </span>
           </div>
 
-          <MobileConnector />
-
-          {/* Fan-in connector (desktop only) */}
-          <div className="hidden md:block w-full" style={{ height: 56 }}>
-            <svg
-              viewBox="0 0 100 40"
-              preserveAspectRatio="none"
-              className="w-full h-full"
-              aria-hidden="true"
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div
+              className="relative overflow-hidden rounded-xl border border-light-border bg-light-surface p-6 dark:border-border-subtle dark:bg-surface-1"
+              style={fade(80)}
             >
-              <defs>
-                <linearGradient id="flowIn" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#f87171" />
-                  <stop offset="100%" stopColor="#c084fc" />
-                </linearGradient>
-              </defs>
-              <DrawPath d="M25,0 L50,40" inView={inView} gradientId="flowIn" />
-              <DrawPath d="M75,0 L50,40" inView={inView} gradientId="flowIn" delay={120} />
-            </svg>
+              <div
+                className="absolute inset-y-0 left-0 w-1 bg-red-500 dark:bg-red-400"
+                aria-hidden="true"
+              />
+              <h3 className="mb-2 text-lg font-semibold text-red-500 dark:text-red-400">
+                Don't understand it
+              </h3>
+              <p className="text-sm text-light-muted dark:text-text-muted">
+                Build the mental model first, from first principles, before any
+                of it touches real infrastructure.
+              </p>
+            </div>
+
+            <div
+              className="relative overflow-hidden rounded-xl border border-light-border bg-light-surface p-6 dark:border-border-subtle dark:bg-surface-1"
+              style={fade(160)}
+            >
+              <div
+                className="absolute inset-y-0 left-0 w-1 bg-purple-600 dark:bg-purple-400"
+                aria-hidden="true"
+              />
+              <h3 className="mb-2 text-lg font-semibold text-purple-600 dark:text-purple-400">
+                Run it for real
+              </h3>
+              <p className="text-sm text-light-muted dark:text-text-muted">
+                Full implementation. The debugging, the 2am redirect loop, the
+                parts that never make it into a README.
+              </p>
+            </div>
           </div>
 
-          {/* PHASE 01 — synthesis hub */}
-          <div className="flex justify-center">
+          <Connector style={fade(240)} />
+
+          {/* ── PHASE 01: SYNTHESIS ── */}
+          <div className="mb-5 flex items-baseline gap-3" style={fade(300)}>
+            <span className="font-mono text-[40px] font-bold leading-none text-teal-accent/20">
+              01
+            </span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-teal-accent">
+              synthesis
+            </span>
+          </div>
+
+          <div className="flex justify-center" style={fade(380)}>
             <a
               href="https://nectar.ibtisam-iq.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="group w-full md:w-auto md:min-w-[360px] bg-gray-900 border border-blue-500/30 rounded-2xl p-7 text-center shadow-[0_0_40px_-12px_rgba(59,130,246,0.35)] hover:border-blue-500/60 transition"
+              className="group w-full rounded-2xl border border-teal-accent/30 bg-light-surface p-8 text-center shadow-[0_0_40px_-12px_rgba(0,180,216,0.25)] transition hover:border-teal-accent/60 dark:bg-surface-1 md:w-auto md:min-w-[400px]"
             >
-              <Eyebrow>phase 01 · synthesis</Eyebrow>
-              <h2 className="text-2xl font-bold mb-2 text-blue-300 group-hover:text-blue-200 transition">
+              <h2 className="mb-3 text-2xl font-bold text-teal-accent transition group-hover:text-teal-accent/80">
                 Nectar
               </h2>
-              <p className="text-gray-400 text-sm mb-3">
+              <p className="mb-4 text-sm text-light-muted dark:text-text-muted">
                 200+ pages. A concept doesn't count as understood until it
                 survives contact with what I actually built.
               </p>
-              <span className="font-mono text-xs text-blue-400 group-hover:text-blue-300 transition">
+              <span className="font-mono text-xs text-teal-accent transition group-hover:text-teal-accent/80">
                 nectar.ibtisam-iq.com ↗
               </span>
             </a>
           </div>
 
-          <MobileConnector />
+          <Connector style={fade(440)} />
 
-          {/* Fan-out connector (desktop only) */}
-          <div className="hidden md:block w-full" style={{ height: 56 }}>
-            <svg
-              viewBox="0 0 100 40"
-              preserveAspectRatio="none"
-              className="w-full h-full"
-              aria-hidden="true"
-            >
-              <defs>
-                <linearGradient id="flowOut" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#60a5fa" />
-                  <stop offset="100%" stopColor="#f472b6" />
-                </linearGradient>
-              </defs>
-              <DrawPath d="M50,0 L16.667,40" inView={inView} gradientId="flowOut" delay={150} />
-              <DrawPath d="M50,0 L50,40" inView={inView} gradientId="flowOut" delay={250} />
-              <DrawPath d="M50,0 L83.333,40" inView={inView} gradientId="flowOut" delay={350} />
-            </svg>
+          {/* ── PHASE 02: OUTPUT ── */}
+          <div className="mb-5 flex items-baseline gap-3" style={fade(500)}>
+            <span className="font-mono text-[40px] font-bold leading-none text-green-500/20 dark:text-green-400/20">
+              02
+            </span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-green-600 dark:text-green-400">
+              output
+            </span>
           </div>
 
-          {/* PHASE 02 — three output nodes */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <StageCard
-              eyebrow="phase 02 · output"
-              title="Repeatable"
-              body="Becomes a script, a module, a role."
-              accent="text-green-400"
-              link={{ label: "SilverStack", to: "https://github.com/ibtisam-iq/silver-stack", external: true }}
-            />
-            <StageCard
-              eyebrow="phase 02 · output"
-              title="Explained"
-              body="Becomes a write-up. Problem first, no padding."
-              accent="text-orange-400"
-              link={{ label: "Blog", to: "https://blog.ibtisam-iq.com", external: true }}
-            />
-            <StageCard
-              eyebrow="phase 02 · output"
-              title="Assembled"
-              body="Becomes a system with its own domain and its own uptime."
-              accent="text-purple-400"
-              link={{ label: "Projects", to: "/" }}
-            />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {OUTPUTS.map((card, i) => (
+              <div
+                key={card.title}
+                className="relative flex flex-col overflow-hidden rounded-xl border border-light-border bg-light-surface p-6 dark:border-border-subtle dark:bg-surface-1"
+                style={fade(560 + i * 80)}
+              >
+                <div
+                  className={`absolute left-0 right-0 top-0 h-1 ${card.bar}`}
+                  aria-hidden="true"
+                />
+                <h3 className={`mb-2 text-lg font-semibold ${card.accent}`}>
+                  {card.title}
+                </h3>
+                <p className="flex-1 text-sm text-light-muted dark:text-text-muted">
+                  {card.body}
+                </p>
+                {card.link.external ? (
+                  <a
+                    href={card.link.to}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`mt-4 text-sm font-medium transition hover:opacity-80 ${card.accent}`}
+                  >
+                    {card.link.label} ↗
+                  </a>
+                ) : (
+                  <Link
+                    to={card.link.to}
+                    className={`mt-4 text-sm font-medium transition hover:opacity-80 ${card.accent}`}
+                  >
+                    {card.link.label} →
+                  </Link>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Runbook tie-in + terminal log */}
-        <div className="mt-20 border-t border-gray-800 pt-12">
-          <p className="text-gray-400 max-w-2xl mx-auto text-center mb-8">
-            The{" "}
-            <a
-              href="https://runbook.ibtisam-iq.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-purple-400 hover:text-purple-300 transition"
-            >
-              runbook
-            </a>{" "}
-            sits underneath all three: every decision and every bug, dated,
-            written down while it was still true.
-          </p>
-
-          <div className="max-w-2xl mx-auto rounded-xl border border-gray-800 overflow-hidden">
-            <div className="flex items-center gap-1.5 bg-gray-900 px-4 py-2.5 border-b border-gray-800">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-              <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-              <span className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
-              <span className="ml-3 font-mono text-xs text-gray-500">
+        {/* Terminal summary */}
+        <div className="mt-16 border-t border-light-border pt-12 dark:border-border-subtle">
+          <div className="mx-auto max-w-2xl overflow-hidden rounded-xl border border-light-border dark:border-border-subtle">
+            <div className="flex items-center gap-1.5 border-b border-light-border bg-light-surface-2 px-4 py-2.5 dark:border-border-subtle dark:bg-surface-1">
+              <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
+              <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/70" />
+              <span className="h-2.5 w-2.5 rounded-full bg-green-500/70" />
+              <span className="ml-3 font-mono text-xs text-light-muted dark:text-text-faint">
                 methodology.log
               </span>
             </div>
-            <pre className="bg-black/60 px-4 py-4 font-mono text-[13px] leading-relaxed text-green-400 overflow-x-auto min-h-[140px]">
+            <pre className="min-h-[140px] overflow-x-auto bg-light-surface px-4 py-4 font-mono text-[13px] leading-relaxed text-green-700 dark:bg-surface-0 dark:text-green-400">
               {typed.join("\n")}
-              <span className="inline-block w-2 h-3.5 bg-green-400 align-middle animate-pulse ml-0.5" />
+              <span className="ml-0.5 inline-block h-3.5 w-2 animate-pulse bg-green-700 align-middle dark:bg-green-400" />
             </pre>
           </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </>

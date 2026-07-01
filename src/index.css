@@ -2,25 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
-  Force the browser to ALWAYS use light color-scheme rendering.
-  This prevents Tailwind preflight's dark media query from activating
-  the browser's native dark mode, which breaks gradient text rendering
-  (bg-clip-text + text-transparent) and other color overrides.
-  The site has its own dark design — it does not need the browser's dark mode.
-*/
-:root {
-  color-scheme: light;
+@layer base {
+  :root {
+    color-scheme: dark light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #f6f8fa;
+    color: #1f2328;
+  }
+
+  .dark body {
+    background-color: #0d1117;
+    color: #e6edf3;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(99, 110, 123, 0.4);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 110, 123, 0.8);
+  }
+
+  ::selection {
+    background: rgba(0, 180, 216, 0.25);
+    color: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid #00b4d8;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
-body {
-  background-color: #0B0F19;
-  color: white;
+.skip-link {
+  @apply absolute -top-10 left-4 z-[100] rounded-md bg-teal-accent px-4 py-2 text-sm font-medium text-white;
+  transition: top 0.2s;
 }
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  scrollbar-width: none;
+.skip-link:focus {
+  @apply top-4;
 }
