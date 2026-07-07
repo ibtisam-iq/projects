@@ -20,9 +20,12 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(location.pathname)
+
+  if (location.pathname !== prevPathname) {
+    setPrevPathname(location.pathname)
     setMobileMenuOpen(false)
-  }, [location.pathname])
+  }
 
   const isActive = (path: string) => location.pathname === path
 

@@ -18,8 +18,8 @@ function useTypewriter(lines: string[], start: boolean) {
     if (!start) return
 
     if (prefersReducedMotion()) {
-      setOutput(lines)
-      return
+      const timer = setTimeout(() => setOutput(lines), 0)
+      return () => clearTimeout(timer)
     }
 
     let cancelled = false
