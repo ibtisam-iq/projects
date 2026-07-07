@@ -79,7 +79,7 @@ jobs:
       - name: Deploy to GitHub Pages
         if: ${{ env.ACT != 'true' }}
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
 # One prerequisite: In repo → Settings → Pages → Source, set it to "GitHub Actions" (not "Deploy from a branch").
 # This is required for actions/deploy-pages to work.
