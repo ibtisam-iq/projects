@@ -3,11 +3,11 @@
 > DevOps Projects Portfolio. Kubernetes deployments, AWS infrastructure, CI/CD pipelines, and GitOps workflows. Built from scratch with source code and runbooks.
 
 [![CI/CD](https://github.com/ibtisam-iq/projects/actions/workflows/pages.yml/badge.svg)](https://github.com/ibtisam-iq/projects/actions/workflows/pages.yml)
-[![Live Site](https://img.shields.io/badge/live-projects.ibtisam-iq.com-7C3AED)](https://projects.ibtisam-iq.com)
+[![Live Site](https://img.shields.io/badge/live-projects.ibtisam--iq.com-7C3AED)](https://projects.ibtisam-iq.com)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)](https://www.typescriptlang.org)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-06B6D4?logo=tailwindcss)](https://tailwindcss.com)
-[![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite)](https://vite.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.3-06B6D4?logo=tailwindcss)](https://tailwindcss.com)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite)](https://vite.dev)
 
 ---
 
@@ -56,8 +56,8 @@ For complete schema specifications, field formatting guidelines, and engineering
 | Layer | Technology |
 |---|---|
 | Framework | **React 19** + **TypeScript 5.9** |
-| Styling | **Tailwind CSS v3** (dark mode via `class` strategy) |
-| Build tool | **Vite 7** |
+| Styling | **Tailwind CSS v4** (dark mode via `class` strategy) |
+| Build tool | **Vite 8** |
 | Routing | **React Router v7** |
 | Icons | **React Icons** |
 | Fonts | **Inter**, **DM Sans**, **JetBrains Mono** (Google Fonts) |

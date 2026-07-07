@@ -193,8 +193,8 @@ App.tsx                    : Router, ScrollToTop, ThemeProvider wrapper
 | Layer | Technology |
 |---|---|
 | Framework | React 19 + TypeScript 5.9 |
-| Styling | Tailwind CSS v3 (dark mode via `class` strategy) |
-| Build tool | Vite 7 |
+| Styling | Tailwind CSS v4 (dark mode via `class` strategy) |
+| Build tool | Vite 8 |
 | Routing | React Router v7 |
 | Icons | React Icons |
 | Fonts | Inter, DM Sans, JetBrains Mono (Google Fonts) |
