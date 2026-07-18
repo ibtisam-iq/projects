@@ -514,13 +514,13 @@
   status: maintained
   year: 2026
   shortDescription: >-
-    Built an open-source Kubernetes debugging toolkit with 3 Alpine variants (14MB to 104MB),
+    Built an open-source Kubernetes debugging toolkit with 3 Alpine variants (15MB to 91MB),
     93% smaller than netshoot. Automated multi-arch builds with Trivy gating, in-container
     smoke tests, and a MkDocs documentation site.
   description: >-
     Built an open-source Kubernetes troubleshooting toolkit as an alternative to images like netshoot, which pull
-    hundreds of megabytes for simple connectivity checks. DebugBox offers 3 right-sized Alpine-based variants: Lite (14MB)
-    for DNS and HTTP checks, Balanced (50MB) for general debugging, and Power (104MB) for packet capture and deep inspection.
+    hundreds of megabytes for simple connectivity checks. DebugBox offers 3 right-sized Alpine-based variants: Lite (15MB)
+    for DNS and HTTP checks, Balanced (51MB) for general debugging, and Power (91MB) for packet capture and deep inspection.
     The Lite variant is 93% smaller than netshoot.
 
     I separated Dockerfiles (declarative) from installation scripts (procedural): package lists live in '.packages' files,
@@ -544,7 +544,7 @@
   sections:
     - title: "Container Design"
       items:
-        - "Built 3 purpose-specific variants (Lite, Balanced, Power) on Alpine Linux, ranging from 14MB to 104MB. The Lite variant is 93% smaller than netshoot for basic DNS and HTTP debugging."
+        - "Built 3 purpose-specific variants (Lite, Balanced, Power) on Alpine Linux, ranging from 15MB to 91MB. The Lite variant is 93% smaller than netshoot for basic DNS and HTTP debugging."
         - "Separated Dockerfiles (declarative) from installation scripts (procedural). Package lists live in '.packages' files; complex installs (like yq with architecture detection and SHA256 verification) have dedicated scripts."
         - "Pinned all tool versions and base images for deterministic, repeatable builds."
     - title: "Kubernetes Developer Experience"
@@ -564,6 +564,7 @@
       items:
         - "Published a documentation site via MkDocs and GitHub Pages with automated builds."
         - "Wrote CONTRIBUTING.md, CODE_OF_CONDUCT.md, and SECURITY.md."
+        - "Designed and authored a hands-on Kubernetes debugging tutorial for DebugBox on iximiuz Labs, guiding users through lite, balanced, and power variants end-to-end in a live multi-node cluster playground (no local setup required)."
   tags:
     - containerization
     - kubernetes
@@ -587,6 +588,8 @@
       url: "https://github.com/ibtisam-iq/debugbox"
     - type: docs
       url: "https://debugbox.ibtisam-iq.com"
+    - type: playground
+      url: "https://labs.iximiuz.com/tutorials/kubernetes-debugging-with-debugbox-74e481c8"
   featured: true
 
 - slug: aws-secure-static-hosting
