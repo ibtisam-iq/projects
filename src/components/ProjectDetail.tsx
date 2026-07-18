@@ -207,7 +207,7 @@ const ProjectDetail = () => {
                 Overview
               </h2>
               <div className="space-y-4">
-                {project.description.split("\n\n").map((para, i) => (
+                {project.description.split(/\n+/).map((para, i) => (
                   <p
                     key={i}
                     className="leading-relaxed text-light-muted dark:text-text-muted"

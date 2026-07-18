@@ -2,6 +2,12 @@
 # Source of Truth: projects.ibtisam-iq.com
 # A push to this file auto-triggers a rebuild.
 # Authoring standards: https://blog.ibtisam-iq.com/project-card-authoring-standards/
+#
+# Formatting note for description & shortDescription:
+# Use folded block scalar (>-) with standard 1 blank line between paragraphs.
+# The build script (scripts/generate-projects.js) automatically converts
+# folded paragraph breaks into exact double newlines (\n\n) in projects.ts,
+# keeping this YAML file clean and readable without UI clutter.
 # ============================================================
 
 - slug: silverstack-cicd-platform
