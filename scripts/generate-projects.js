@@ -8,6 +8,12 @@ import { parse } from 'yaml'
 const yaml = readFileSync('data/projects.yaml', 'utf8')
 const projects = parse(yaml)
 
+projects.forEach((p) => {
+  if (typeof p.description === 'string') {
+    p.description = p.description.replace(/\r?\n+/g, '\n\n')
+  }
+})
+
 const output = `// ================================================================
 // AUTO-GENERATED FILE. DO NOT EDIT MANUALLY.
 // Source of truth: data/projects.yaml (in this repo)
