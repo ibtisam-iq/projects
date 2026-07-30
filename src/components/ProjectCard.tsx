@@ -80,7 +80,7 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
       </div>
 
       {/* Title */}
-      <Link to={`/project/${project.slug}`}>
+      <Link to={`/${project.slug}`}>
         <h3 className="mb-2 text-base font-bold leading-snug tracking-tight text-light-text transition-colors group-hover:text-teal-accent dark:text-text-primary md:text-lg">
           {project.title}
         </h3>

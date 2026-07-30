@@ -155,7 +155,7 @@ const App = () => (
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/how-i-work" element={<HowIWork />} />
-        <Route path="/project/:slug" element={<ProjectDetail />} />
+        <Route path="/:slug" element={<ProjectDetail />} />
       </Routes>
       </ScrollToTop>
     </Router>
