@@ -376,7 +376,7 @@ const ProjectDetail = () => {
               {relatedProjects.map((rp) => (
                 <Link
                   key={rp.slug}
-                  to={`/project/${rp.slug}`}
+                  to={`/${rp.slug}`}
                   className="group rounded-lg border border-light-border bg-light-surface p-4 transition-colors hover:border-teal-accent/30 dark:border-border-subtle dark:bg-surface-1 dark:hover:border-teal-accent/30"
                 >
                   <h3 className="mb-2 text-sm font-semibold text-light-text transition-colors group-hover:text-teal-accent dark:text-text-primary">
