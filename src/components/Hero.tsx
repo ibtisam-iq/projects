@@ -1,8 +1,13 @@
+import { useState } from "react"
 import { projects } from "@/data/projects"
 import { useCountUp } from "@/hooks/useCountUp"
 import { FiChevronDown } from "react-icons/fi"
 
+const GITHUB_AVATAR = "https://avatars.githubusercontent.com/u/174851199?v=4&s=400"
+
 const Hero = () => {
+  // Local public/profile.png takes priority; falls back to GitHub avatar
+  const [photoSrc, setPhotoSrc] = useState("/profile.png")
   const totalProjects = projects.length
   const uniqueTech = new Set(projects.flatMap((p) => p.tech)).size
 
@@ -31,7 +36,8 @@ const Hero = () => {
       />
 
       <div className="relative mx-auto max-w-7xl px-6 pb-4 pt-12 md:pb-6 md:pt-16">
-        <div className="max-w-3xl">
+        <div className="flex flex-col md:flex-row md:items-center md:gap-16">
+          <div className="min-w-0 flex-1">
           <h1 className="text-4xl font-bold leading-tight tracking-tight text-light-text dark:text-text-primary md:text-5xl lg:text-6xl">
             DevOps & Cloud
             <br />
@@ -66,6 +72,20 @@ const Hero = () => {
                 </span>
               </div>
             ))}
+          </div>
+          </div>
+
+          <div className="mt-10 flex justify-center md:mt-0 md:shrink-0">
+            <img
+              src={photoSrc}
+              onError={() => {
+                if (photoSrc !== GITHUB_AVATAR) setPhotoSrc(GITHUB_AVATAR)
+              }}
+              alt="Muhammad Ibtisam Iqbal"
+              width={280}
+              height={280}
+              className="h-48 w-48 rounded-full border-2 border-light-border object-cover dark:border-border-subtle md:h-64 md:w-64 lg:h-72 lg:w-72"
+            />
           </div>
         </div>
 
