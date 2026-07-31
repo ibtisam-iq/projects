@@ -433,49 +433,61 @@
 # --- CI/CD, Tooling, and Cloud Basics ---
 
 - slug: devsecops-pipeline-engineering
-  title: "14-Stage DevSecOps Pipeline Mirrored Across Jenkins and GitHub Actions with 3-Pass Trivy, SonarQube, and GHCR/Docker Hub/Nexus Publishing"
+  title: "DevSecOps CI Pipelines Mirrored Across Jenkins and GitHub Actions with Layered Trivy Scanning, SonarQube Gates, and GHCR/Docker Hub/Nexus Publishing"
   category: platform
   status: completed
   year: 2026
   shortDescription: >-
-    Built a 14-stage CI pipeline for three codebases and implemented it identically on Jenkins
-    and GitHub Actions. Integrated Trivy, SonarQube quality gates, and triple-registry publishing
-    with strict GitOps handoff.
+    Built one CI pipeline contract for three codebases (14, 16, and 21 stages) and implemented it
+    twice, on Jenkins and GitHub Actions. Integrated Trivy, SonarQube quality gates, and
+    triple-registry publishing with a strict GitOps handoff.
   description: >-
-    Built a standardized 14-stage CI pipeline for three monolithic codebases (Java, Python, Node.js) and implemented
-    it identically on both Jenkins and GitHub Actions to prove the pipeline design is tool-agnostic. Before writing
+    Built a standardized CI pipeline contract for three monolithic codebases (Java, Python, Node.js) and implemented
+    it twice for each, on both Jenkins and GitHub Actions, to prove the pipeline design is tool-agnostic. The stage
+    order is identical across all six implementations; the stage count is not (14 for Java, 16 for Python, 21 for
+    the two-image Node app), because each ecosystem leaves a different amount of work to the pipeline. Before writing
     any automation, I validated each application's full lifecycle locally (Maven compilation, Webpack builds, pytest
     with MySQL/PostgreSQL) to establish a working baseline.
 
-    Each pipeline integrates language-specific SAST tools: Bandit and pip-audit for Python, npm audit and ESLint for
-    Node.js, and Trivy filesystem scanning for Java. Container security uses a 3-pass Trivy strategy that separates
-    concerns: '--vuln-type library' hard-fails the build on CRITICAL findings, while '--vuln-type os' runs as advisory
-    only to prevent Debian-maintained CVEs from false-blocking releases.
+    Each pipeline integrates language-specific SAST tools: Bandit and pip-audit for Python, npm audit and two ESLint
+    configurations for Node.js, and Trivy plus SonarQube for Java. Container security separates findings by who owns
+    the fix: '--vuln-type library' covers dependencies declared in the project's own manifest, while '--vuln-type os'
+    runs advisory-only so an upstream distribution's patch cadence never becomes a build gate.
+
+    Enforcement is a deliberate per-project decision rather than a default. On the inherited Java codebase the
+    GitHub Actions workflow reports CRITICAL findings instead of blocking, because hard-failing a build on CVEs in
+    someone else's dependency tree takes a decision that belongs to whoever maintains that code. The Python and Node
+    pipelines, where I own the dependencies, block on CRITICAL library findings.
 
     Test suites run against in-memory databases (SQLite for Python) to avoid external dependencies in CI, while still
     generating JaCoCo and Cobertura XML coverage reports that feed into SonarQube quality gates.
 
-    Every image is tagged with three identifiers (semantic version, 7-character Git SHA, and CI build number) with
-    no floating 'latest' tags. Images are published simultaneously to three registries: GHCR, Docker Hub, and a
-    self-hosted Nexus instance (running on SilverStack).
+    Every image carries an immutable tag composed of three identifiers (semantic version, 7-character Git SHA, and CI
+    build number) alongside a convenience 'latest' tag. Only the immutable tag is ever written to the deployment
+    repository, so nothing floating can reach a cluster. Images are published simultaneously to three registries:
+    GHCR, Docker Hub, and a self-hosted Nexus instance (running on SilverStack).
 
-    Every pipeline ends with a strict GitOps handoff: the image SHA is committed to the CD repository. No pipeline
+    Every pipeline ends with a strict GitOps handoff: the image tag is committed to the CD repository. No pipeline
     has kubectl access to any cluster.
   sections:
     - title: "Pipeline Design"
       items:
         - "Validated each application's build and test cycle locally (Maven, Webpack, pytest with MySQL/PostgreSQL) before automating anything."
-        - "Implemented the same 14-stage pipeline on both Jenkins and GitHub Actions to prove the design is tool-agnostic."
-        - "Built a strict CI/CD separation: CI pipelines push an image SHA commit to the CD repository. No pipeline has kubectl access to any cluster."
+        - "Fixed one stage order across all six implementations and let the stage count diverge by ecosystem (14 Java, 16 Python, 21 Node) rather than forcing cosmetic uniformity."
+        - "Implemented every pipeline twice, on Jenkins and GitHub Actions, to separate design decisions from platform habits."
+        - "Built a strict CI/CD separation: CI pipelines commit an image tag to the CD repository and stop. No pipeline has kubectl access to any cluster."
     - title: "Security Scanning & Quality Gates"
       items:
-        - "Integrated language-specific security tools: Bandit and pip-audit for Python, npm audit and ESLint for Node.js, Trivy filesystem scan for Java."
-        - "Configured a 3-pass Trivy strategy: '--vuln-type library' blocks the build on CRITICAL findings, '--vuln-type os' runs as advisory only, preventing Debian-maintained CVEs from false-blocking releases."
+        - "Integrated language-specific security tools: Bandit and pip-audit for Python, npm audit and two ESLint configurations for Node.js, Trivy and SonarQube for Java."
+        - "Split Trivy image scanning by who owns the fix: '--vuln-type library' targets dependencies declared in the project's own manifest, '--vuln-type os' runs advisory-only so an upstream distribution's patch cadence never becomes a build gate."
+        - "Treated enforcement as a per-project decision: blocking on CRITICAL library findings where I own the dependencies, reporting instead of blocking on an inherited codebase where that call belongs to its maintainers."
+        - "Resolved seven transitive CRITICAL CVEs from the Spring Boot BOM using both '<properties>' keys and '<dependencyManagement>' overrides, after discovering the BOM silently ignores property keys it does not expose."
         - "Ran CI test suites against in-memory databases (SQLite for Python) to avoid external dependencies, while still generating JaCoCo and Cobertura XML reports for SonarQube."
     - title: "Artifact Management"
       items:
-        - "Published version-tagged images to GHCR, Docker Hub, and a self-hosted Nexus registry simultaneously."
-        - "Tagged every image with the semantic version, the 7-character Git SHA, and the CI build number. No floating 'latest' tags."
+        - "Published every image to GHCR, Docker Hub, and a self-hosted Nexus registry simultaneously, in a single build pass tagged for all three."
+        - "Composed an immutable tag from the semantic version, the 7-character Git SHA, and the CI build number, so each segment answers a distinct question: which release, which commit, which run."
+        - "Published a floating 'latest' alongside it for convenience, but wrote only the immutable tag to the deployment repository, so nothing floating can reach a cluster."
   tags:
     - ci-cd
     - security
