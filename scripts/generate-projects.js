@@ -2,7 +2,7 @@
 // Reads: data/projects.yaml (in this repo)
 // Writes: src/data/projects.ts
 
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { parse } from 'yaml'
 
 const yaml = readFileSync('data/projects.yaml', 'utf8')
@@ -43,5 +43,8 @@ export const getAllYears = (): number[] => {
 }
 `
 
+// src/data/ holds only this generated file, so it does not exist in a fresh
+// clone (git tracks no empty directories). Create it before writing.
+mkdirSync('src/data', { recursive: true })
 writeFileSync('src/data/projects.ts', output)
 console.log(`✅ Generated src/data/projects.ts with ${projects.length} projects`)
