@@ -9,6 +9,7 @@ import ProjectDetail from "@/components/ProjectDetail"
 import HowIWork from "@/components/HowIWork"
 import Footer from "@/components/Footer"
 import { projects } from "@/data/projects"
+import { useCanonical } from "@/hooks/useCanonical"
 import { useState, useMemo, type PropsWithChildren } from "react"
 import { FiFilter } from "react-icons/fi"
 
@@ -139,6 +140,7 @@ const HomePage = () => {
 
 const ScrollToTop = ({ children }: PropsWithChildren) => {
   const { pathname } = useLocation()
+  useCanonical()
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior })
   }, [pathname])
