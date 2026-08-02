@@ -4,8 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "generate": "node scripts/generate-projects.js",
+    "postinstall": "npm run generate",
+    "dev": "npm run generate && vite",
+    "build": "npm run generate && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
