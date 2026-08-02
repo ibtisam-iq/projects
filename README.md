@@ -93,7 +93,7 @@ projects/
 │   │   ├── useCountUp.ts       # requestAnimationFrame counter with easeOut curve.
 │   │   └── useInView.ts        # IntersectionObserver hook for scroll-triggered animations.
 │   ├── data/
-│   │   └── projects.ts         # AUTO-GENERATED. Do not edit manually.
+│   │   └── projects.ts         # AUTO-GENERATED from projects.yaml. Gitignored. Do not edit manually.
 │   ├── types/
 │   │   └── project.ts          # Project TypeScript interface.
 │   ├── App.tsx                 # Router setup, ScrollToTop, ThemeProvider wrapper.
@@ -120,17 +120,15 @@ projects/
 git clone https://github.com/ibtisam-iq/projects.git
 cd projects
 
+# Generates src/data/projects.ts via the postinstall hook
 npm install
-
-# Generate projects.ts from YAML (run after any YAML changes)
-node scripts/generate-projects.js
 
 npm run dev
 npm run build
 ```
 
 > [!NOTE]
-> The generated TypeScript code must be updated after editing `data/projects.yaml` by executing `node scripts/generate-projects.js`. This step executes automatically within the CI build pipeline.
+> `src/data/projects.ts` is generated from `data/projects.yaml` and is **not committed** (see `.gitignore`). It is recreated automatically by `postinstall`, `npm run dev`, and `npm run build`, so editing the YAML is the only step required. Run `npm run generate` directly to refresh it without starting a server.
 
 ---
 
@@ -154,18 +152,17 @@ The pipeline (`.github/workflows/pages.yml`) handles two triggers:
 
 | Trigger | When |
 |---|---|
-| `push` to `main` | Any change pushed to the main branch. |
+| `push` to `main` | Any change pushed to the main branch. Builds and deploys. |
+| `pull_request` to `main` | Build only. The deploy job is skipped via `if: github.event_name != 'pull_request'`. |
 | `workflow_dispatch` | Manual re-run from GitHub Actions UI. |
 
 Pipeline steps:
 1. Checkout code.
 2. Setup **Node.js 24**.
-3. Run `npm ci`.
-4. Run `npm install yaml --no-save`.
-5. Run `generate-projects.js`. This reads `data/projects.yaml` and writes `src/data/projects.ts`.
-6. Run `npm run build` using **Vite**.
-7. Add `CNAME` and `404.html`.
-8. Deploy to **GitHub Pages**.
+3. Run `npm ci`. The `postinstall` hook runs `generate-projects.js`, which reads `data/projects.yaml` and writes `src/data/projects.ts`.
+4. Run `npm run build` using **Vite**.
+5. Add `CNAME` and `404.html`.
+6. Deploy to **GitHub Pages**.
 
 ---
 
