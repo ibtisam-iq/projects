@@ -27,3 +27,7 @@ dist-ssr
 *.bak
 
 .claude
+
+# Generated from data/projects.yaml by scripts/generate-projects.js.
+# Recreated by `npm run generate`, which postinstall/dev/build all run.
+src/data/projects.ts
