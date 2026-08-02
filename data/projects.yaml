@@ -532,7 +532,7 @@
   description: >-
     Built an open-source Kubernetes troubleshooting toolkit as an alternative to images like netshoot, which pull
     hundreds of megabytes for simple connectivity checks. DebugBox offers 3 right-sized Alpine-based variants: Lite (15MB)
-    for DNS and HTTP checks, Balanced (51MB) for general debugging, and Power (91MB) for packet capture and deep inspection.
+    for DNS and HTTP checks, Balanced (47MB) for general debugging, and Power (91MB) for packet capture and deep inspection.
     The Lite variant is 93% smaller than netshoot.
 
     I separated Dockerfiles (declarative) from installation scripts (procedural): package lists live in '.packages' files,
