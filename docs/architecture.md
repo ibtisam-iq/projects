@@ -25,12 +25,15 @@ The site is **data-driven**. Project content lives in [`data/projects.yaml`](../
 │         │                           │
 │  1. Checkout code                   │
 │  2. npm ci                          │
-│  3. npm install yaml --no-save      │
-│  4. node generate-projects.js       │
-│     → writes src/data/projects.ts   │
-│  5. npm run build (Vite)            │
-│  6. Add CNAME + 404.html            │
-│  7. Deploy to GitHub Pages          │
+│     → postinstall runs generate     │
+│  3. npm run build                   │
+│     ├─ generate-projects.js         │
+│     ├─ tsc -b && vite build         │
+│     └─ prerender-meta.js            │
+│        → dist/<route>/index.html    │
+│  4. Verify per-route og:url         │
+│  5. Add CNAME + 404.html            │
+│  6. Deploy to GitHub Pages          │
 │         │                           │
 └─────────┼───────────────────────────┘
           │
@@ -65,6 +68,7 @@ Each project in `data/projects.yaml` follows this schema:
 ```yaml
 - slug: my-project                     # URL-safe identifier (/project/<slug>)
   title: "My Project"                  # Display name
+  metaTitle: "My Project on AWS"       # Optional, ~45-55 chars. <title> and og:title
   category: platform                   # platform | tool
   status: completed                    # completed | in-progress | maintained | archived
   year: 2026                           # Completion or last major update year
@@ -147,6 +151,13 @@ A Node.js ESM script that reads `data/projects.yaml` and writes a fully-typed `s
 - A warning comment ("DO NOT EDIT MANUALLY")
 - The projects array typed as `Project[]`
 - Utility functions: `getAllTechTags`, `getAllCapabilityTags`, `getAllYears`
+
+### `scripts/prerender-meta.js`
+A Node.js ESM script that runs after `vite build`. The site is client-rendered, so every route serves the same `index.html`; `useCanonical` corrects the tags in the browser, but crawlers that do not execute JavaScript (LinkedIn, Slack, Twitter) read the raw HTML and see the site-root `canonical` and `og:url` on every page.
+
+The script clones `dist/index.html` once per route and rewrites eight tags: `<title>`, `description`, `canonical`, `og:title`, `og:description`, `og:url`, `twitter:title`, and `twitter:description`. Output is `dist/<route>/index.html`, one per project slug plus `/how-i-work`. React still renders the page on the client, unchanged.
+
+Titles come from `metaTitle`, falling back to `title` up to the first `:` or `,`. Descriptions come from the first sentence of `shortDescription`. `og:image` remains site-wide. If a tag pattern stops matching, the build fails rather than emitting a shell with stale metadata.
 
 ### `src/types/project.ts`
 TypeScript interfaces defining the `Project`, `ProjectSection`, and `ProjectLink` types. All components reference these types.

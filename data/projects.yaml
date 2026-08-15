@@ -12,6 +12,7 @@
 
 - slug: silverstack-cicd-platform
   title: "SilverStack: Self-Hosted CI/CD on MicroVMs with 5 Custom OCI Images, Systemd Orchestration, Cloudflare Tunnels, and GitHub Actions CI"
+  metaTitle: "SilverStack: Self-Hosted CI/CD on MicroVMs"
   category: platform
   status: maintained
   year: 2026
@@ -92,6 +93,7 @@
 
 - slug: microservices-demo
   title: "Microservices GitOps on Amazon EKS with Terraform, 3 CI Pipelines, ArgoCD Image Updater, ExternalDNS, Gateway API, and Observability"
+  metaTitle: "Microservices GitOps on Amazon EKS with ArgoCD"
   category: platform
   status: completed
   year: 2026
@@ -202,6 +204,7 @@
 
 - slug: retail-store-sample-app
   title: "Multi-Environment Deployment from Bare-Metal to Amazon EKS with Helmfile, IRSA, DynamoDB, SQS/Lambda/SNS, and CloudWatch"
+  metaTitle: "Bare-Metal Kubernetes to Amazon EKS with Helmfile"
   category: platform
   status: completed
   year: 2026
@@ -284,6 +287,7 @@
 
 - slug: java-monolith
   title: "BankApp: Same Java Artifact Deployed Across EC2 Auto Scaling, ECS Fargate, and Amazon EKS with RDS, Gateway API, and Kustomize"
+  metaTitle: "BankApp: One Java Artifact on EC2, ECS and EKS"
   category: platform
   status: completed
   year: 2026
@@ -347,6 +351,7 @@
 
 - slug: polyglot-monolith-deployment
   title: "Polyglot Deployment: Java, Python, and Node.js Across EC2, ECS, Bare-Metal K8s, and EKS with Kustomize Overlays and Multi-Stage Docker"
+  metaTitle: "Polyglot Deployment: Java, Python and Node.js"
   category: platform
   status: completed
   year: 2026
@@ -434,6 +439,7 @@
 
 - slug: devsecops-pipeline-engineering
   title: "DevSecOps CI Pipelines Mirrored Across Jenkins and GitHub Actions with Layered Trivy Scanning, SonarQube Gates, and GHCR/Docker Hub/Nexus Publishing"
+  metaTitle: "DevSecOps CI Pipelines on Jenkins and GitHub Actions"
   category: platform
   status: completed
   year: 2026
@@ -522,6 +528,7 @@
 
 - slug: debugbox
   title: "DebugBox: Multi-Arch Kubernetes Diagnostics Toolkit with 3 Size-Optimized Variants, Trivy Gating, Hadolint, and MkDocs"
+  metaTitle: "DebugBox: Right-Sized Kubernetes Debug Containers"
   category: tool
   status: maintained
   year: 2026
@@ -606,6 +613,7 @@
 
 - slug: aws-secure-static-hosting
   title: "Static Hosting on AWS with CloudFront OAC, Cross-Region Replication, Dual-KMS Encryption, CloudTrail Auditing, and Lifecycle Management"
+  metaTitle: "Zero-Compute Static Hosting on AWS with CloudFront"
   category: platform
   status: completed
   year: 2026
