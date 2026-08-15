@@ -43,6 +43,22 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Every route must carry its own og:url. A shell left on the site root
+      # means the meta swap silently failed, and crawlers that do not run JS
+      # (LinkedIn, Slack) would resolve every project page back to the root.
+      - name: Verify per-route metadata
+        run: |
+          fail=0
+          for f in dist/*/index.html; do
+            case "$f" in dist/assets/*) continue ;; esac
+            route="$(basename "$(dirname "$f")")"
+            if ! grep -q "og:url\" content=\"https://projects.ibtisam-iq.com/$route\"" "$f"; then
+              echo "::error file=$f::og:url does not point at /$route"
+              fail=1
+            fi
+          done
+          exit $fail
+
       - name: Add CNAME
         run: echo "projects.ibtisam-iq.com" > dist/CNAME
 

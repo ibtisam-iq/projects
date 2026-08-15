@@ -7,7 +7,7 @@
     "generate": "node scripts/generate-projects.js",
     "postinstall": "npm run generate",
     "dev": "npm run generate && vite",
-    "build": "npm run generate && tsc -b && vite build",
+    "build": "npm run generate && tsc -b && vite build && node scripts/prerender-meta.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },

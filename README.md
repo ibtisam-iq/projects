@@ -42,7 +42,9 @@ The site is entirely data-driven. Project content lives in [`data/projects.yaml`
 > [!NOTE]
 > No source code changes are required to add a project.
 
-Projects are managed centrally through [`data/projects.yaml`](./data/projects.yaml), acting as the single source of truth. New entries are appended to this file and are automatically validated, compiled to TypeScript, and deployed via GitHub Actions within approximately 2 minutes upon pushing to the main branch.
+Projects are managed centrally through [`data/projects.yaml`](./data/projects.yaml), acting as the single source of truth. New entries are appended to this file and are automatically validated, compiled to TypeScript, given a prerendered metadata shell, and deployed via GitHub Actions within approximately 2 minutes upon pushing to the main branch.
+
+Each entry may set an optional `metaTitle` (roughly 45 to 55 characters), used for the page `<title>` and `og:title`. Full `title` values run past what search results and link previews display. When `metaTitle` is omitted, the build falls back to `title` up to the first `:` or `,`, and the meta description falls back to the first sentence of `shortDescription`.
 
 For complete schema specifications, field formatting guidelines, and engineering writing conventions, refer to:
 
@@ -77,7 +79,8 @@ projects/
 ├── docs/
 │   └── architecture.md         # Full architecture and pipeline documentation.
 ├── scripts/
-│   └── generate-projects.js    # Converts projects.yaml to src/data/projects.ts.
+│   ├── generate-projects.js    # Converts projects.yaml to src/data/projects.ts.
+│   └── prerender-meta.js       # Writes dist/<route>/index.html with per-route meta after the build.
 ├── src/
 │   ├── components/
 │   │   ├── Navbar.tsx          # Top nav with theme toggle and mobile menu.
@@ -160,9 +163,10 @@ Pipeline steps:
 1. Checkout code.
 2. Setup **Node.js 24**.
 3. Run `npm ci`. The `postinstall` hook runs `generate-projects.js`, which reads `data/projects.yaml` and writes `src/data/projects.ts`.
-4. Run `npm run build` using **Vite**.
-5. Add `CNAME` and `404.html`.
-6. Deploy to **GitHub Pages**.
+4. Run `npm run build` using **Vite**, then `prerender-meta.js` writes one `dist/<route>/index.html` per route with route-specific `title`, `description`, `canonical`, and Open Graph tags.
+5. Verify every generated shell carries its own `og:url`. A shell left on the site root fails the build.
+6. Add `CNAME` and `404.html`.
+7. Deploy to **GitHub Pages**.
 
 ---
 
