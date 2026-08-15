@@ -62,8 +62,8 @@ jobs:
       - name: Add CNAME
         run: echo "projects.ibtisam-iq.com" > dist/CNAME
 
-      - name: Add 404 fallback
-        run: cp dist/index.html dist/404.html
+      # 404.html is emitted by scripts/prerender-meta.js during the build, with its
+      # own title and noindex. Copying index.html here would overwrite that.
 
       - name: Upload artifact
         if: ${{ env.ACT != 'true' }}
