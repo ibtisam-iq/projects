@@ -50,8 +50,8 @@ const Hero = () => {
 
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-light-muted dark:text-text-muted md:text-lg">
             Kubernetes clusters, AWS infrastructure, CI/CD pipelines, and GitOps
-            workflows. Every project built from scratch with source code,
-            runbooks, and terminal sessions.
+            workflows. Every project built from scratch with source code and a
+            runbook, plus terminal sessions on the ones worth replaying.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
