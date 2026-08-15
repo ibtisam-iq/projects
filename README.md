@@ -80,7 +80,7 @@ projects/
 │   └── architecture.md         # Full architecture and pipeline documentation.
 ├── scripts/
 │   ├── generate-projects.js    # Converts projects.yaml to src/data/projects.ts.
-│   └── prerender-meta.js       # Writes dist/<route>/index.html with per-route meta after the build.
+│   └── prerender-meta.js       # After the build: per-route shells, 404.html, sitemap.xml, robots.txt.
 ├── src/
 │   ├── components/
 │   │   ├── Navbar.tsx          # Top nav with theme toggle and mobile menu.
@@ -163,10 +163,12 @@ Pipeline steps:
 1. Checkout code.
 2. Setup **Node.js 24**.
 3. Run `npm ci`. The `postinstall` hook runs `generate-projects.js`, which reads `data/projects.yaml` and writes `src/data/projects.ts`.
-4. Run `npm run build` using **Vite**, then `prerender-meta.js` writes one `dist/<route>/index.html` per route with route-specific `title`, `description`, `canonical`, and Open Graph tags.
+4. Run `npm run build` using **Vite**, then `prerender-meta.js` writes one `dist/<route>/index.html` per route with route-specific `title`, `description`, `canonical`, and Open Graph tags. The same script writes `404.html`, `sitemap.xml` and `robots.txt`.
 5. Verify every generated shell carries its own `og:url`. A shell left on the site root fails the build.
-6. Add `CNAME` and `404.html`.
+6. Add `CNAME`.
 7. Deploy to **GitHub Pages**.
+
+`sitemap.xml`, `robots.txt` and `404.html` are generated rather than held in `public/`. Without them the SPA fallback answers `/robots.txt` and `/sitemap.xml` with the app shell, so a crawler asking for the sitemap receives HTML. The sitemap is built from the same route list as the shells, so a project added to `projects.yaml` cannot appear in one without appearing in the other. `404.html` carries its own title, a self-referential canonical and `noindex`, rather than the home page metadata that a copy of `index.html` gives every dead URL.
 
 ---
 
