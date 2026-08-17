@@ -36,9 +36,10 @@
     microVM with a build-time parameterized upstream port, a /health endpoint for readiness checks, and
     hardened security headers. All services serve on port 80 regardless of the application's native port.
 
-    On the CI side, I built GitHub Actions workflows for each image, and every service image runs a build-time
-    health check before it can be pushed: 'nginx -t' parses the real config, systemd units are verified by their
-    multi-user.target.wants symlink, and required binaries and directories are asserted present. Security is enforced through
+    On the CI side, I built GitHub Actions workflows for each image, and every image, including the shared base,
+    now runs a build-time health check before it can be pushed: required binaries, directories and systemd unit
+    wiring are asserted present, with 'nginx -t' parsing the real config on every service image that runs one.
+    Security is enforced through
     strict sudoers profiles, daemon user isolation, pinned binary versions with SHA256 checksum verification, and
     ephemeral SSH key generation per microVM instance. Each image is published as a publicly accessible playground
     on iximiuz Labs.
@@ -50,7 +51,7 @@
     - title: "Continuous Integration & Automated Publishing"
       items:
         - "Built GitHub Actions workflows for each image (e.g., build-jenkins-rootfs) to automate the full build-test-push cycle, replacing manual image builds."
-        - "Added a build-time health check to every service image: 'nginx -t' parses the real config, systemd units are verified by their multi-user.target.wants symlink, and required binaries and directories are asserted present. The script exits nonzero on any failure, which fails the build, so only passing images reach GHCR."
+        - "Added a build-time health check to every image, including the shared base: required binaries, directories and systemd unit wiring are asserted present, with 'nginx -t' parsing the real config on every service image that runs one. The script exits nonzero on any failure, which fails the build, so only passing images reach GHCR."
     - title: "Networking & Edge Routing"
       items:
         - "Worked around Carrier-Grade NAT (CGNAT) and the lack of public IPs by configuring outbound-only Cloudflare Tunnels, exposing CI/CD services on custom domains without opening inbound firewall ports."
