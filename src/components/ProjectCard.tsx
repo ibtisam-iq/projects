@@ -22,10 +22,17 @@ const linkConfig: Record<string, { icon: IconType; label: string }> = {
 }
 
 const statusColors: Record<string, string> = {
-  completed: "bg-green-500/15 text-green-600 dark:text-green-400",
-  "in-progress": "bg-amber-500/15 text-amber-600 dark:text-amber-400",
-  maintained: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
-  archived: "bg-gray-500/15 text-gray-600 dark:text-gray-400",
+  completed: "border-emerald/40 bg-emerald-glow text-emerald-soft",
+  "in-progress": "border-amber/40 bg-amber-glow text-amber",
+  maintained: "border-indigo/40 bg-indigo-glow text-indigo-soft",
+  archived: "border-border-color bg-surface-3 text-text-dim",
+}
+
+const statusDots: Record<string, string> = {
+  completed: "bg-emerald shadow-[0_0_8px_#10d492]",
+  "in-progress": "bg-amber shadow-[0_0_8px_#ffc93c]",
+  maintained: "bg-indigo shadow-[0_0_8px_#7c7cff]",
+  archived: "bg-text-dim",
 }
 
 interface ProjectCardProps {
@@ -39,41 +46,46 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
   return (
     <article
       ref={ref as React.RefObject<HTMLElement>}
-      className={`group relative overflow-hidden rounded-lg border bg-light-surface p-5 transition-all duration-300 md:p-6 ${
-        inView
-          ? "translate-y-0 opacity-100"
-          : "translate-y-4 opacity-0"
+      className={`group relative overflow-hidden rounded-[16px] border bg-surface-1 p-6 backdrop-blur-[12px] transition-all duration-300 md:p-7 ${
+        inView ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       } ${
         project.featured
-          ? "border-teal-accent/25 hover:border-teal-accent/40 hover:shadow-[0_4px_20px_rgba(0,180,216,0.12)] dark:border-teal-accent/15 dark:hover:border-teal-accent/30 dark:hover:shadow-[0_4px_20px_rgba(0,180,216,0.08)]"
-          : "border-light-border hover:border-teal-accent/30 hover:shadow-lg dark:border-border-subtle dark:hover:border-teal-accent/30"
-      } hover:-translate-y-1 dark:bg-surface-1`}
+          ? "border-[#2f4066] hover:border-cyan hover:shadow-[0_20px_40px_-18px_rgba(0,0,0,0.8),0_0_0_1px_rgba(22,200,236,0.2)]"
+          : "border-border-color hover:border-indigo hover:shadow-[0_20px_40px_-18px_rgba(0,0,0,0.8)]"
+      } hover:-translate-y-[5px]`}
       style={{
         transitionDelay: `${index * 80}ms`,
       }}
     >
+      {/* Subtle top glow line on hover */}
+      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-cyan to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-60" />
+      
+      {/* Corner radial glow on hover */}
+      <div className="pointer-events-none absolute -right-[55px] -top-[55px] h-[150px] w-[150px] bg-[radial-gradient(circle,rgba(22,200,236,0.15),transparent_68%)] opacity-0 transition-opacity duration-350 group-hover:opacity-100" />
+
       {project.featured && (
         <div
-          className="absolute inset-y-0 left-0 w-[3px] bg-teal-accent"
+          className="absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-indigo to-cyan"
           aria-hidden="true"
         />
       )}
 
       {/* Status row */}
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+      <div className="mb-4 flex flex-wrap items-center gap-2.5">
         <span
-          className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium capitalize ${
-            statusColors[project.status] || "bg-gray-500/15 text-gray-400"
+          className={`flex items-center gap-1.5 rounded-full border px-[10px] py-[4px] text-[11px] font-bold uppercase tracking-[0.06em] ${
+            statusColors[project.status] || "border-border-color bg-surface-3 text-text-dim"
           }`}
         >
+          <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${statusDots[project.status] || "bg-text-dim"}`} />
           {project.status.replace("-", " ")}
         </span>
-        <span className="font-mono text-xs text-light-muted dark:text-text-faint">
+        <span className="font-mono text-[13px] font-bold text-text-dim tracking-tight">
           {project.year}
         </span>
         {project.featured && (
-          <span className="flex items-center gap-1 rounded-full bg-teal-accent/10 px-2 py-0.5 text-[10px] font-medium text-teal-accent">
-            <FiStar size={10} />
+          <span className="flex items-center gap-1 rounded-full bg-cyan-glow px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-cyan-soft border border-cyan/30">
+            <FiStar size={10} className="drop-shadow-[0_0_4px_#16c8ec]" />
             Featured
           </span>
         )}
@@ -81,22 +93,22 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
 
       {/* Title */}
       <Link to={`/${project.slug}`}>
-        <h3 className="mb-2 text-base font-bold leading-snug tracking-tight text-light-text transition-colors group-hover:text-teal-accent dark:text-text-primary md:text-lg">
+        <h3 className="mb-3 text-[22px] font-extrabold leading-[1.25] tracking-[-0.025em] text-text-primary transition-colors group-hover:text-cyan md:text-[24px]">
           {project.title}
         </h3>
       </Link>
 
       {/* Description */}
-      <p className="mb-4 text-sm leading-relaxed text-light-muted dark:text-text-muted">
+      <p className="mb-6 text-[15.5px] leading-[1.65] text-text-muted">
         {project.shortDescription}
       </p>
 
       {/* Tech Stack */}
-      <div className="mb-4 flex flex-wrap gap-1.5">
+      <div className="mb-5 flex flex-wrap gap-2">
         {project.tech.map((tech, i) => (
           <span
             key={tech}
-            className={`rounded bg-light-surface-2 px-2 py-0.5 font-mono text-[11px] text-light-muted transition-all duration-300 dark:bg-surface-2 dark:text-text-muted ${
+            className={`flex items-center gap-1.5 rounded-full border border-border-color bg-surface-3 px-3 py-1.5 font-sans text-[13px] font-bold tracking-[0.04em] text-text-muted transition-all duration-300 hover:border-[#35476e] hover:text-text-primary ${
               inView ? "scale-100 opacity-100" : "scale-95 opacity-0"
             }`}
             style={{ transitionDelay: inView ? `${i * 30}ms` : "0ms" }}
@@ -107,21 +119,22 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
       </div>
 
       {/* Bottom: skills + links */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-light-border/50 pt-3 dark:border-border-subtle/50">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-border-soft pt-4">
         {project.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full border border-teal-accent/20 px-2 py-0.5 text-[11px] text-teal-accent dark:border-teal-accent/25"
+                className="flex items-center gap-1.5 rounded-full border border-indigo/30 bg-indigo-glow px-2.5 py-1 text-[11.5px] font-bold tracking-wider text-indigo-soft"
               >
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-indigo shadow-[0_0_8px_#7c7cff]"></span>
                 {tag}
               </span>
             ))}
           </div>
         )}
 
-        <div className="flex flex-wrap gap-1.5 md:ml-auto">
+        <div className="flex flex-wrap gap-2 md:ml-auto">
           {project.links.map((link) => {
             let config = linkConfig[link.type]
             if (!config) {
@@ -145,13 +158,13 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium transition-colors ${
+                className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[12px] font-bold transition-all ${
                   isGitHub
-                    ? "bg-teal-accent/10 text-teal-accent hover:bg-teal-accent/20"
-                    : "bg-light-surface-2 text-light-muted hover:text-light-text dark:bg-surface-2 dark:text-text-muted dark:hover:text-text-primary"
+                    ? "border-transparent bg-gradient-to-r from-indigo to-[#5b52e8] text-white shadow-[0_4px_12px_-4px_rgba(124,124,255,0.6)] hover:-translate-y-0.5 hover:shadow-[0_8px_16px_-4px_rgba(124,124,255,0.8)]"
+                    : "border-border-color bg-surface-2 text-text-primary hover:-translate-y-0.5 hover:border-[#3d5177] hover:bg-[#26324f]"
                 }`}
               >
-                <Icon size={11} className="shrink-0" />
+                <Icon size={12} className="shrink-0" />
                 <span>{config.label}</span>
               </a>
             )

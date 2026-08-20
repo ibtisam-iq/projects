@@ -41,6 +41,15 @@ export const getAllYears = (): number[] => {
   projects.forEach((p) => yearSet.add(p.year))
   return Array.from(yearSet).sort((a, b) => b - a)
 }
+
+// Derived from the data, never hardcoded: a filter option that matches zero
+// projects is a dead end, and the schema allows statuses this list has not
+// seen yet.
+export const getAllStatuses = (): string[] => {
+  const statusSet = new Set<string>()
+  projects.forEach((p) => statusSet.add(p.status))
+  return Array.from(statusSet).sort()
+}
 `
 
 // src/data/ holds only this generated file, so it does not exist in a fresh

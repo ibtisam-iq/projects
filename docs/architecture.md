@@ -175,27 +175,44 @@ The CI/CD pipeline. Triggers on:
 ## Component Architecture
 
 ```
-App.tsx                    : Router, ScrollToTop, ThemeProvider wrapper
-├── context/
-│   └── ThemeContext.tsx    : Dark/light mode provider (class strategy on <html>)
+App.tsx                        : Router, ScrollToTop wrapper, skip-link
 ├── hooks/
-│   ├── useCountUp.ts      : requestAnimationFrame counter with easeOut curve
-│   └── useInView.ts       : IntersectionObserver hook (fires once, respects prefers-reduced-motion)
+│   ├── useCanonical.ts        : Keeps <link rel="canonical"> in sync on route change
+│   ├── useCountUp.ts          : requestAnimationFrame counter with easeOut curve
+│   └── useInView.ts           : IntersectionObserver hook (fires once, respects prefers-reduced-motion)
+├── utils/
+│   └── toolCategories.ts      : Buckets the tech list into 4 domains; computes per-option facet counts
 ├── components/
-│   ├── Navbar.tsx          : Sticky nav with internal links + theme toggle
-│   ├── Hero.tsx            : Heading, animated stat counters (projects, tech count), scroll indicator
-│   ├── Sidebar.tsx         : Filter panel (search, category, skills, tech, year, status)
-│   ├── ProjectCard.tsx     : Card with scroll-triggered reveal, hover lift, staggered tech badges
-│   ├── ProjectDetail.tsx   : Full project page with overview paragraphs, dynamic sections, sidebar metadata
-│   ├── HowIWork.tsx        : /how-i-work methodology page with SVG pipeline and typewriter terminal
-│   └── Footer.tsx          : Social links and external site navigation
+│   ├── Navbar.tsx             : Sticky nav, scroll-progress bar, repository link, mobile menu
+│   ├── Hero.tsx               : Heading, animated stat counters (projects, tech count), scroll indicator
+│   ├── TopFilterBar.tsx       : Owns dropdown state; hosts the desktop filter deck and mobile trigger
+│   │   ├── ToolsMegaPopover.tsx   : 4-column technology selector with in-popover search
+│   │   ├── ActiveFilterChips.tsx  : Match count, removable chips, quick presets, reset-all
+│   │   └── MobileFilterDrawer.tsx : Full-screen drawer below `lg`, portalled to <body>
+│   ├── ProjectCard.tsx        : Card with scroll-triggered reveal, hover lift, staggered tech badges
+│   ├── ProjectDetail.tsx      : Full project page with overview paragraphs, dynamic sections, sidebar metadata
+│   ├── HowIWork.tsx           : /how-i-work methodology page with SVG pipeline and typewriter terminal
+│   └── Footer.tsx             : Social links and external site navigation
 ```
 
+> [!NOTE]
+> There is no theme provider or theme toggle. The site is locked to dark:
+> `<html class="dark">` in `index.html`, `color-scheme: dark` and a fixed body
+> gradient in `index.css`. `darkMode: 'class'` remains in the Tailwind config
+> only so the existing `dark:` variants keep resolving.
+
 ### Filter Flow
-1. `App.tsx` (`HomePage`) manages all filter state (`useState`)
-2. `Sidebar` receives state + setters, renders filter controls
-3. `filteredProjects` is computed via `useMemo` combining all active filters
-4. Matching projects are rendered as `ProjectCard` components
+1. `App.tsx` (`HomePage`) owns all filter state (`useState`) and computes `filteredProjects` via `useMemo`
+2. `TopFilterBar` receives that state plus setters, and owns only local UI state (which dropdown is open, whether the mobile drawer is open)
+3. It forwards state down to `ToolsMegaPopover`, `ActiveFilterChips` and `MobileFilterDrawer`, so desktop and mobile controls always read and write the same source
+4. `calculateProjectCounts` (in `utils/toolCategories.ts`) derives the per-option counts shown beside every filter
+5. Matching projects are rendered as `ProjectCard` components
+
+### Why the drawer is portalled
+`TopFilterBar`'s root is `relative z-30`, which creates a stacking context. A
+`fixed inset-0 z-50` child rendered inside it still cannot rise above the
+`z-50` sticky navbar, because its z-index is scoped to the parent context.
+`MobileFilterDrawer` therefore renders through `createPortal(..., document.body)`.
 
 ---
 
@@ -204,11 +221,11 @@ App.tsx                    : Router, ScrollToTop, ThemeProvider wrapper
 | Layer | Technology |
 |---|---|
 | Framework | React 19 + TypeScript 5.9 |
-| Styling | Tailwind CSS v4 (dark mode via `class` strategy) |
+| Styling | Tailwind CSS v4, loaded via `@import "tailwindcss"` + `@config` bridge to `tailwind.config.js`. Locked to dark. |
 | Build tool | Vite 8 |
 | Routing | React Router v7 |
 | Icons | React Icons |
-| Fonts | Inter, DM Sans, JetBrains Mono (Google Fonts) |
+| Fonts | Plus Jakarta Sans (sans), JetBrains Mono (mono), Inter (fallback) — Google Fonts |
 | Data format | YAML → TypeScript (auto-generated at build time) |
 | Hosting | GitHub Pages |
 | CI/CD | GitHub Actions |
