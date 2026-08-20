@@ -6,7 +6,6 @@ import { FiChevronDown } from "react-icons/fi"
 const GITHUB_AVATAR = "https://avatars.githubusercontent.com/u/174851199?v=4&s=400"
 
 const Hero = () => {
-  // Local public/profile.png takes priority; falls back to GitHub avatar
   const [photoSrc, setPhotoSrc] = useState("/profile.png")
   const totalProjects = projects.length
   const uniqueTech = new Set(projects.flatMap((p) => p.tech)).size
@@ -23,32 +22,20 @@ const Hero = () => {
 
   return (
     <section className="relative overflow-hidden">
-      <div
-        className="absolute inset-0 opacity-[0.04] dark:opacity-[0.06]"
-        aria-hidden="true"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(0,180,216,0.5) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,180,216,0.5) 1px, transparent 1px)
-          `,
-          backgroundSize: "48px 48px",
-        }}
-      />
-
-      <div className="relative mx-auto max-w-7xl px-6 pb-4 pt-12 md:pb-6 md:pt-16">
+      <div className="relative mx-auto max-w-[1240px] px-[22px] pb-4 pt-12 md:pb-6 md:pt-16">
         <div className="flex flex-col md:flex-row md:items-center md:gap-16">
           <div className="min-w-0 flex-1">
-          <h1 className="text-4xl font-bold leading-tight tracking-tight text-light-text dark:text-text-primary md:text-5xl lg:text-6xl">
+          <h1 className="text-[clamp(32px,5.4vw,56px)] font-extrabold leading-[1.1] tracking-[-0.025em] text-transparent bg-clip-text bg-gradient-to-br from-white via-indigo-soft to-cyan">
             DevOps & Cloud
             <br />
             Infrastructure Projects
           </h1>
 
-          <p className="mt-4 font-mono text-sm tracking-wide text-teal-accent md:text-base">
+          <p className="mt-4 font-mono text-[13px] font-bold uppercase tracking-[0.16em] text-cyan-soft md:text-[14px]">
             Real deployments. Real pipelines. Real infrastructure.
           </p>
 
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-light-muted dark:text-text-muted md:text-lg">
+          <p className="mt-5 max-w-2xl text-[17.5px] leading-relaxed text-text-muted">
             Kubernetes clusters, AWS infrastructure, CI/CD pipelines, and GitOps
             workflows. Every project built from scratch with source code and a
             runbook, plus terminal sessions on the ones worth replaying.
@@ -58,16 +45,16 @@ const Hero = () => {
             {stats.map((stat, i) => (
               <div
                 key={stat.label}
-                className="flex items-center gap-2 rounded-full border border-light-border bg-light-surface px-4 py-2 transition-all duration-500 dark:border-border-subtle dark:bg-surface-1"
+                className="flex items-center gap-2.5 rounded-full border border-border-color bg-surface-1 px-[18px] py-[9px] backdrop-blur-[12px] transition-all duration-500 hover:-translate-y-[2px] hover:border-cyan"
                 style={{
                   opacity: 1,
                   animation: `fadeIn 0.4s ease-out ${i * 100}ms both`,
                 }}
               >
-                <span className="font-mono text-sm font-semibold text-teal-accent">
+                <span className="font-mono text-[16px] font-extrabold text-cyan-soft">
                   {stat.value}
                 </span>
-                <span className="text-xs text-light-muted dark:text-text-muted">
+                <span className="text-[14px] font-bold text-text-muted">
                   {stat.label}
                 </span>
               </div>
@@ -84,7 +71,7 @@ const Hero = () => {
               alt="Muhammad Ibtisam Iqbal"
               width={280}
               height={280}
-              className="h-48 w-48 rounded-full border-2 border-light-border object-cover dark:border-border-subtle md:h-64 md:w-64 lg:h-72 lg:w-72"
+              className="h-48 w-48 rounded-full border border-border-color bg-surface-1 object-cover shadow-[0_0_30px_rgba(124,124,255,0.25)] md:h-64 md:w-64 lg:h-72 lg:w-72"
             />
           </div>
         </div>
@@ -97,7 +84,7 @@ const Hero = () => {
                 .getElementById("main-content")
                 ?.scrollIntoView({ behavior: "smooth" })
             }
-            className="animate-bounce-gentle text-light-muted/50 transition-colors hover:text-teal-accent dark:text-text-faint/50 dark:hover:text-teal-accent"
+            className="animate-bounce-gentle text-text-dim transition-colors hover:text-cyan"
             aria-hidden="true"
             tabIndex={-1}
           >
