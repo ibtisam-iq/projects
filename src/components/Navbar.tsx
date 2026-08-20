@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { useTheme } from "@/context/ThemeContext"
-import { FiSun, FiMoon, FiMenu, FiX } from "react-icons/fi"
+import { FiMenu, FiX, FiGithub } from "react-icons/fi"
 
 const navLinks = [
   { to: "/", label: "Projects" },
@@ -11,12 +10,22 @@ const navLinks = [
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const { isDark, toggle } = useTheme()
+  const [scrollProgress, setScrollProgress] = useState(0)
   const location = useLocation()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20)
+      
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
+      const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0
+      setScrollProgress(progress)
+    }
+    
     window.addEventListener("scroll", onScroll, { passive: true })
+    // Initialize
+    onScroll()
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
@@ -31,77 +40,74 @@ const Navbar = () => {
 
   return (
     <header
-      className={`sticky top-0 z-50 backdrop-blur-md transition-all duration-200 ${
-        scrolled ? "py-2.5" : "py-4"
-      } border-b bg-light-bg/80 border-light-border dark:bg-surface-0/80 dark:border-white/5`}
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "py-3 border-b-border-subtle bg-[#04070d]/90 backdrop-blur-[18px] saturate-[140%] shadow-[0_12px_34px_-18px_rgba(0,0,0,0.95)]"
+          : "py-5 border-b-transparent bg-transparent"
+      } border-b`}
     >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6">
-        <Link to="/" className="flex items-center gap-2.5" aria-label="Home">
-          <svg
-            width="26"
-            height="26"
-            viewBox="0 0 28 28"
-            fill="none"
-            className="text-teal-accent"
-            aria-hidden="true"
-          >
-            <path
-              d="M14 2L26 8v12l-12 6L2 20V8l12-6z"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              fill="none"
-            />
-            <path
-              d="M14 10l6 3v6l-6 3-6-3v-6l6-3z"
-              fill="currentColor"
-              opacity="0.25"
-            />
-            <circle cx="14" cy="14" r="2" fill="currentColor" />
-          </svg>
-          <span className="font-mono text-[17px] font-semibold tracking-tight text-light-text dark:text-text-primary">
-            ibtisam<span className="text-teal-accent">.</span>iq
+      <div 
+        className="absolute left-0 top-0 h-[2px] bg-gradient-to-r from-indigo via-cyan to-emerald z-50"
+        style={{ width: `${Math.max(0, Math.min(100, scrollProgress))}%`, transition: "width 0.1s ease-out" }}
+      />
+      <nav className="mx-auto flex max-w-[1240px] items-center justify-between px-[22px]">
+        <Link to="/" className="flex items-center gap-3 whitespace-nowrap" aria-label="Home">
+          <div className="flex h-[38px] w-[38px] items-center justify-center rounded-[11px] bg-gradient-to-br from-indigo to-cyan text-[15px] font-extrabold tracking-[-0.03em] text-white shadow-[0_0_20px_rgba(124,124,255,0.45)]">
+            IQ
+          </div>
+          <span className="flex flex-col leading-[1.2]">
+            <span className="text-[17px] font-extrabold tracking-[-0.02em] text-text-primary">
+              Muhammad Ibtisam
+            </span>
+            <span className="hidden text-[11.5px] font-semibold uppercase tracking-[0.09em] text-text-dim md:block">
+              DevOps & Cloud Engineer
+            </span>
           </span>
         </Link>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className={`relative pb-0.5 text-sm font-medium transition-colors ${
+              className={`rounded-[10px] px-[13px] py-[9px] text-[15px] font-semibold transition-all duration-220 whitespace-nowrap ${
                 isActive(link.to)
-                  ? "text-teal-accent"
-                  : "text-light-muted hover:text-light-text dark:text-text-muted dark:hover:text-text-primary"
+                  ? "bg-cyan-glow text-cyan-soft shadow-[inset_0_0_0_1px_rgba(22,200,236,0.3)]"
+                  : "text-text-muted hover:bg-surface-2 hover:text-text-primary"
               }`}
             >
               {link.label}
-              {isActive(link.to) && (
-                <span className="absolute -bottom-0.5 left-0 right-0 h-0.5 rounded-full bg-teal-accent" />
-              )}
             </Link>
           ))}
 
-          <button
-            onClick={toggle}
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            className="rounded-md p-2 text-light-muted transition-colors hover:bg-light-surface-2 hover:text-light-text dark:text-text-muted dark:hover:bg-surface-2 dark:hover:text-text-primary"
+          <div className="mx-2 h-4 w-px bg-border-subtle" />
+
+          <a
+            href="https://github.com/ibtisam-iq/projects"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub Repository"
+            className="flex items-center justify-center gap-2 rounded-[11px] border border-border-color bg-surface-2 px-4 py-2 text-[14px] font-bold text-text-primary transition-all duration-220 hover:-translate-y-[1px] hover:border-[#3d5177] hover:bg-[#26324f]"
           >
-            {isDark ? <FiSun size={18} /> : <FiMoon size={18} />}
-          </button>
+            <FiGithub size={17} />
+            <span>Repository</span>
+          </a>
         </div>
 
-        <div className="flex items-center gap-1 md:hidden">
-          <button
-            onClick={toggle}
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            className="rounded-md p-2.5 text-light-muted dark:text-text-muted"
+        <div className="flex items-center gap-2 md:hidden">
+          <a
+            href="https://github.com/ibtisam-iq/projects"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub Repository"
+            className="rounded-[10px] border border-border-color bg-surface-2 p-2.5 text-text-primary transition-all"
           >
-            {isDark ? <FiSun size={18} /> : <FiMoon size={18} />}
-          </button>
+            <FiGithub size={18} />
+          </a>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            className="rounded-md p-2.5 text-light-muted dark:text-text-muted"
+            className="rounded-[10px] border border-border-color bg-surface-2 p-2.5 text-text-primary transition-all"
           >
             {mobileMenuOpen ? <FiX size={20} /> : <FiMenu size={20} />}
           </button>
@@ -109,23 +115,21 @@ const Navbar = () => {
       </nav>
 
       {mobileMenuOpen && (
-        <div className="animate-slide-up border-t border-light-border bg-light-bg dark:border-white/5 dark:bg-surface-1 md:hidden">
-          <div className="flex flex-col gap-1 px-6 py-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive(link.to)
-                    ? "text-teal-accent"
-                    : "text-light-muted dark:text-text-muted"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
+        <div className="absolute left-0 right-0 top-[100%] m-0 flex animate-fade-in flex-col gap-1 border-b border-border-color bg-[#070a12]/98 p-3 backdrop-blur-[16px] md:hidden">
+          {navLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              onClick={() => setMobileMenuOpen(false)}
+              className={`rounded-[10px] px-3.5 py-3 text-[15px] font-semibold transition-all ${
+                isActive(link.to)
+                  ? "bg-cyan-glow text-cyan-soft shadow-[inset_0_0_0_1px_rgba(22,200,236,0.3)]"
+                  : "text-text-muted"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
       )}
     </header>
