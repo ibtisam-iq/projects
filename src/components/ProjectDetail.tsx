@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from "react"
 import { useParams, Link } from "react-router-dom"
 import { projects } from "@/data/projects"
+import { projectTitle, HOME_TITLE } from "@/utils/pageTitle"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import {
@@ -44,12 +45,7 @@ const ProjectDetail = () => {
   const project = projects.find((p) => p.slug === slug)
 
   useEffect(() => {
-    document.title = project
-      ? `${project.title} | Muhammad Ibtisam`
-      : "Projects | Muhammad Ibtisam"
-    return () => {
-      document.title = "Projects | Muhammad Ibtisam"
-    }
+    document.title = project ? projectTitle(project) : HOME_TITLE
   }, [project])
 
   const relatedProjects = useMemo(() => {
@@ -82,7 +78,7 @@ const ProjectDetail = () => {
             </p>
             <Link
               to="/"
-              className="inline-flex items-center gap-2 rounded-lg bg-teal-accent px-6 py-3 font-semibold text-white transition-colors hover:bg-teal-muted"
+              className="inline-flex items-center gap-2 rounded-[16px] bg-teal-accent px-6 py-3 font-semibold text-white transition-colors hover:bg-teal-muted"
             >
               <FiArrowLeft size={16} />
               Back to All Projects
@@ -136,7 +132,7 @@ const ProjectDetail = () => {
           </Link>
           <FiChevronRight
             size={14}
-            className="text-light-muted dark:text-text-faint"
+            className="text-light-muted dark:text-text-dim"
             aria-hidden="true"
           />
           <Link
@@ -147,7 +143,7 @@ const ProjectDetail = () => {
           </Link>
           <FiChevronRight
             size={14}
-            className="text-light-muted dark:text-text-faint"
+            className="text-light-muted dark:text-text-dim"
             aria-hidden="true"
           />
           <span className="truncate text-light-text dark:text-text-primary">
@@ -178,15 +174,15 @@ const ProjectDetail = () => {
                 >
                   {stat.label}
                 </span>
-                <span className="font-mono text-sm text-light-muted dark:text-text-faint">
+                <span className="font-mono text-sm text-light-muted dark:text-text-dim">
                   {project.year}
                 </span>
-                <span className="rounded-md border border-light-border bg-light-surface-2 px-2.5 py-0.5 text-xs capitalize text-light-muted dark:border-border-subtle dark:bg-surface-2 dark:text-text-muted">
+                <span className="rounded-md border border-border-color bg-surface-1 backdrop-blur-[12px]-2 px-2.5 py-0.5 text-xs capitalize text-light-muted dark:border-border-subtle dark:bg-surface-2 dark:text-text-muted">
                   {project.category}
                 </span>
               </div>
 
-              <h1 className="text-2xl font-bold leading-tight text-light-text dark:text-text-primary md:text-3xl lg:text-4xl">
+              <h1 className="text-[clamp(28px,4vw,40px)] font-extrabold leading-[1.1] tracking-[-0.025em] text-transparent bg-clip-text bg-gradient-to-br from-white via-indigo-soft to-cyan">
                 {project.title}
               </h1>
             </header>
@@ -197,13 +193,13 @@ const ProjectDetail = () => {
                 src={project.imageUrl}
                 alt={project.title}
                 loading="lazy"
-                className="w-full rounded-lg border border-light-border dark:border-border-subtle"
+                className="w-full rounded-[16px] border border-light-border dark:border-border-subtle"
               />
             )}
 
             {/* Overview */}
             <section>
-              <h2 className="mb-4 border-l-2 border-teal-accent pl-3 text-sm font-semibold uppercase tracking-wider text-light-text dark:text-text-primary">
+              <h2 className="mb-4 border-l-[3px] border-cyan pl-3 text-sm font-semibold uppercase tracking-wider text-light-text dark:text-text-primary">
                 Overview
               </h2>
               <div className="space-y-4">
@@ -221,10 +217,10 @@ const ProjectDetail = () => {
             {/* Dynamic Sections */}
             {project.sections.map((section, sIdx) => (
               <section key={sIdx}>
-                <h2 className="mb-5 border-l-2 border-teal-accent pl-3 text-sm font-semibold uppercase tracking-wider text-light-text dark:text-text-primary">
+                <h2 className="mb-5 border-l-[3px] border-cyan pl-3 text-sm font-semibold uppercase tracking-wider text-light-text dark:text-text-primary">
                   {section.title}
                 </h2>
-                <div className="rounded-lg border border-light-border bg-light-surface dark:border-border-subtle dark:bg-surface-1">
+                <div className="rounded-[16px] border border-border-color bg-surface-1 backdrop-blur-[12px] dark:border-border-subtle dark:bg-surface-1">
                   <ul className="divide-y divide-light-border/50 dark:divide-border-subtle/50">
                     {section.items.map((item, idx) => (
                       <li
@@ -256,10 +252,10 @@ const ProjectDetail = () => {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-colors ${
+                    className={`inline-flex items-center gap-2 rounded-[16px] px-5 py-2.5 text-sm font-medium transition-colors ${
                       isPrimary
-                        ? "bg-teal-accent text-white hover:bg-teal-muted"
-                        : "border border-light-border bg-light-surface text-light-text hover:bg-light-surface-2 dark:border-border-subtle dark:bg-surface-2 dark:text-text-primary dark:hover:bg-surface-3"
+                        ? "border-transparent bg-gradient-to-r from-indigo to-[#5b52e8] text-white shadow-[0_4px_12px_-4px_rgba(124,124,255,0.6)] hover:-translate-y-0.5 hover:shadow-[0_8px_16px_-4px_rgba(124,124,255,0.8)] hover:bg-teal-muted"
+                        : "border border-border-color bg-surface-1 backdrop-blur-[12px] text-light-text hover:bg-light-surface-2 dark:border-border-subtle dark:bg-surface-2 dark:text-text-primary dark:hover:bg-surface-3"
                     }`}
                   >
                     <Icon size={15} />
@@ -272,10 +268,10 @@ const ProjectDetail = () => {
 
           {/* Sidebar metadata panel */}
           <aside className="w-full shrink-0 lg:w-72">
-            <div className="sticky top-20 space-y-6 rounded-lg border border-light-border bg-light-surface p-5 dark:border-border-subtle dark:bg-surface-1">
+            <div className="sticky top-20 space-y-6 rounded-[16px] border border-border-color bg-surface-1 backdrop-blur-[12px] p-5 dark:border-border-subtle dark:bg-surface-1">
               {/* Links */}
               <div>
-                <h3 className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-light-muted dark:text-text-faint">
+                <h3 className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-light-muted dark:text-text-dim">
                   Links
                 </h3>
                 <div className="flex flex-col gap-2">
@@ -300,7 +296,7 @@ const ProjectDetail = () => {
 
               {/* Tech Stack */}
               <div>
-                <h3 className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-light-muted dark:text-text-faint">
+                <h3 className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-light-muted dark:text-text-dim">
                   Tech Stack
                 </h3>
                 <div className="flex flex-wrap gap-1.5">
@@ -318,7 +314,7 @@ const ProjectDetail = () => {
               {/* Skills */}
               {project.tags.length > 0 && (
                 <div>
-                  <h3 className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-light-muted dark:text-text-faint">
+                  <h3 className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-light-muted dark:text-text-dim">
                     Skills
                   </h3>
                   <div className="flex flex-wrap gap-1.5">
@@ -337,7 +333,7 @@ const ProjectDetail = () => {
               {/* Meta */}
               <div className="space-y-2 border-t border-light-border pt-4 dark:border-border-subtle">
                 <div className="flex justify-between text-sm">
-                  <span className="text-light-muted dark:text-text-faint">
+                  <span className="text-light-muted dark:text-text-dim">
                     Year
                   </span>
                   <span className="font-mono text-light-text dark:text-text-primary">
@@ -345,7 +341,7 @@ const ProjectDetail = () => {
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-light-muted dark:text-text-faint">
+                  <span className="text-light-muted dark:text-text-dim">
                     Status
                   </span>
                   <span
@@ -355,7 +351,7 @@ const ProjectDetail = () => {
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-light-muted dark:text-text-faint">
+                  <span className="text-light-muted dark:text-text-dim">
                     Category
                   </span>
                   <span className="capitalize text-light-text dark:text-text-primary">
@@ -369,7 +365,7 @@ const ProjectDetail = () => {
 
         {relatedProjects.length > 0 && (
           <section className="mt-12 border-t border-light-border pt-8 dark:border-border-subtle">
-            <h2 className="mb-5 text-sm font-semibold uppercase tracking-wider text-light-muted dark:text-text-faint">
+            <h2 className="mb-5 text-sm font-semibold uppercase tracking-wider text-light-muted dark:text-text-dim">
               Related Projects
             </h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -377,7 +373,7 @@ const ProjectDetail = () => {
                 <Link
                   key={rp.slug}
                   to={`/${rp.slug}`}
-                  className="group rounded-lg border border-light-border bg-light-surface p-4 transition-colors hover:border-teal-accent/30 dark:border-border-subtle dark:bg-surface-1 dark:hover:border-teal-accent/30"
+                  className="group rounded-[16px] border border-border-color bg-surface-1 backdrop-blur-[12px] p-4 transition-colors hover:border-teal-accent/30 dark:border-border-subtle dark:bg-surface-1 dark:hover:border-teal-accent/30"
                 >
                   <h3 className="mb-2 text-sm font-semibold text-light-text transition-colors group-hover:text-teal-accent dark:text-text-primary">
                     {rp.title}

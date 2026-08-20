@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useInView } from "@/hooks/useInView"
+import { pageTitle } from "@/utils/pageTitle"
 
 function prefersReducedMotion() {
   return (
@@ -120,6 +121,12 @@ const HowIWork = () => {
   const { ref: pipelineRef, inView } = useInView({ threshold: 0.15 })
   const typed = useTypewriter(LOG_LINES, inView)
 
+  // Matches the prerendered shell for /how-i-work. Without this, arriving here
+  // via client-side navigation leaves the previous route's title in place.
+  useEffect(() => {
+    document.title = pageTitle("How I Work")
+  }, [])
+
   const fade = (delay: number): React.CSSProperties =>
     prefersReducedMotion()
       ? {}
@@ -135,7 +142,7 @@ const HowIWork = () => {
 
       <main className="mx-auto max-w-5xl px-6 py-16 text-light-text dark:text-text-primary">
         <div className="mb-16 text-center">
-          <p className="mb-4 font-mono text-xs uppercase tracking-[0.3em] text-light-muted dark:text-text-faint">
+          <p className="mb-4 font-mono text-xs uppercase tracking-[0.3em] text-light-muted dark:text-text-dim">
             Methodology
           </p>
           <h1 className="mb-4 text-4xl font-extrabold text-light-text dark:text-text-primary md:text-5xl">
@@ -160,7 +167,7 @@ const HowIWork = () => {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div
-              className="relative overflow-hidden rounded-xl border border-light-border bg-light-surface p-6 dark:border-border-subtle dark:bg-surface-1"
+              className="relative overflow-hidden rounded-[16px] border border-border-color bg-surface-1 backdrop-blur-[12px] p-6 dark:border-border-subtle dark:bg-surface-1"
               style={fade(80)}
             >
               <div
@@ -177,7 +184,7 @@ const HowIWork = () => {
             </div>
 
             <div
-              className="relative overflow-hidden rounded-xl border border-light-border bg-light-surface p-6 dark:border-border-subtle dark:bg-surface-1"
+              className="relative overflow-hidden rounded-[16px] border border-border-color bg-surface-1 backdrop-blur-[12px] p-6 dark:border-border-subtle dark:bg-surface-1"
               style={fade(160)}
             >
               <div
@@ -198,10 +205,10 @@ const HowIWork = () => {
 
           {/* ── PHASE 01: SYNTHESIS ── */}
           <div className="mb-5 flex items-baseline gap-3" style={fade(300)}>
-            <span className="font-mono text-[40px] font-bold leading-none text-teal-accent/20">
+            <span className="font-mono text-[40px] font-bold leading-none text-cyan/20">
               01
             </span>
-            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-teal-accent">
+            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-cyan">
               synthesis
             </span>
           </div>
@@ -211,16 +218,16 @@ const HowIWork = () => {
               href="https://nectar.ibtisam-iq.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="group w-full rounded-2xl border border-teal-accent/30 bg-light-surface p-8 text-center shadow-[0_0_40px_-12px_rgba(0,180,216,0.25)] transition hover:border-teal-accent/60 dark:bg-surface-1 md:w-auto md:min-w-[400px]"
+              className="group w-full rounded-2xl border border-cyan bg-surface-1 backdrop-blur-[12px] shadow-[0_0_40px_-12px_rgba(22,200,236,0.3)] p-8 text-center shadow-[0_0_40px_-12px_rgba(0,180,216,0.25)] transition hover:border-teal-accent/60 dark:bg-surface-1 md:w-auto md:min-w-[400px]"
             >
-              <h2 className="mb-3 text-2xl font-bold text-teal-accent transition group-hover:text-teal-accent/80">
+              <h2 className="mb-3 text-2xl font-bold text-cyan transition group-hover:text-cyan/80">
                 Nectar
               </h2>
               <p className="mb-4 text-sm text-light-muted dark:text-text-muted">
                 365 pages. A concept doesn't count as understood until it
                 survives contact with what I actually built.
               </p>
-              <span className="font-mono text-xs text-teal-accent transition group-hover:text-teal-accent/80">
+              <span className="font-mono text-xs text-cyan transition group-hover:text-cyan/80">
                 nectar.ibtisam-iq.com ↗
               </span>
             </a>
@@ -242,7 +249,7 @@ const HowIWork = () => {
             {OUTPUTS.map((card, i) => (
               <div
                 key={card.title}
-                className="relative flex flex-col overflow-hidden rounded-xl border border-light-border bg-light-surface p-6 dark:border-border-subtle dark:bg-surface-1"
+                className="relative flex flex-col overflow-hidden rounded-[16px] border border-border-color bg-surface-1 backdrop-blur-[12px] p-6 dark:border-border-subtle dark:bg-surface-1"
                 style={fade(560 + i * 80)}
               >
                 <div
@@ -279,12 +286,12 @@ const HowIWork = () => {
 
         {/* Terminal summary */}
         <div className="mt-16 border-t border-light-border pt-12 dark:border-border-subtle">
-          <div className="mx-auto max-w-2xl overflow-hidden rounded-xl border border-light-border dark:border-border-subtle">
+          <div className="mx-auto max-w-2xl overflow-hidden rounded-[16px] border border-light-border dark:border-border-subtle">
             <div className="flex items-center gap-1.5 border-b border-light-border bg-light-surface-2 px-4 py-2.5 dark:border-border-subtle dark:bg-surface-1">
               <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
               <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/70" />
               <span className="h-2.5 w-2.5 rounded-full bg-green-500/70" />
-              <span className="ml-3 font-mono text-xs text-light-muted dark:text-text-faint">
+              <span className="ml-3 font-mono text-xs text-light-muted dark:text-text-dim">
                 methodology.log
               </span>
             </div>

@@ -56,7 +56,7 @@ const Footer = () => (
     </div>
 
     <div className="border-t border-light-border dark:border-border-subtle">
-      <p className="mx-auto max-w-7xl px-6 py-4 text-xs text-light-muted dark:text-text-faint">
+      <p className="mx-auto max-w-7xl px-6 py-4 text-xs text-light-muted dark:text-text-dim">
         &copy; {new Date().getFullYear()} Muhammad Ibtisam. Built with React +
         TypeScript + Tailwind + Vite &middot; Deployed on GitHub Pages
       </p>
