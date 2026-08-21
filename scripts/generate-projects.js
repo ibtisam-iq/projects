@@ -4,6 +4,7 @@
 
 import { readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { parse } from 'yaml'
+import { TECH_REGISTRY, ALLOWED_TAGS } from '../src/data/taxonomy.ts'
 
 const yaml = readFileSync('data/projects.yaml', 'utf8')
 const projects = parse(yaml)
@@ -13,6 +14,27 @@ projects.forEach((p) => {
     p.description = p.description.replace(/\r?\n+/g, '\n\n')
   }
 })
+
+// Catches a typo or a near-duplicate (e.g. "Route 53" vs "Amazon Route 53")
+// before it ships as two filter options that should have been one.
+const allowedTagSet = new Set(ALLOWED_TAGS)
+const errors = []
+projects.forEach((p) => {
+  p.tech.forEach((t) => {
+    if (!(t in TECH_REGISTRY)) {
+      errors.push(`${p.slug}: tech "${t}" is not in src/data/taxonomy.ts TECH_REGISTRY`)
+    }
+  })
+  p.tags.forEach((t) => {
+    if (!allowedTagSet.has(t)) {
+      errors.push(`${p.slug}: tag "${t}" is not in src/data/taxonomy.ts ALLOWED_TAGS`)
+    }
+  })
+})
+if (errors.length > 0) {
+  console.error('❌ Taxonomy validation failed:\n' + errors.map((e) => `  - ${e}`).join('\n'))
+  process.exit(1)
+}
 
 const output = `// ================================================================
 // AUTO-GENERATED FILE. DO NOT EDIT MANUALLY.
