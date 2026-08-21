@@ -1,7 +1,18 @@
 # ============================================================
 # Source of Truth: projects.ibtisam-iq.com
 # A push to this file auto-triggers a rebuild.
-# Authoring standards: https://blog.ibtisam-iq.com/project-card-authoring-standards/
+#
+# Full authoring contract (schema, taxonomy, tech ordering, checklist for
+# writing a new entry by hand or via an LLM): docs/authoring-guide.md
+# Prose/style standards: https://blog.ibtisam-iq.com/project-card-authoring-standards/
+#
+# tech: order matters. Every project's card renders only the first 8 tech
+# entries as chips; the rest stay searchable/filterable but invisible on the
+# card. Put the tools that most define the project first, see
+# docs/authoring-guide.md#ordering-tech before writing a new tech: list.
+#
+# tech: and tags: values must exist in src/data/taxonomy.ts (TECH_REGISTRY /
+# ALLOWED_TAGS). An unregistered string fails the build.
 #
 # Formatting note for description & shortDescription:
 # Use folded block scalar (>-) with standard 1 blank line between paragraphs.
@@ -67,19 +78,19 @@
     - networking
     - security
     - iac
-    - automation
   tech:
-    - systemd
     - Docker
     - Jenkins
     - SonarQube
     - Nexus
+    - GitHub Actions
+    - Cloudflare Tunnel
+    - systemd
     - PostgreSQL
     - Nginx
-    - Cloudflare Tunnel
-    - GitHub Actions
     - GHCR
     - Bash
+    - Ubuntu
   links:
     - type: github
       url: "https://github.com/ibtisam-iq/silver-stack/tree/main/iximiuz/rootfs"
@@ -161,7 +172,8 @@
         - "Set up kube-prometheus-stack for metrics. Configured AlertManager to push cluster alerts to Slack."
         - "Deployed the Elastic Stack (Elasticsearch, Filebeat, Kibana) to aggregate logs across the 4-node EKS cluster."
   tags:
-    - kubernetes
+    - orchestration
+    - microservices
     - gitops
     - ci-cd
     - iac
@@ -171,26 +183,33 @@
     - security
     - autoscaling
   tech:
-    - Terraform
     - Amazon EKS
-    - Docker
-    - Helm
-    - Kustomize
+    - Terraform
     - ArgoCD
-    - ArgoCD Image Updater
     - Gateway API
+    - Helm
+    - GitHub Actions
+    - Prometheus
+    - Trivy
+    - Grafana
+    - Docker
+    - Kustomize
+    - ArgoCD Image Updater
     - AWS Load Balancer Controller
     - ExternalDNS
-    - Route 53
-    - GitHub Actions
-    - Trivy
+    - Amazon Route 53
+    - AWS Certificate Manager
+    - Amazon EBS CSI Driver
+    - Metrics Server
     - GHCR
-    - Prometheus
-    - Grafana
     - AlertManager
     - Elasticsearch
     - Filebeat
     - Kibana
+    - Kubernetes
+    - CloudFormation
+    - AWS IAM
+    - AWS EC2
   links:
     - type: app-repo
       url: "https://github.com/ibtisam-iq/microservices-demo"
@@ -229,7 +248,7 @@
     IRSA (IAM Roles for Service Accounts) to bind the Cart service to DynamoDB and the Orders service to a serverless
     event pipeline (SQS triggers Lambda, which publishes to SNS).
 
-    Traffic routing uses the ALB Ingress Controller with an Ingress Group that shares a single ALB across the UI,
+    Traffic routing uses the AWS Load Balancer Controller with an Ingress Group that shares a single ALB across the UI,
     Prometheus, and Grafana. Logging is handled by Fluent Bit streaming to CloudWatch Container Insights for
     native AWS log aggregation.
   sections:
@@ -248,32 +267,37 @@
         - "Deployed the AWS Load Balancer Controller and configured an Ingress Group to share a single ALB across the UI, Prometheus, and Grafana."
         - "Deployed Fluent Bit to stream logs to CloudWatch Container Insights."
   tags:
-    - kubernetes
     - orchestration
-    - cloud-native
     - iac
     - microservices
+    - networking
+    - security
     - observability
   tech:
-    - Terraform
-    - eksctl
-    - CloudFormation
-    - kubeadm
     - Amazon EKS
+    - kubeadm
+    - Terraform
     - Docker
     - Helmfile
-    - Helm
-    - ALB Ingress Controller
-    - DynamoDB
-    - SQS
     - Lambda
+    - DynamoDB
+    - CloudWatch
+    - eksctl
+    - CloudFormation
+    - Helm
+    - AWS Load Balancer Controller
+    - SQS
     - SNS
     - RabbitMQ
     - Redis
     - Fluent Bit
-    - CloudWatch
     - Prometheus
     - Grafana
+    - Kubernetes
+    - AWS IAM
+    - Amazon EBS CSI Driver
+    - AWS Certificate Manager
+    - Cloudflare
   links:
     - type: github
       url: "https://github.com/ibtisam-iq/retail-store-sample-app"
@@ -324,23 +348,38 @@
         - "Adopted the Kubernetes Gateway API over legacy Ingress, integrated with the AWS Application Load Balancer."
         - "Aligned JVM memory parameters (-Xmx, -Xms) with Kubernetes resource limits to prevent OOM kills."
   tags:
-    - aws
-    - kubernetes
+    - orchestration
     - containerization
     - iac
-    - ci-cd
     - security
+    - networking
+    - observability
+    - autoscaling
   tech:
+    - Amazon EKS
     - AWS EC2
     - Amazon ECS
-    - Amazon EKS
+    - Terraform
+    - Docker
+    - Kubernetes
+    - Gateway API
+    - AWS Load Balancer Controller
+    - NGINX Gateway Fabric
+    - cert-manager
     - Amazon RDS
     - Java 21
     - Spring Boot 3.4
     - Maven
-    - Docker
     - Kustomize
-    - Gateway API
+    - kubeadm
+    - Amazon ECR
+    - AWS Application Load Balancer
+    - AWS Certificate Manager
+    - Amazon EBS CSI Driver
+    - AWS IAM
+    - Amazon S3
+    - CloudWatch
+    - Cloudflare
     - Bash
   links:
     - type: runbook
@@ -402,28 +441,33 @@
         - "Used Kustomize bases for stateless Deployments and injected StatefulSets, StorageClasses, and RDS connection strings through environment-specific overlays."
   tags:
     - containerization
-    - kubernetes
+    - orchestration
     - iac
     - networking
-    - gitops
+    - autoscaling
   tech:
-    - AWS EC2
-    - Amazon ECS
-    - kubeadm
-    - Kubernetes
     - Amazon EKS
-    - Amazon RDS
+    - Docker
     - Java
     - Python
     - Node.js
+    - Kustomize
+    - kubeadm
+    - AWS EC2
+    - Amazon ECS
+    - Amazon RDS
+    - Spring Boot
+    - Flask
+    - Express
     - React
+    - Webpack
+    - Gunicorn
     - MySQL
     - PostgreSQL
-    - Docker
     - Docker Compose
     - Nginx
-    - Kustomize
     - Bash
+    - Kubernetes
   links:
     - type: java-monolith-repo
       url: "https://github.com/ibtisam-iq/java-monolith-app"
@@ -499,21 +543,24 @@
   tags:
     - ci-cd
     - security
+    - devsecops
     - containerization
-    - gitops
   tech:
     - Jenkins
     - GitHub Actions
+    - Trivy
+    - SonarQube
     - Docker
     - Maven
-    - npm
-    - pytest
-    - Trivy
     - Bandit
-    - pip-audit
     - ESLint
-    - SonarQube
+    - npm
+    - Jest
+    - pytest
+    - pip-audit
     - JaCoCo
+    - Cobertura
+    - SQLite
     - GHCR
     - Docker Hub
     - Nexus
@@ -588,22 +635,31 @@
         - "Designed and authored a hands-on Kubernetes debugging tutorial for DebugBox on iximiuz Labs, guiding users through lite, balanced, and power variants end-to-end in a live multi-node cluster playground (no local setup required)."
   tags:
     - containerization
-    - kubernetes
+    - orchestration
     - security
     - devsecops
     - ci-cd
     - networking
+    - documentation
   tech:
-    - Alpine Linux
     - Docker (Buildx & QEMU)
-    - Bash
-    - Hadolint
+    - Alpine Linux
     - Trivy
-    - Make
+    - Hadolint
     - GitHub Actions
+    - kubectx
+    - kubens
+    - yq
+    - Bash
+    - Make
     - GHCR
     - Docker Hub
     - MkDocs
+    - mike
+    - lychee
+    - GitHub Pages
+    - Kubernetes
+    - Docker
   links:
     - type: github
       url: "https://github.com/ibtisam-iq/debugbox"
@@ -663,14 +719,12 @@
     - security
     - networking
     - observability
-    - documentation
   tech:
-    - Amazon S3
-    - AWS KMS
     - Amazon CloudFront
     - AWS Certificate Manager
+    - Amazon S3
+    - AWS KMS
     - Amazon Route 53
-    - Cloudflare
     - AWS IAM
     - AWS CloudTrail
     - AWS CLI
