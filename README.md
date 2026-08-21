@@ -62,18 +62,24 @@ flowchart TD
 
 **Filtering**
 
-- **Search** across title, short description, and technology names.
+- **Search** across title, both descriptions, section content, tags, and technology names.
 - **Category**: Platform or Tool, with live counts.
-- **Skills**: multi-select capability tags such as `ci-cd`, `gitops`, `kubernetes`.
-- **Technologies**: multi-select, grouped into four domains with in-popover search.
+- **Skills**: multi-select capability tags such as `ci-cd`, `gitops`, `orchestration`. Independent of the Technologies facet; narrows by discipline, not by tool.
+- **Technologies**: multi-select, grouped into six domains with in-popover search. Popover column count adapts to domain count (currently 3×2) rather than a fixed 4, so adding a domain doesn't leave an uneven last row.
 - **Status** and **Year**: both derived from the data at build time.
+
+> [!NOTE]
+> `data/projects.yaml`'s `tech` and `tags` are validated at build time against
+> [`src/data/taxonomy.ts`](./src/data/taxonomy.ts): every `tech` string maps to
+> exactly one domain, and every `tag` comes from a closed vocabulary. An unlisted
+> string fails the build instead of compiling into a broken filter option.
 
 > [!NOTE]
 > Filter options come from `getAllStatuses()` and `getAllYears()`, never a hardcoded list. An option that matches zero projects cannot appear, and the Year control stays hidden while every project shares one year.
 
 **Pages**
 
-- **Detail pages** rendering dynamic sections, skills, tech stack, and link buttons.
+- **Detail pages** rendering dynamic sections, skills, the full tech stack, and link buttons. The card itself shows only the first 8 tech entries plus a "+N more" link, so the full list stays fully searchable and filterable without crowding the card. The 8 are curated per project, see [`docs/authoring-guide.md#ordering-tech`](./docs/authoring-guide.md#ordering-tech).
 - **Methodology page** at `/how-i-work` outlining the engineering pipeline.
 
 **Interface**
@@ -107,7 +113,8 @@ The same rule is mirrored client-side in [`src/utils/pageTitle.ts`](./src/utils/
 
 **References**
 
-- [Project Card Authoring Standards](https://blog.ibtisam-iq.com/project-card-authoring-standards/): authoring guide and writing standards.
+- [Authoring Guide](./docs/authoring-guide.md): the full contract for a new entry (schema, taxonomy rules, tech ordering, and a checklist). Written to hand to an LLM as-is.
+- [Project Card Authoring Standards](https://blog.ibtisam-iq.com/project-card-authoring-standards/): prose and formatting style.
 - [Architecture & Schema Reference](./docs/architecture.md#project-schema): data pipeline and schema specification.
 
 ---
@@ -223,7 +230,7 @@ projects/
 │   │   ├── Navbar.tsx          # Sticky nav: scroll-progress bar, repository link, mobile menu.
 │   │   ├── Hero.tsx            # Landing section with animated stat counters.
 │   │   ├── TopFilterBar.tsx    # Owns dropdown state; desktop filter deck + mobile trigger.
-│   │   ├── ToolsMegaPopover.tsx   # 4-column tech selector with in-popover search.
+│   │   ├── ToolsMegaPopover.tsx   # Domain-grouped tech selector; column count adapts to domain count.
 │   │   ├── ActiveFilterChips.tsx  # Match count, removable chips, quick presets, reset-all.
 │   │   ├── MobileFilterDrawer.tsx # Full-screen drawer below `lg`, portalled to <body>.
 │   │   ├── ProjectCard.tsx     # Card with scroll reveal and hover glow.
@@ -236,8 +243,9 @@ projects/
 │   │   └── useInView.ts        # IntersectionObserver hook for scroll-triggered animations.
 │   ├── utils/
 │   │   ├── pageTitle.ts        # Client mirror of the prerender title rule.
-│   │   └── toolCategories.ts   # Buckets tech into 4 domains; computes facet counts.
+│   │   └── toolCategories.ts   # Groups tech into taxonomy domains; computes facet counts.
 │   ├── data/
+│   │   ├── taxonomy.ts         # Single source of truth for tech domains and the tag vocabulary.
 │   │   └── projects.ts         # AUTO-GENERATED. Gitignored. Never edited by hand.
 │   ├── types/
 │   │   └── project.ts          # Project TypeScript interface.
