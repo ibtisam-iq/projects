@@ -36,6 +36,18 @@ const Navbar = () => {
     setMobileMenuOpen(false)
   }
 
+  // Lock background scroll while the mobile menu is open. Without this the
+  // page content behind the dropdown stays scrollable and visually bleeds
+  // through it, since the panel has no backdrop.
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [mobileMenuOpen])
+
   const isActive = (path: string) => location.pathname === path
 
   return (
@@ -52,7 +64,7 @@ const Navbar = () => {
       />
       <nav className="mx-auto flex max-w-[1240px] items-center justify-between px-[22px]">
         <Link to="/" className="flex items-center gap-3 whitespace-nowrap" aria-label="Home">
-          <div className="flex h-[38px] w-[38px] items-center justify-center rounded-[11px] bg-gradient-to-br from-indigo to-cyan text-[15px] font-extrabold tracking-[-0.03em] text-white shadow-[0_0_20px_rgba(124,124,255,0.45)]">
+          <div className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] bg-gradient-to-br from-indigo to-cyan text-[15px] font-extrabold tracking-[-0.03em] text-white shadow-[0_0_20px_rgba(124,124,255,0.45)]">
             IQ
           </div>
           <span className="flex flex-col leading-[1.2]">
@@ -87,7 +99,7 @@ const Navbar = () => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub Repository"
-            className="flex items-center justify-center gap-2 rounded-[11px] border border-border-color bg-surface-2 px-4 py-2 text-[14px] font-bold text-text-primary transition-all duration-220 hover:-translate-y-[1px] hover:border-[#3d5177] hover:bg-[#26324f]"
+            className="flex items-center justify-center gap-2 rounded-[10px] border border-border-color bg-surface-2 px-4 py-2 text-[14px] font-bold text-text-primary transition-all duration-220 hover:-translate-y-[1px] hover:border-[#3d5177] hover:bg-[#26324f]"
           >
             <FiGithub size={17} />
             <span>Repository</span>
@@ -115,7 +127,15 @@ const Navbar = () => {
       </nav>
 
       {mobileMenuOpen && (
-        <div className="absolute left-0 right-0 top-[100%] m-0 flex animate-fade-in flex-col gap-1 border-b border-border-color bg-[#070a12]/98 p-3 backdrop-blur-[16px] md:hidden">
+        <div
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {mobileMenuOpen && (
+        <div className="absolute left-0 right-0 top-[100%] z-50 m-0 flex animate-fade-in flex-col gap-1 border-b border-border-color bg-[#070a12]/98 p-3 backdrop-blur-[16px] md:hidden">
           {navLinks.map((link) => (
             <Link
               key={link.to}
