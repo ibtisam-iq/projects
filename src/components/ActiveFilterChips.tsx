@@ -18,14 +18,17 @@ interface ActiveFilterChipsProps {
   clearAll: () => void
 }
 
+// Picked by real project coverage, not just recognizability. A preset that
+// matches one project is a trap, not a shortcut.
 const POPULAR_QUICK_PRESETS = [
+  "Docker",
   "Kubernetes",
   "Amazon EKS",
   "Terraform",
-  "ArgoCD",
   "GitHub Actions",
   "Jenkins",
-  "Docker",
+  "Helm",
+  "Trivy",
 ]
 
 export const ActiveFilterChips = ({
@@ -172,8 +175,8 @@ export const ActiveFilterChips = ({
           /* Empty state only: a starting point when nothing is filtered yet.
              Picking one makes hasActiveFilters true, so this row is replaced by
              the chips above and a preset is never rendered in a selected state. */
-          <div className="hidden sm:flex items-center gap-1.5 pl-2">
-            <span className="flex items-center gap-1 font-mono text-[11px] text-light-muted/70 dark:text-text-dim">
+          <div className="hidden sm:flex flex-wrap items-center gap-1.5 pl-2">
+            <span className="flex items-center gap-1 whitespace-nowrap font-mono text-[11px] text-light-muted/70 dark:text-text-dim">
               <FiZap size={11} className="text-teal-accent" />
               Quick filters:
             </span>
@@ -181,7 +184,7 @@ export const ActiveFilterChips = ({
               <button
                 key={preset}
                 onClick={() => addPresetTech(preset)}
-                className="rounded-full bg-light-surface-2 px-2 py-0.5 font-mono text-[10px] text-light-muted transition-colors hover:bg-light-border hover:text-light-text dark:bg-surface-2 dark:text-text-muted dark:hover:bg-surface-3 dark:hover:text-text-primary"
+                className="whitespace-nowrap rounded-full bg-light-surface-2 px-2 py-0.5 font-mono text-[10px] text-light-muted transition-colors hover:bg-light-border hover:text-light-text dark:bg-surface-2 dark:text-text-muted dark:hover:bg-surface-3 dark:hover:text-text-primary"
               >
                 {preset}
               </button>

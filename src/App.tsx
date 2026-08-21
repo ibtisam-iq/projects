@@ -28,11 +28,18 @@ const HomePage = () => {
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
       const q = searchQuery.toLowerCase()
+      // Spans every field a visitor might type a real detail from (e.g. "ArgoCD
+      // Image Updater"), not just the title and card blurb.
       const matchesSearch =
         searchQuery === "" ||
         project.title.toLowerCase().includes(q) ||
         project.shortDescription.toLowerCase().includes(q) ||
-        project.tech.some((tech) => tech.toLowerCase().includes(q))
+        project.description.toLowerCase().includes(q) ||
+        project.tech.some((tech) => tech.toLowerCase().includes(q)) ||
+        project.tags.some((tag) => tag.toLowerCase().includes(q)) ||
+        project.sections.some((section) =>
+          section.items.some((item) => item.toLowerCase().includes(q)),
+        )
       const matchesCategory =
         selectedCategory === "all" || project.category === selectedCategory
       const matchesTech =
