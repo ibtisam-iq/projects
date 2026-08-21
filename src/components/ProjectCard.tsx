@@ -40,8 +40,17 @@ interface ProjectCardProps {
   index?: number
 }
 
+// Card renders only the headline tools (authored first in each project's tech
+// list, see docs/authoring-guide.md#ordering-tech); the rest stay fully
+// searchable and filterable, just not chip-rendered here. 8 is the ceiling
+// most projects in this dataset need to surface every genuinely distinct
+// tool family without spilling to a third row on a typical card width.
+const VISIBLE_TECH_COUNT = 8
+
 const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
   const { ref, inView } = useInView()
+  const visibleTech = project.tech.slice(0, VISIBLE_TECH_COUNT)
+  const hiddenTechCount = project.tech.length - visibleTech.length
 
   return (
     <article
@@ -105,7 +114,7 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
 
       {/* Tech Stack */}
       <div className="mb-5 flex flex-wrap gap-2">
-        {project.tech.map((tech, i) => (
+        {visibleTech.map((tech, i) => (
           <span
             key={tech}
             className={`flex items-center gap-1.5 rounded-full border border-border-color bg-surface-3 px-3 py-1.5 font-sans text-[13px] font-bold tracking-[0.04em] text-text-muted transition-all duration-300 hover:border-[#35476e] hover:text-text-primary ${
@@ -116,6 +125,14 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
             {tech}
           </span>
         ))}
+        {hiddenTechCount > 0 && (
+          <Link
+            to={`/${project.slug}`}
+            className="flex items-center rounded-full border border-dashed border-border-color px-3 py-1.5 font-sans text-[13px] font-bold text-text-dim transition-colors hover:border-cyan hover:text-cyan-soft"
+          >
+            +{hiddenTechCount} more
+          </Link>
+        )}
       </div>
 
       {/* Bottom: skills + links */}

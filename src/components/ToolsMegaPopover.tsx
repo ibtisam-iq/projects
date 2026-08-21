@@ -2,6 +2,19 @@ import { useState, useMemo, useEffect, useRef, useCallback } from "react"
 import { FiSearch, FiX, FiCheck } from "react-icons/fi"
 import { getCategorizedTools } from "@/utils/toolCategories"
 
+// Column count is derived from domain count so the grid stays ~2 rows instead
+// of thinning out an uneven last row (6 domains on 4 columns left 4-then-2).
+// Add a wider mapping here if DOMAINS in taxonomy.ts ever grows past 8.
+const GRID_COLS_BY_DOMAIN_COUNT: Record<number, string> = {
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-2 lg:grid-cols-3",
+  4: "sm:grid-cols-2 lg:grid-cols-4",
+  5: "sm:grid-cols-2 lg:grid-cols-3",
+  6: "sm:grid-cols-2 lg:grid-cols-3",
+  7: "sm:grid-cols-2 lg:grid-cols-4",
+  8: "sm:grid-cols-2 lg:grid-cols-4",
+}
+
 interface ToolsMegaPopoverProps {
   isOpen: boolean
   onClose: () => void
@@ -160,9 +173,13 @@ export const ToolsMegaPopover = ({
       </div>
 
       {/* Popover 4-Column Grid */}
-      <div className="max-h-[60vh] overflow-y-auto p-3 sm:p-4 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-light-border dark:[&::-webkit-scrollbar-thumb]:bg-border-subtle hover:[&::-webkit-scrollbar-thumb]:bg-light-muted dark:hover:[&::-webkit-scrollbar-thumb]:bg-text-muted">
+      <div className="max-h-[50vh] overflow-y-auto p-3 sm:p-4 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-light-border dark:[&::-webkit-scrollbar-thumb]:bg-border-subtle hover:[&::-webkit-scrollbar-thumb]:bg-light-muted dark:hover:[&::-webkit-scrollbar-thumb]:bg-text-muted">
         {filteredDomains.length > 0 ? (
-          <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div
+            className={`grid grid-cols-1 gap-x-6 gap-y-6 ${
+              GRID_COLS_BY_DOMAIN_COUNT[domains.length] ?? "sm:grid-cols-2 lg:grid-cols-4"
+            }`}
+          >
             {filteredDomains.map((domain) => (
               <div
                 key={domain.id}
@@ -182,7 +199,7 @@ export const ToolsMegaPopover = ({
                 </div>
 
                 {/* Tools List */}
-                <div className="flex flex-col gap-0.5 overflow-y-auto pr-2 max-h-64 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-light-border/60 dark:[&::-webkit-scrollbar-thumb]:bg-border-subtle/60 hover:[&::-webkit-scrollbar-thumb]:bg-light-muted/80 dark:hover:[&::-webkit-scrollbar-thumb]:bg-text-muted/80">
+                <div className="flex flex-col gap-0.5 overflow-y-auto pr-2 max-h-24 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-light-border/60 dark:[&::-webkit-scrollbar-thumb]:bg-border-subtle/60 hover:[&::-webkit-scrollbar-thumb]:bg-light-muted/80 dark:hover:[&::-webkit-scrollbar-thumb]:bg-text-muted/80">
                   {domain.tools.map((tool) => {
                     const isSelected = selectedTech.includes(tool)
                     const count = toolCounts[tool] || 0

@@ -79,11 +79,11 @@ Each project in `data/projects.yaml` follows this schema:
       items:
         - "Bullet point describing what was built and why."
         - "Another bullet point with specific tools and decisions."
-  tags:                                # Capability domains (recruiter-level)
-    - ci-cd
-    - kubernetes
-  tech:                                # Specific tools and platforms (engineer-level)
-    - Docker
+  tags:                                # Discipline/practice, from the closed
+    - ci-cd                            #   ALLOWED_TAGS vocabulary in taxonomy.ts
+    - orchestration
+  tech:                                # Concrete tool, must exist in TECH_REGISTRY
+    - Docker                           #   in taxonomy.ts (also assigns its domain)
     - Terraform
   links:                               # Type + URL pairs
     - type: github                     # github | runbook | blog | website | playground | docs | app-repo | cd-repo
@@ -115,7 +115,10 @@ Each project in `data/projects.yaml` follows this schema:
 ## Content Management Workflow
 
 > [!TIP]
-> No source code changes needed to add a project. For complete formatting rules and styling best practices, consult the official **[Project Card Authoring Standards](https://blog.ibtisam-iq.com/project-card-authoring-standards/)**.
+> No source code changes needed to add a project. For the full contract for a
+> new entry (schema, taxonomy rules, tech ordering), see the
+> **[Authoring Guide](./authoring-guide.md)**. For prose and formatting style,
+> see the **[Project Card Authoring Standards](https://blog.ibtisam-iq.com/project-card-authoring-standards/)**.
 
 **1. Edit `data/projects.yaml`** and add a new entry following the schema above.
 
@@ -147,10 +150,16 @@ git push
 The single source of truth. Contains all project entries in YAML format. Edit this file to add, update, or remove projects.
 
 ### `scripts/generate-projects.js`
-A Node.js ESM script that reads `data/projects.yaml` and writes a fully-typed `src/data/projects.ts` file. The generated file includes:
+A Node.js ESM script that reads `data/projects.yaml` and writes a fully-typed `src/data/projects.ts` file. Before writing, it validates every project's `tech` and `tags` against `src/data/taxonomy.ts` and fails the build (naming the project and the offending string) on anything not registered there, the same posture as the per-route `og:url` check in the deploy workflow. The generated file includes:
 - A warning comment ("DO NOT EDIT MANUALLY")
 - The projects array typed as `Project[]`
-- Utility functions: `getAllTechTags`, `getAllCapabilityTags`, `getAllYears`
+- Utility functions: `getAllTechTags`, `getAllCapabilityTags`, `getAllYears`, `getAllStatuses`
+
+### `src/data/taxonomy.ts`
+The single source of truth for the tech/tag taxonomy, hand-authored and imported by both `generate-projects.js` (build-time validation) and `toolCategories.ts` (UI grouping). A tool is added to the project the moment it's added here, in one place. Exports:
+- `DOMAINS`: the 6 groupings used by the Technologies popover
+- `TECH_REGISTRY`: every allowed `tech` string mapped to exactly one domain
+- `ALLOWED_TAGS`: the closed vocabulary every project's `tags` must draw from
 
 ### `scripts/prerender-meta.js`
 A Node.js ESM script that runs after `vite build`. The site is client-rendered, so every route serves the same `index.html`; `useCanonical` corrects the tags in the browser, but crawlers that do not execute JavaScript (LinkedIn, Slack, Twitter) read the raw HTML and see the site-root `canonical` and `og:url` on every page.
@@ -180,13 +189,15 @@ App.tsx                        : Router, ScrollToTop wrapper, skip-link
 │   ├── useCanonical.ts        : Keeps <link rel="canonical"> in sync on route change
 │   ├── useCountUp.ts          : requestAnimationFrame counter with easeOut curve
 │   └── useInView.ts           : IntersectionObserver hook (fires once, respects prefers-reduced-motion)
+├── data/
+│   └── taxonomy.ts            : Single source of truth for tech domains and the tag vocabulary
 ├── utils/
-│   └── toolCategories.ts      : Buckets the tech list into 4 domains; computes per-option facet counts
+│   └── toolCategories.ts      : Groups the tech list into taxonomy.ts domains; computes per-option facet counts
 ├── components/
 │   ├── Navbar.tsx             : Sticky nav, scroll-progress bar, repository link, mobile menu
 │   ├── Hero.tsx               : Heading, animated stat counters (projects, tech count), scroll indicator
 │   ├── TopFilterBar.tsx       : Owns dropdown state; hosts the desktop filter deck and mobile trigger
-│   │   ├── ToolsMegaPopover.tsx   : 4-column technology selector with in-popover search
+│   │   ├── ToolsMegaPopover.tsx   : Technology selector grouped by taxonomy domain (column count adapts to domain count), with in-popover search
 │   │   ├── ActiveFilterChips.tsx  : Match count, removable chips, quick presets, reset-all
 │   │   └── MobileFilterDrawer.tsx : Full-screen drawer below `lg`, portalled to <body>
 │   ├── ProjectCard.tsx        : Card with scroll-triggered reveal, hover lift, staggered tech badges
@@ -225,7 +236,7 @@ App.tsx                        : Router, ScrollToTop wrapper, skip-link
 | Build tool | Vite 8 |
 | Routing | React Router v7 |
 | Icons | React Icons |
-| Fonts | Plus Jakarta Sans (sans), JetBrains Mono (mono), Inter (fallback) — Google Fonts |
+| Fonts | Plus Jakarta Sans (sans), JetBrains Mono (mono), Inter (fallback); Google Fonts |
 | Data format | YAML → TypeScript (auto-generated at build time) |
 | Hosting | GitHub Pages |
 | CI/CD | GitHub Actions |

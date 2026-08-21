@@ -264,7 +264,9 @@ export const TopFilterBar = ({
                       </button>
                     )}
                   </div>
-                  <div className="max-h-60 overflow-y-auto pr-1 flex flex-col gap-1">
+                  {/* Matches ToolsMegaPopover's per-column max-h-24 so the two
+                      dropdowns read as one consistent, shrunk design language. */}
+                  <div className="max-h-24 overflow-y-auto pr-1 flex flex-col gap-1">
                     {allTags.map((tag) => {
                       const isSelected = selectedTags.includes(tag)
                       const count = skillCounts[tag] || 0
