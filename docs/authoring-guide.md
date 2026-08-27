@@ -90,6 +90,9 @@ shorter but still averages 46. Neither fits a chip, a card heading, or a
 cross-reference list, so **`shortName` is required and capped at 28 characters**. The
 build fails if it is missing or too long, rather than leaving a consumer to truncate it.
 
+These two fields are read by another repository. [`docs/consumers.md`](./consumers.md)
+lists everything it depends on.
+
 `homepage: true` puts the project in the small curated set on
 [ibtisam-iq.com](https://ibtisam-iq.com). Order there follows the order of
 `data/projects.yaml`. This is separate from `featured`, which is true on every project

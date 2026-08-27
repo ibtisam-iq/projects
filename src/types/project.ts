@@ -15,20 +15,14 @@ export interface Project {
    *  scripts/prerender-meta.js falls back to `title` up to the first : or , */
   metaTitle?: string
   /**
-   * The name to use where there is only room for a few words: a chip, a card
-   * heading, a cross-reference list. `title` is written for search engines and runs
-   * past 140 characters, and even `metaTitle` averages 46, so neither survives that
-   * context.
-   *
-   * Consumed by ibtisam-iq.com for its homepage cards and its tool cross-reference.
-   * Required, and capped at 28 characters by the build, so a new project cannot land
-   * without a name that fits.
+   * Name for places with room for a few words: a chip, a card heading. `title` runs
+   * past 140 characters and `metaTitle` averages 46, so neither fits. Max 28,
+   * enforced by the build. Used by the portfolio site, see docs/consumers.md.
    */
   shortName: string
   /**
-   * Show this project among the small curated set on the ibtisam-iq.com homepage.
-   * Distinct from `featured`, which is true on every project and only drives a badge
-   * on this site's own cards. Homepage order follows the order of data/projects.yaml.
+   * Include on the portfolio site's homepage, which shows a handful, in the order of
+   * data/projects.yaml. Not the same as `featured`, which only styles a card here.
    */
   homepage: boolean
   category: string

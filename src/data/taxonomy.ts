@@ -58,19 +58,12 @@ export const DOMAINS: Domain[] = [
 ]
 
 export interface TechMeta {
-  /** Which of the six domains this technology belongs to. */
+  /** One of the six DOMAINS above. Drives the Technologies popover grouping. */
   domain: DomainId
   /**
-   * Whether ibtisam-iq.com shows this on its visible tools page.
-   *
-   * false does not mean unimportant or hidden from this site. It means the entry is
-   * an application-layer dependency or a convenience CLI, so listing it among the
-   * tools a DevOps engineer operates would dilute that page rather than strengthen
-   * it. Hidden entries are still counted, still matched against projects, and still
-   * indexed in the portfolio's keyword block for recruiter tooling.
-   *
-   * Required rather than optional on purpose: a new technology cannot slip onto the
-   * portfolio unreviewed.
+   * Show on the skills page of the portfolio site (see docs/consumers.md).
+   * false for application-layer dependencies and CLIs, React, pytest, AWS CLI:
+   * still validated and counted everywhere, just not listed there.
    */
   showcase: boolean
 }

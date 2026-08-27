@@ -104,6 +104,12 @@ flowchart TD
 2. Push to `main`.
 3. The pipeline compiles, prerenders, and deploys in roughly two minutes.
 
+**Required `shortName`**, 28 characters or fewer, and **`homepage`**, a boolean:
+
+- `shortName` is the name for chips and card headings, where `title` will not fit.
+- `homepage` features the project on the portfolio site. See [`docs/consumers.md`](./docs/consumers.md).
+- The build rejects a missing or over-long `shortName`, so neither can reach a consumer.
+
 **Optional `metaTitle`**, roughly 45 to 55 characters:
 
 - Used for the page `<title>` and `og:title`.
@@ -118,6 +124,7 @@ The same rule is mirrored client-side in [`src/utils/pageTitle.ts`](./src/utils/
 - [Authoring Guide](./docs/authoring-guide.md): the full contract for a new entry (schema, taxonomy rules, tech ordering, and a checklist). Written to hand to an LLM as-is.
 - [Project Card Authoring Standards](https://blog.ibtisam-iq.com/project-card-authoring-standards/): prose and formatting style.
 - [Architecture & Schema Reference](./docs/architecture.md#project-schema): data pipeline and schema specification.
+- [Consumers](./docs/consumers.md): the files another repository reads from here, and what changing them breaks.
 
 ---
 
@@ -223,7 +230,9 @@ projects/
 ├── data/
 │   └── projects.yaml           # Single source of truth. Edited to add or update projects.
 ├── docs/
-│   └── architecture.md         # Full architecture and pipeline documentation.
+│   ├── architecture.md         # Full architecture and pipeline documentation.
+│   ├── authoring-guide.md      # The contract for adding a project.
+│   └── consumers.md            # What another repo reads from here. Read before refactoring.
 ├── scripts/
 │   ├── generate-projects.js    # Converts projects.yaml to src/data/projects.ts.
 │   └── prerender-meta.js       # Per-route shells, 404.html, sitemap.xml, robots.txt.

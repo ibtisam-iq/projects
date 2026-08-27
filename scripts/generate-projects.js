@@ -20,9 +20,7 @@ projects.forEach((p) => {
 const allowedTagSet = new Set(ALLOWED_TAGS)
 const errors = []
 
-// shortName is what consumers put in a chip or a card heading, so it is validated
-// here rather than left for them to discover. Capping the length is the point: an
-// unbounded one would simply move the overflow problem downstream.
+// Caught here so a name that will not fit fails in this repo, not downstream.
 const SHORT_NAME_MAX = 28
 
 projects.forEach((p) => {
@@ -52,8 +50,7 @@ if (errors.length > 0) {
   process.exit(1)
 }
 
-// A consumer that filters on `homepage` renders nothing if every project is false.
-// Better to stop here than to ship an empty section on another site.
+// All false would leave the portfolio site's homepage section empty.
 if (!projects.some((p) => p.homepage === true)) {
   console.error('❌ No project has homepage: true. ibtisam-iq.com would show no cards.')
   process.exit(1)
