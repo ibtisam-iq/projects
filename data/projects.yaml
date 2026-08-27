@@ -367,8 +367,8 @@
     - NGINX Gateway Fabric
     - cert-manager
     - Amazon RDS
-    - Java 21
-    - Spring Boot 3.4
+    - Java
+    - Spring Boot
     - Maven
     - Kustomize
     - kubeadm

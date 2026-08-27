@@ -70,9 +70,11 @@ flowchart TD
 
 > [!NOTE]
 > `data/projects.yaml`'s `tech` and `tags` are validated at build time against
-> [`src/data/taxonomy.ts`](./src/data/taxonomy.ts): every `tech` string maps to
-> exactly one domain, and every `tag` comes from a closed vocabulary. An unlisted
-> string fails the build instead of compiling into a broken filter option.
+> [`src/data/taxonomy.ts`](./src/data/taxonomy.ts): every `tech` string carries a
+> `domain` and a `showcase` flag, and every `tag` comes from a closed vocabulary. An
+> unlisted string fails the build instead of compiling into a broken filter option.
+> `showcase` is read by [ibtisam-iq.com](https://ibtisam-iq.com) to decide which tools
+> its skills page lists; **this site shows every `tech` string regardless.**
 
 > [!NOTE]
 > Filter options come from `getAllStatuses()` and `getAllYears()`, never a hardcoded list. An option that matches zero projects cannot appear, and the Year control stays hidden while every project shares one year.

@@ -22,7 +22,7 @@ export const getCategorizedTools = (allTools: string[]): ToolDomain[] => {
   allTools.forEach((tool) => {
     // Falls back to the runtime/data bucket for a tool used in the data but
     // not yet registered, rather than dropping it from the popover silently.
-    const domainId = TECH_REGISTRY[tool] ?? "runtimes-data"
+    const domainId = TECH_REGISTRY[tool]?.domain ?? "runtimes-data"
     byDomain[domainId].push(tool)
   })
 

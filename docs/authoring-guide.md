@@ -58,10 +58,11 @@ outside that list.
 `tech` is the **Technologies** facet: concrete tools and products. Two rules,
 both enforced at build time by `src/data/taxonomy.ts`:
 
-1. **Every string must exist in `TECH_REGISTRY`**, mapped to exactly one of the 6
-   domains (Cloud & IaC, Containers & Orchestration, CI/CD & GitOps, Security &
-   DevSecOps, Observability & Monitoring, Runtimes/Languages/Data). A new tool
-   gets one line added to `TECH_REGISTRY` before it can appear in the YAML.
+1. **Every string must exist in `TECH_REGISTRY`**, carrying a `domain` (one of the
+   6: Cloud & IaC, Containers & Orchestration, CI/CD & GitOps, Security &
+   DevSecOps, Observability & Monitoring, Runtimes/Languages/Data) and a
+   `showcase` flag. A new tool gets one line added to `TECH_REGISTRY` before it
+   can appear in the YAML.
 2. **Only list a tool if it was genuinely used to build this project**, not
    merely present somewhere near it. `tech` is treated as a factual claim, not a
    keyword-stuffing surface: don't add a tool to look more comprehensive, and
@@ -86,8 +87,15 @@ Open `src/data/taxonomy.ts`, add one line to `TECH_REGISTRY` under the domain it
 belongs to:
 
 ```ts
-"Flux": "cicd-gitops",
+"Flux": { domain: "cicd-gitops", showcase: true },
 ```
+
+`showcase` decides whether ibtisam-iq.com lists the tool on its visible tools page.
+Set it `true` for infrastructure you operate, and `false` for an application-layer
+dependency or a convenience CLI (`React`, `pytest`, `AWS CLI`). A `false` entry is
+still validated, still counted per project, and still indexed in the portfolio's
+keyword block; it simply does not take up space on screen. The field is required, so
+a new tool cannot reach the portfolio without that call being made.
 
 Use the exact same string in `data/projects.yaml`. If the same service has two
 plausible names (`Route 53` vs. `Amazon Route 53`), pick one and use it
