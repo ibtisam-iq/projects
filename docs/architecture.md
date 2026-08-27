@@ -63,12 +63,17 @@ YAML is the right format for structured content data because:
 
 ## Project Schema
 
-Each project in `data/projects.yaml` follows this schema:
+Each project in `data/projects.yaml` follows this schema. Several of these fields are
+read by another repository; see [`consumers.md`](./consumers.md) before renaming any.
+
+
 
 ```yaml
 - slug: my-project                     # URL-safe identifier (/project/<slug>)
   title: "My Project"                  # Display name
   metaTitle: "My Project on AWS"       # Optional, ~45-55 chars. <title> and og:title
+  shortName: "My Project"              # Required, max 28 chars. Chips and card headings
+  homepage: false                      # Feature on the portfolio site's homepage
   category: platform                   # platform | tool
   status: completed                    # completed | in-progress | maintained | archived
   year: 2026                           # Completion or last major update year
@@ -91,7 +96,7 @@ Each project in `data/projects.yaml` follows this schema:
     - type: runbook
       url: "https://runbook.ibtisam-iq.com/..."
   imageUrl: "/images/hero.png"         # Optional hero image for detail page
-  featured: true                       # Pinned to top of the project grid
+  featured: true                       # Styles the card here. See homepage for the portfolio site
 ```
 
 ### Categories

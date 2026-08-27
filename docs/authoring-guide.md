@@ -10,6 +10,8 @@ This is the contract for writing a new entry in [`data/projects.yaml`](../data/p
 - slug: my-project                     # URL-safe identifier (/my-project)
   title: "My Project"                  # Full display name
   metaTitle: "My Project on AWS"       # Optional, ~45-55 chars. <title> and og:title
+  shortName: "My Project"              # Required, max 28 chars. Chips and card headings
+  homepage: false                      # Show on the ibtisam-iq.com homepage
   category: platform                   # platform | tool
   status: completed                    # completed | in-progress | maintained | archived
   year: 2026
@@ -80,6 +82,22 @@ both enforced at build time by `src/data/taxonomy.ts`:
    built on it later. When auditing against a source repo, ask "did this
    project's own work use this tool," not "does this tool exist somewhere in the
    repo."
+
+### shortName and homepage
+
+`title` is written for search engines and runs past 140 characters. `metaTitle` is
+shorter but still averages 46. Neither fits a chip, a card heading, or a
+cross-reference list, so **`shortName` is required and capped at 28 characters**. The
+build fails if it is missing or too long, rather than leaving a consumer to truncate it.
+
+These two fields are read by another repository. [`docs/consumers.md`](./consumers.md)
+lists everything it depends on.
+
+`homepage: true` puts the project in the small curated set on
+[ibtisam-iq.com](https://ibtisam-iq.com). Order there follows the order of
+`data/projects.yaml`. This is separate from `featured`, which is true on every project
+and only drives a badge on this site's own cards. The build fails if no project sets
+`homepage: true`, since that would render an empty section elsewhere.
 
 ### Adding a new tool to the registry
 
