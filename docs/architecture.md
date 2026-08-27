@@ -158,7 +158,7 @@ A Node.js ESM script that reads `data/projects.yaml` and writes a fully-typed `s
 ### `src/data/taxonomy.ts`
 The single source of truth for the tech/tag taxonomy, hand-authored and imported by both `generate-projects.js` (build-time validation) and `toolCategories.ts` (UI grouping). A tool is added to the project the moment it's added here, in one place. Exports:
 - `DOMAINS`: the 6 groupings used by the Technologies popover
-- `TECH_REGISTRY`: every allowed `tech` string mapped to exactly one domain
+- `TECH_REGISTRY`: every allowed `tech` string mapped to a `{ domain, showcase }` record. `showcase` is consumed by ibtisam-iq.com to decide what appears on its visible tools page
 - `ALLOWED_TAGS`: the closed vocabulary every project's `tags` must draw from
 
 ### `scripts/prerender-meta.js`
