@@ -19,7 +19,23 @@ projects.forEach((p) => {
 // before it ships as two filter options that should have been one.
 const allowedTagSet = new Set(ALLOWED_TAGS)
 const errors = []
+
+// shortName is what consumers put in a chip or a card heading, so it is validated
+// here rather than left for them to discover. Capping the length is the point: an
+// unbounded one would simply move the overflow problem downstream.
+const SHORT_NAME_MAX = 28
+
 projects.forEach((p) => {
+  if (typeof p.shortName !== 'string' || p.shortName.trim() === '') {
+    errors.push(`${p.slug}: shortName is required, a few words for a chip or card heading`)
+  } else if (p.shortName.length > SHORT_NAME_MAX) {
+    errors.push(
+      `${p.slug}: shortName is ${p.shortName.length} chars, over the ${SHORT_NAME_MAX} cap ("${p.shortName}")`
+    )
+  }
+  if (typeof p.homepage !== 'boolean') {
+    errors.push(`${p.slug}: homepage must be true or false`)
+  }
   p.tech.forEach((t) => {
     if (!(t in TECH_REGISTRY)) {
       errors.push(`${p.slug}: tech "${t}" is not in src/data/taxonomy.ts TECH_REGISTRY`)
@@ -32,7 +48,14 @@ projects.forEach((p) => {
   })
 })
 if (errors.length > 0) {
-  console.error('❌ Taxonomy validation failed:\n' + errors.map((e) => `  - ${e}`).join('\n'))
+  console.error('❌ Validation failed:\n' + errors.map((e) => `  - ${e}`).join('\n'))
+  process.exit(1)
+}
+
+// A consumer that filters on `homepage` renders nothing if every project is false.
+// Better to stop here than to ship an empty section on another site.
+if (!projects.some((p) => p.homepage === true)) {
+  console.error('❌ No project has homepage: true. ibtisam-iq.com would show no cards.')
   process.exit(1)
 }
 
