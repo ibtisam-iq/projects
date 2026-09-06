@@ -28,6 +28,9 @@ dist-ssr
 
 .claude
 
+# Interview preparation notes
+interview-prep
+
 # Generated from data/projects.yaml by scripts/generate-projects.js.
 # Recreated by `npm run generate`, which postinstall/dev/build all run.
 src/data/projects.ts
